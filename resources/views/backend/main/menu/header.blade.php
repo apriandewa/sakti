@@ -85,7 +85,7 @@
                             <div class="dropdown-divider"></div>
                         </li>
                         <li class="user-body">
-                            <a class="dropdown-item" href="/user/profile"><i class="ti-user text-muted me-2"></i>
+                            <a class="dropdown-item" href="{{ url('user/profile') }}"><i class="ti-user text-muted me-2"></i>
                                 Profil</a>
                         </li>
                         <li class="user-body">

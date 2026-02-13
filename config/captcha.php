@@ -11,7 +11,7 @@ return [
     'lines' => 0,                 // tidak ada garis pengganggu
     'bgImage' => false,
     'bgColor' => '#ffffff',       // background putih polos
-    'fontColors' => ['#000000'],  // warna hitam solid
+    'fontColors' => ['#a07716ff'],  // warna hitam solid
     'contrast' => 0,               // tidak ada efek kontras
     'angle' => 0,                  // huruf tidak diputar
     'sharpen' => 0,                 // tidak diasah

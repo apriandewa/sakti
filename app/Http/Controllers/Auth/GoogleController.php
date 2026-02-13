@@ -24,6 +24,8 @@ class GoogleController extends Controller
             [
                 'name' => $googleUser->getName(),
                 'password' => bcrypt(uniqid()), // random password
+                'level_id' => 3, // default level_id for new users
+                'access_group_id' => 3, // default level_id for new users
             ]
         );
 

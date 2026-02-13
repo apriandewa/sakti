@@ -8,17 +8,21 @@ use Illuminate\Support\Facades\Validator;
 class ValidateCaptcha
 {
     /**
-     * Validate captcha only for login POST (bukan untuk two-factor challenge).
+     * Validate captcha untuk semua POST request form Fortify
+     * kecuali two-factor challenge.
      */
     public function __invoke(Request $request, $next)
     {
-        // hanya jalan pada POST (login form). Abaikan route two-factor challenge.
+        // Jika request POST dan bukan two-factor challenge
         if ($request->isMethod('post') && ! $request->is('two-factor-challenge*')) {
+
             Validator::make($request->all(), [
-                'captcha' => 'required|captcha',
+                'captcha'     => ['required', 'captcha_api:' . $request->captcha_key],
+                'captcha_key' => ['required']
             ], [
-                'captcha.required' => 'Captcha wajib diisi.',
-                'captcha.captcha'   => 'Captcha tidak valid.',
+                'captcha.required'     => 'Captcha wajib diisi.',
+                'captcha.captcha_api'  => 'Captcha tidak valid.',
+                'captcha_key.required' => 'Captcha key tidak ditemukan.',
             ])->validate();
         }
 

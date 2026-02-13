@@ -39,6 +39,8 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+  
 </head>
 
 <body class="index-page">
@@ -110,6 +112,16 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
+
+<script>
+    (function(d){
+        var s = d.createElement("script");
+        s.setAttribute("data-account", "{{ config('services.userway.widget_id') }}");
+        s.setAttribute("src", "https://cdn.userway.org/widget.js");
+        (d.body || d.head).appendChild(s);
+    })(document);
+</script>
+
 
 
 </body>

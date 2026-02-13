@@ -12,6 +12,7 @@ use App\Models\Berita;
 use App\Models\Unduhan;
 use App\Models\Galeri;
 use App\Models\Page;
+use App\Models\Pengaturan;
 use App\Models\Profil;
 use Carbon\Carbon;
 
@@ -46,8 +47,8 @@ class AppServiceProvider extends ServiceProvider
             $unduhanList = Unduhan::select('kategori')->distinct()->pluck('kategori');
             $galeriList  = Galeri::select('kategori')->distinct()->pluck('kategori');
             $latestNews  = Berita::latest()->take(3)->get();
-
-            $view->with(compact('beritaList', 'unduhanList', 'galeriList', 'latestNews'));
+            $pengaturan = Pengaturan::first();
+            $view->with(compact('beritaList', 'unduhanList', 'galeriList', 'latestNews', 'pengaturan'));
         });
 
         View::share('pagemenu', Page::where('status', 'aktif')->where('kategori', 'profil')->orderBy('created_at', 'asc')->get());

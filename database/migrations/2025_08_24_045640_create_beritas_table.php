@@ -20,7 +20,7 @@ return new class extends Migration
 			$table->text("desc")->nullable();
 			$table->string("kategori")->nullable();
 			$table->string("keterangan")->nullable();
-			$table->bigInteger("view")->nullable();
+			$table->bigInteger("view")->default(0);
 			$table->string("status")->nullable();
 			$table->foreignUuid("user_id")->nullable()->constrained();
             $table->foreignUuid("verifikator_id")->nullable()->constrained('users')->nullOnDelete();

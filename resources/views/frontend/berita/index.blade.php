@@ -75,7 +75,7 @@
                           <a href="blog-details.html">Penulis : {{$news->user->name}}</a>
                         </li>
                         <li class="d-flex align-items-center"><i class="bi bi-eye"></i> 
-                          <a href="blog-details.html">Dilihat : 12 Kali</a>
+                          <a href="blog-details.html">Dilihat : {{ $news->view ?? 0 }} Kali</a>
                         </li>
                       </ul>
                     </div>
@@ -100,6 +100,82 @@
     </section>
     <!-- /Blog Posts Section -->
     
+    <div class="notable-alumni">
+          <div class="section-header text-center" data-aos="fade-up" data-aos-delay="200">
+            <h3>Notable Alumni Spotlights</h3>
+            <p>Extraordinary graduates making an impact in their fields</p>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+              <div class="alumni-profile">
+                <div class="profile-header">
+                  <div class="profile-img">
+                    <img src="assets/img/person/person-f-3.webp" alt="Alumni" class="img-fluid">
+                  </div>
+                  <div class="profile-year">2009</div>
+                </div>
+                <div class="profile-body">
+                  <h4>Emma Richardson</h4>
+                  <span class="profile-title">Climate Science Researcher</span>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas convallis velit a enim tincidunt, sed tincidunt nulla feugiat. Cras efficitur magna in metus lacinia.</p>
+                  <a href="#" class="btn-view-profile">View Profile <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="achievement-badge">
+                  <i class="bi bi-award"></i>
+                  <span>Environmental Leadership Award</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+              <div class="alumni-profile">
+                <div class="profile-header">
+                  <div class="profile-img">
+                    <img src="assets/img/person/person-m-7.webp" alt="Alumni" class="img-fluid">
+                  </div>
+                  <div class="profile-year">2013</div>
+                </div>
+                <div class="profile-body">
+                  <h4>Dr. Marcus Johnson</h4>
+                  <span class="profile-title">Neurosurgeon &amp; Medical Innovator</span>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas convallis velit a enim tincidunt, sed tincidunt nulla feugiat. Cras efficitur magna in metus.</p>
+                  <a href="#" class="btn-view-profile">View Profile <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="achievement-badge">
+                  <i class="bi bi-stars"></i>
+                  <span>Medical Innovation Excellence</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+              <div class="alumni-profile">
+                <div class="profile-header">
+                  <div class="profile-img">
+                    <img src="assets/img/person/person-f-9.webp" alt="Alumni" class="img-fluid">
+                  </div>
+                  <div class="profile-year">2015</div>
+                </div>
+                <div class="profile-body">
+                  <h4>Sophia Lin</h4>
+                  <span class="profile-title">Tech Entrepreneur &amp; VC Partner</span>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas convallis velit a enim tincidunt, sed tincidunt nulla feugiat. Cras efficitur magna in metus.</p>
+                  <a href="#" class="btn-view-profile">View Profile <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="achievement-badge">
+                  <i class="bi bi-lightning"></i>
+                  <span>Tech Visionary of the Year</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="600">
+            <a href="#" class="btn-explore">Explore More Alumni Stories</a>
+          </div>
+        </div>
+
   </main>
 
 @endsection

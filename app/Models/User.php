@@ -42,6 +42,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'level_id',
+        'access_group_id',
     ];
 
     /**
@@ -78,7 +80,7 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-     public function level(): object
+    public function level(): object
     {
         return $this->belongsTo(Level::class);
     }

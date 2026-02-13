@@ -3,14 +3,15 @@
     <div class="topbar d-flex align-items-center">
       <div class="container d-flex justify-content-center justify-content-md-between">
         <div class="contact-info d-flex align-items-center">
-          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">contact@example.com</a></i>
-          <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
+          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">{{$pengaturan->email}}</a></i>
+          <i class="bi bi-phone d-flex align-items-center ms-4"><span>{{$pengaturan->telepon}}</span></i>
         </div>
         <div class="social-links d-none d-md-flex align-items-center">
-          <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-          <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-          <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <a href="{{$pengaturan->facebook}}" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
+          <a href="{{$pengaturan->instagram}}" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
+          <a href="{{$pengaturan->twiter}}" class="twitter" target="_blank"><i class="bi bi-twitter-x"></i></a>
+          <a href="{{$pengaturan->tiktok}}" class="tiktok" target="_blank"><i class="bi bi-tiktok"></i></a>
+          <a href="{{$pengaturan->youtube}}" class="youtube" target="_blank"><i class="bi bi-youtube"></i></a>
         </div>
       </div>
     </div><!-- End Top Bar -->

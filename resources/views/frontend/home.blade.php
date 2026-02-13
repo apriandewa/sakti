@@ -57,23 +57,21 @@
 
         <div class="row gy-4">
           <div class="col-lg-5 2">
-            <img src="reveal/assets/img/about.jpg" class="img-fluid" alt="">
+            @if(!is_null($welcome->getfilebyalias('gambar_page')))
+                    @php
+                      $file = $welcome->getfilebyalias('gambar_page');
+                    @endphp
+                    @if($file)
+                      <div class="form-group text-center">
+                        {!! html()->img(url($file->public_stream), $file->name)->class('img-fluid') !!}
+                      </div>
+                    @endif
+                @endif
           </div>
           <div class="col-lg-7 content">
-            <h3>Selamat Datang di Website Resmi</h3>
-            <h3>PPID Kabupaten Indragiri Hulu</h3>
-            <p class="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
-            </p>
-            <ul>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-              <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
-            </ul>
+            <h3>{{$welcome->nama}}</h3>
             <p>
-              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident
+              {!! $welcome->desc !!}
             </p>
           </div>
         </div>
@@ -154,7 +152,7 @@
 
       </div>
       <div class="cta-button text-center mt-3" data-aos="fade-up" data-aos-delay="200">
-        <a href="#" class="btn">
+        <a href="/statistik" class="btn">
           <span>Statistik Pelayanan Informasi</span>
           <i class="bi bi-arrow-right"></i>
         </a>
@@ -238,7 +236,7 @@
     </section><!-- /Team Section -->
 
     <!-- Services Section -->
-    <section id="services" class="services section">
+    <section id="stats" class="stats section">
 
       <!-- Section Title -->
       <div class="container section-title text-center" data-aos="fade-up">
@@ -246,7 +244,85 @@
         <p>Berikut adalah Daftar Informasi Publik Kabupaten Indragiri Hulu</p>
       </div><!-- End Section Title -->
 
-      
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="stats-grid">
+          <div class="row g-4">
+            <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="100">
+              <a href="{{ url('/berkala') }}" class="text-decoration-none">
+                <div class="stat-item featured hover-shadow">
+                  <div class="stat-icon">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-number">
+                      <span data-purecounter-start="0"
+                            data-purecounter-end="{{ $infoberkala }}"
+                            data-purecounter-duration="2"
+                            class="purecounter">
+                      </span>
+                    </div>
+                    <div class="stat-label">Informasi Berkala</div>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="100">
+              <a href="{{ url('/tersedia') }}" class="text-decoration-none">
+                <div class="stat-item featured hover-shadow">
+                  <div class="stat-icon">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-number">
+                      <span data-purecounter-start="0"
+                            data-purecounter-end="{{ $infotersedia }}"
+                            data-purecounter-duration="2"
+                            class="purecounter">
+                      </span>
+                    </div>
+                    <div class="stat-label">Informasi Tersedia Setiap Saat</div>
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="300">
+              <div class="stat-item featured">
+                <div class="stat-icon">
+                  <i class="bi bi-award-fill"></i>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-number">
+                    <span data-purecounter-start="0" data-purecounter-end="{{$diberikan}}" data-purecounter-duration="2" class="purecounter"></span>
+                  </div>
+                  <div class="stat-label">Informasi Serta Merta</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="400">
+              <div class="stat-item featured">
+                <div class="stat-icon">
+                  <i class="bi bi-globe"></i>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-number">
+                    <span data-purecounter-start="0" data-purecounter-end="{{$ditolak}}" data-purecounter-duration="2" class="purecounter"></span>
+                  </div>
+                  <div class="stat-label">Informasi Dikecualikan</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="cta-button text-center mt-3" data-aos="fade-up" data-aos-delay="200">
+        <a href="#" class="btn">
+          <span>Statistik Pelayanan Informasi</span>
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
 
     </section><!-- /Services Section -->
 
@@ -438,7 +514,7 @@
                               @endif
                             </li>
                             <li class="d-flex align-items-center"><i class="bi bi-eye"></i> 
-                              <a href="blog-details.html">Dilihat : 12 Kali</a>
+                              <a href="blog-details.html">Dilihat : {{ $news->view }} Kali</a>
                             </li>
                           </ul>
                         </div>
@@ -692,7 +768,7 @@
                         <span class="text-muted">Penulis tidak diketahui</span>
                       @endif
                     </li>
-                    <li class="d-flex align-items-center"><i class="bi bi-eye"></i> <a href="blog-details.html">Dilihat : 12 Kali</a></li>
+                    <li class="d-flex align-items-center"><i class="bi bi-eye"></i> <a href="blog-details.html">Dilihat : {{ $download->view }} Kali</a></li>
                   </ul>
                 </div>
               </div>
@@ -785,96 +861,52 @@
     <!-- Call To Action Section -->
     <section id="call-to-action" class="call-to-action section dark-background">
 
-      <div class="container">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <div class="row" data-aos="zoom-in" data-aos-delay="100">
-          <div class="col-xl-9 text-center text-xl-start">
-            <h3>Transparansi Anggaran</h3>
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <div class="row align-items-lg-center">
+          <div class="col-lg-6 order-lg-2" data-aos="fade-left" data-aos-delay="200">
+            <div class="image-wrapper position-relative">
+              <div class="floating-card">
+                <i class="bi bi-shield-lock"></i>
+                <h5>PPIM Kabupaten Indragiri Hulu</h5>
+                <p>Pusat Pelayanan Informasi Masyarakat Kabupaten Indragiri Hulu</p>
+              </div>
+              <img src="reveal/assets/img/misc/misc-6.webp" alt="Security Solutions" class="img-fluid main-image">
+            </div>
           </div>
-          <div class="col-xl-3 cta-btn-container text-center">
-            <a class="cta-btn align-middle" href="#">Lihat Data Transparansi</a>
+
+          <div class="col-lg-6 order-lg-1" data-aos="fade-right" data-aos-delay="100">
+            <div class="content-area">
+              <h3>PPIM Kabupaten Indragiri Hulu</h3>
+              <p>Pusat Pelayanan Informasi Masyarakat Kabupaten Indragiri Hulu</p>
+
+              <ul class="feature-list">
+                <span>Jadwal Pelayanan Informasi</span>
+                <li>
+                  <i class="bi bi-check"></i>
+                  <span>Senin-Kamis</span>
+                  &nbsp;
+                  <span>Pukul : 08.00 WIB s/d 16.00 WIB</span>
+                </li>
+                <li>
+                  <i class="bi bi-check"></i>
+                  <span>Jum'at</span>
+                  &nbsp;
+                  <span>Pukul : 08.00 WIB s/d 15.00 WIB</span>
+                </li>
+              </ul>
+
+              <div class="cta-wrapper">
+                <a href="https://sipatin.inhukab.go.id" target="_blank" class="btn btn-cta">Permintaan Data</a>
+              </div>
+            </div>
           </div>
+
         </div>
 
       </div>
 
     </section><!-- /Call To Action Section -->
-
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing section">
-
-      <!-- Section Title -->
-      <div class="container section-title text-center" data-aos="fade-up">
-        <h2>Unduhan</h2>
-        <p>Berikut ini adalah Berkas Unduhan dari Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu</p>
-      </div>
-      <!-- End Section Title -->
-
-      <div class="container" data-aos="zoom-in" data-aos-delay="100">
-
-        <div class="row g-4">
-
-          <div class="col-lg-4">
-            <div class="pricing-item">
-              <h3>Free Plan</h3>
-              <div class="icon">
-                <i class="bi bi-box"></i>
-              </div>
-              <h4><sup>$</sup>0<span> / month</span></h4>
-              <ul>
-                <li><i class="bi bi-check"></i> <span>Quam adipiscing vitae proin</span></li>
-                <li><i class="bi bi-check"></i> <span>Nec feugiat nisl pretium</span></li>
-                <li><i class="bi bi-check"></i> <span>Nulla at volutpat diam uteera</span></li>
-                <li class="na"><i class="bi bi-x"></i> <span>Pharetra massa massa ultricies</span></li>
-                <li class="na"><i class="bi bi-x"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-              </ul>
-              <div class="text-center"><a href="#" class="buy-btn">Buy Now</a></div>
-            </div>
-          </div><!-- End Pricing Item -->
-
-          <div class="col-lg-4">
-            <div class="pricing-item featured">
-              <h3>Business Plan</h3>
-              <div class="icon">
-                <i class="bi bi-rocket"></i>
-              </div>
-
-              <h4><sup>$</sup>29<span> / month</span></h4>
-              <ul>
-                <li><i class="bi bi-check"></i> <span>Quam adipiscing vitae proin</span></li>
-                <li><i class="bi bi-check"></i> <span>Nec feugiat nisl pretium</span></li>
-                <li><i class="bi bi-check"></i> <span>Nulla at volutpat diam uteera</span></li>
-                <li><i class="bi bi-check"></i> <span>Pharetra massa massa ultricies</span></li>
-                <li><i class="bi bi-check"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-              </ul>
-              <div class="text-center"><a href="#" class="buy-btn">Buy Now</a></div>
-            </div>
-          </div><!-- End Pricing Item -->
-
-          <div class="col-lg-4">
-            <div class="pricing-item">
-              <h3>Developer Plan</h3>
-              <div class="icon">
-                <i class="bi bi-send"></i>
-              </div>
-              <h4><sup>$</sup>49<span> / month</span></h4>
-              <ul>
-                <li><i class="bi bi-check"></i> <span>Quam adipiscing vitae proin</span></li>
-                <li><i class="bi bi-check"></i> <span>Nec feugiat nisl pretium</span></li>
-                <li><i class="bi bi-check"></i> <span>Nulla at volutpat diam uteera</span></li>
-                <li><i class="bi bi-check"></i> <span>Pharetra massa massa ultricies</span></li>
-                <li><i class="bi bi-check"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-              </ul>
-              <div class="text-center"><a href="#" class="buy-btn">Buy Now</a></div>
-            </div>
-          </div><!-- End Pricing Item -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Pricing Section -->
 
      <!-- Clients Section -->
     <section id="clients" class="clients section light-background">

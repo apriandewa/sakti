@@ -79,6 +79,13 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		});
 		Route::resource('page', 'Page\PageController');
 		//end-page
+		//pengaturan
+		Route::prefix('pengaturan')->as('pengaturan')->group(function () {
+			Route::get('data', 'Pengaturan\PengaturanController@data');
+			Route::get('delete/{id}', 'Pengaturan\PengaturanController@delete');
+		});
+		Route::resource('pengaturan', 'Pengaturan\PengaturanController');
+		//end-pengaturan
 		//{{route replacer}} DON'T REMOVE THIS LINE
     });
 });

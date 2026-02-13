@@ -34,7 +34,11 @@ Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
 Route::get('/galeri/{slug}', [GaleriController::class, 'show'])->name('galeri.detail');
 
 Route::get('/informasi', [InformasiController::class, 'index'])->name('informasi');
+Route::get('/berkala', [InformasiController::class, 'berkala'])->name('informasi.berkala');
+Route::get('/tersedia', [InformasiController::class, 'tersedia'])->name('informasi.tersedia');
 Route::get('/informasi/{slug}', [InformasiController::class, 'show'])->name('informasi.detail');
+
+Route::get('/statistik', [InformasiController::class, 'statistik'])->name('informasi.statistik');
 
 Route::get('/page', [PageController::class, 'index'])->name('page');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.detail');
@@ -56,9 +60,9 @@ Route::middleware('auth')->group(function () {
 Route::group(['prefix' => config('master.app.url.frontend')], function () {
     Route::prefix('file')->as('file.')->group(function () {
         Route::get('stream/{id}/{name}', "Backend\File\FileController@publicStream");
-        Route::get('download/{id}/{name}', "File\FileController@downloadFile");
-        Route::get('delete/{id}/{name}', "File\FileController@deleteFile");
-        Route::post('upload-image-editor', "File\FileController@handleEditorImageUpload");
+        // Route::get('download/{id}/{name}', "File\FileController@downloadFile");
+        // Route::get('delete/{id}/{name}', "File\FileController@deleteFile");
+        // Route::post('upload-image-editor', "File\FileController@handleEditorImageUpload");
     });
 });
 
