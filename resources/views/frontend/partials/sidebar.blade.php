@@ -104,7 +104,7 @@
                       <div class="fw-bold">{{ $news->nama }}</div>
                         <small class="text-muted d-flex align-items-center gap-2">
                           <span><i class="bi bi-calendar"></i> {{ $news->created_at->format('d M Y') }}</span>
-                          <span><i class="bi bi-eye"></i> {{ $news->views ?? 0 }} kali</span>
+                          <span><i class="bi bi-eye"></i> {{ $news->view ?? 0 }} kali</span>
                         </small>
                       </div>
                     </a>

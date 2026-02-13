@@ -57,21 +57,19 @@
 
         <div class="row gy-4">
           <div class="col-lg-5 2">
-            @if(!is_null($welcome->getfilebyalias('gambar_page')))
-                    @php
-                      $file = $welcome->getfilebyalias('gambar_page');
-                    @endphp
-                    @if($file)
-                      <div class="form-group text-center">
-                        {!! html()->img(url($file->public_stream), $file->name)->class('img-fluid') !!}
-                      </div>
-                    @endif
-                @endif
+            @php
+              $file = optional($welcome)->getfilebyalias('gambar_page');
+              @endphp
+
+              @if($file)
+                  {!! html()->img(url($file->public_stream), $file->name)->class('img-fluid') !!}
+            @endif
+
           </div>
           <div class="col-lg-7 content">
-            <h3>{{$welcome->nama}}</h3>
+            <h3>{{ $welcome->nama ?? '' }}</h3>
             <p>
-              {!! $welcome->desc !!}
+              {{ $welcome->nama ?? '' }}
             </p>
           </div>
         </div>

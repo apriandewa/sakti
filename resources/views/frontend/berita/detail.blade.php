@@ -30,7 +30,17 @@
                   </div>
                 @endif
             @endif
-            <h3>{{$news->nama}}</h3>
+            <h3 class="title mt-2 mb-2">{{$news->nama}}</h3>
+            <div class="meta-top">
+              <ul>
+                <li class="d-flex align-items-center"><i class="bi bi-person"></i> 
+                  <a href="blog-details.html">Penulis : {{$news->user->name}}</a>
+                </li>
+                <li class="d-flex align-items-center"><i class="bi bi-eye"></i> 
+                  <a href="blog-details.html">Dilihat : {{ $news->view ?? 0 }} Kali</a>
+                </li>
+              </ul>
+            </div>
             <p>
               {!! html()->p($news->desc) !!}
             </p>
