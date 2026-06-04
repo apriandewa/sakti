@@ -1,4 +1,6 @@
-$('#desc').summernote({
+// Summernote untuk field #desc (jika ada)
+if ($('#desc').length && typeof $.fn.summernote !== 'undefined') {
+    $('#desc').summernote({
         tabsize: 2,
         height: 250,
         toolbar: [
@@ -11,11 +13,19 @@ $('#desc').summernote({
         ],
         fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36'],
     });
-    var noteModal = document.querySelector('.note-modal');
-    noteModal.style.zIndex = 9999;
-    noteModal.querySelector('.checkbox').style.display = 'none';
-    noteModal.querySelector('.note-modal-content').style.padding = '3px';
 
+    var noteModal = document.querySelector('.note-modal');
+    if (noteModal) {
+        noteModal.style.zIndex = 9999;
+        var noteCheckbox = noteModal.querySelector('.checkbox');
+        if (noteCheckbox) noteCheckbox.style.display = 'none';
+        var noteContent = noteModal.querySelector('.note-modal-content');
+        if (noteContent) noteContent.style.padding = '3px';
+    }
+}
+
+// Bootstrap FileInput (hanya jika plugin tersedia DAN ada elemen .file-drag-drop)
+if (typeof $.fn.fileinput !== 'undefined' && $(".file-drag-drop").length) {
     $(".file-drag-drop").fileinput({
         theme: 'fa',
         uploadUrl: "/#",
@@ -32,7 +42,10 @@ $('#desc').summernote({
         },
         initialPreviewAsData: true,
     });
+}
 
+// Select2 (jika plugin tersedia)
+if (typeof $.fn.select2 !== 'undefined') {
     $('.select2').each(function () {
         let dropdownParent = $(this).closest('form');
         $(this).select2({
@@ -40,4 +53,4 @@ $('#desc').summernote({
             dropdownParent: dropdownParent
         });
     });
-    
+}

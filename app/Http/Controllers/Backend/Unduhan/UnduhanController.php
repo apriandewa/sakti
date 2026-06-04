@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Unduhan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Unduhan;
+use App\Models\Kategori;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Verifikasi;  
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,11 @@ class UnduhanController extends Controller
 
     public function create()
     {
-        return view($this->view.'.create');
+        $parentKategori = Kategori::where('slug', 'unduhan')->first();
+        $kategoris = $parentKategori
+            ? Kategori::where('parent_id', $parentKategori->id)->pluck('nama', 'nama')
+            : collect();
+        return view($this->view.'.create', compact('kategoris'));
     }
 
     public function data(Request $request)
@@ -82,8 +87,14 @@ class UnduhanController extends Controller
 
                 return "<div class='btn-group'>" . $button . "</div>";
             })
+            ->addColumn('status_badge', function ($row) {
+                return view('components.status-badge', [
+                    'status' => $row->status,
+                    'size'   => 'xs',
+                ])->render();
+            })
             ->addIndexColumn()
-            ->rawColumns(['action'])
+            ->rawColumns(['action','status_badge'])
             ->make();
     }
 
@@ -91,44 +102,51 @@ class UnduhanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-			'slug' => 'required|unique:unduhans',
-			'desc' => 'required',
-			'kategori' => 'required',
-			// 'status' => 'required',
-            'gambar' => 'nullable|image|mimes:jpg,png|max:2048',
-            'file' => 'nullable|file|mimes:pdf|max:12048',
+            'nama'       => 'required',
+            'slug'       => 'required|unique:unduhans',
+            'desc'       => 'required',
+            'kategori'   => 'required',
+            'gambar'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'berkas'     => 'nullable|array',
+            'berkas.*'   => 'nullable|file|mimes:pdf,doc,docx|max:20480',
         ]);
 
-        $data = $request->all();
-        $data['user_id'] = $request->user()->id; // Add the logged-in user's ID to the data
-        $data['status'] = 'DRAFT';
-        if ($unduhan = $this->model::create($data)) {
-            if ($request->hasFile('file')) {
+        $payload = $request->except(['gambar', 'berkas']);
+        $payload['user_id'] = $request->user()->id;
+        $payload['status']  = 'DRAFT';
+
+        if ($unduhan = $this->model::create($payload)) {
+
+            // Gambar sampul (single)
+            if ($request->hasFile('gambar')) {
                 $unduhan->file()->create([
-                    'data' => [
-                        'name' => $request->file('file')->getClientOriginalName(),
-                        'disk' => config('filesystems.default'),
-                        'target' => Storage::disk(config('filesystems.default'))->putFile('unduhan', $request->file('file')),
+                    'data'  => [
+                        'name'   => $request->file('gambar')->getClientOriginalName(),
+                        'disk'   => config('filesystems.default'),
+                        'target' => Storage::disk(config('filesystems.default'))->putFile('unduhan/gambar', $request->file('gambar')),
                     ],
-                    'alias' => 'berkas_unduhan', // Menambahkan alias untuk field surat_permohonan
+                    'alias' => 'gambar_unduhan',
                 ]);
             }
 
-            if ($request->hasFile('gambar')) {
-                $unduhan->file()->create([
-                    'data' => [
-                        'name' => $request->file('gambar')->getClientOriginalName(),
-                        'disk' => config('filesystems.default'),
-                        'target' => Storage::disk(config('filesystems.default'))->putFile('unduhan', $request->file('gambar')),
-                    ],
-                    'alias' => 'gambar_unduhan', // Menambahkan alias untuk field gambar
-                ]);
+            // Berkas unduhan (multiple — PDF / Word)
+            if ($request->hasFile('berkas')) {
+                foreach ($request->file('berkas') as $berkas) {
+                    if (!$berkas || !$berkas->isValid()) continue;
+                    $unduhan->file()->create([
+                        'data'  => [
+                            'name'   => $berkas->getClientOriginalName(),
+                            'disk'   => config('filesystems.default'),
+                            'target' => Storage::disk(config('filesystems.default'))->putFile('unduhan/berkas', $berkas),
+                        ],
+                        'alias' => 'berkas_unduhan',
+                    ]);
+                }
             }
 
             $response = ['status' => TRUE, 'message' => 'Data berhasil disimpan'];
         }
-        return response()->json($response ?? ['status'=>FALSE, 'message'=>'Data gagal disimpan']);
+        return response()->json($response ?? ['status' => FALSE, 'message' => 'Data gagal disimpan']);
     }
 
     public function show($id)
@@ -148,48 +166,67 @@ class UnduhanController extends Controller
     public function edit($id)
     {
         $data = $this->model::find($id);
-        return view($this->view.'.edit', compact('data'));
+        $parentKategori = Kategori::where('slug', 'unduhan')->first();
+        $kategoris = $parentKategori
+            ? Kategori::where('parent_id', $parentKategori->id)->pluck('nama', 'nama')
+            : collect();
+        return view($this->view.'.edit', compact('data', 'kategoris'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama' => 'required',
-			'slug' => 'required',
-			'desc' => 'required',
-			'kategori' => 'required',
-			// 'status' => 'required',
+            'nama'       => 'required',
+            'slug'       => 'required',
+            'desc'       => 'required',
+            'kategori'   => 'required',
+            'gambar'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'berkas'     => 'nullable|array',
+            'berkas.*'   => 'nullable|file|mimes:pdf,doc,docx|max:20480',
         ]);
 
-        $data=$this->model::find($id);
-        $data['user_id'] = $request->user()->id; // Add the logged-in user's ID to the data
-        $data['status'] = 'DRAFT';
-        // Handle file upload if 'gambar' is present in the request
-            if($data->update($request->all())){
-                if ($request->hasFile('gambar')) {
-                    // Hapus semua file lama dengan alias 'gambar_unduhan'
-                    foreach ($data->files()->where('alias', 'gambar_unduhan')->get() as $file) {
-                        // Hapus file fisik dari storage jika ada
-                        if (isset($file->data['target']) && Storage::disk($file->data['disk'] ?? config('filesystems.default'))->exists($file->data['target'])) {
-                            Storage::disk($file->data['disk'] ?? config('filesystems.default'))->delete($file->data['target']);
-                        }
-                        $file->delete();
+        $data = $this->model::findOrFail($id);
+        $data['user_id'] = $request->user()->id;
+        $data['status']  = 'DRAFT';
+
+        if ($data->update($request->except(['gambar', 'berkas']))) {
+
+            // Gambar sampul (single — ganti jika ada baru)
+            if ($request->hasFile('gambar')) {
+                foreach ($data->files()->where('alias', 'gambar_unduhan')->get() as $file) {
+                    if (isset($file->data['target']) && Storage::disk($file->data['disk'] ?? config('filesystems.default'))->exists($file->data['target'])) {
+                        Storage::disk($file->data['disk'] ?? config('filesystems.default'))->delete($file->data['target']);
                     }
-                    // Upload file baru dengan format sama seperti store
+                    $file->delete();
+                }
+                $data->files()->create([
+                    'data'  => [
+                        'name'   => $request->file('gambar')->getClientOriginalName(),
+                        'disk'   => config('filesystems.default'),
+                        'target' => Storage::disk(config('filesystems.default'))->putFile('unduhan/gambar', $request->file('gambar')),
+                    ],
+                    'alias' => 'gambar_unduhan',
+                ]);
+            }
+
+            // Berkas unduhan (multiple — tambah ke existing)
+            if ($request->hasFile('berkas')) {
+                foreach ($request->file('berkas') as $berkas) {
+                    if (!$berkas || !$berkas->isValid()) continue;
                     $data->files()->create([
-                        'data' => [
-                            'name' => $request->file('gambar')->getClientOriginalName(),
-                            'disk' => config('filesystems.default'),
-                            'target' => Storage::disk(config('filesystems.default'))->putFile('unduhan', $request->file('gambar')),
+                        'data'  => [
+                            'name'   => $berkas->getClientOriginalName(),
+                            'disk'   => config('filesystems.default'),
+                            'target' => Storage::disk(config('filesystems.default'))->putFile('unduhan/berkas', $berkas),
                         ],
-                        'alias' => 'gambar_unduhan',
+                        'alias' => 'berkas_unduhan',
                     ]);
                 }
-                $response=[
-                    'status'=>TRUE, 'message'=>'Data berhasil disimpan',
-                ];
             }
-        return response()->json($response ?? ['status'=>FALSE, 'message'=>'Data gagal disimpan']);
+
+            $response = ['status' => TRUE, 'message' => 'Data berhasil disimpan'];
+        }
+        return response()->json($response ?? ['status' => FALSE, 'message' => 'Data gagal disimpan']);
     }
 
     public function delete($id)

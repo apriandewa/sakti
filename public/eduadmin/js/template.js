@@ -1633,3 +1633,326 @@ function applyTheme(theme) {
     if (themeSwitch) themeSwitch.checked = false; // Pastikan checkbox tersinkron
   }
 }
+
+/* ============================================================
+   UPLOAD HELPERS — Logo, Galeri, Berkas (Global)
+   Cara pakai:
+     initLogoUpload('logo', 'logoPreviewWrap', 'logoPreviewImg', 'logoPreviewName', 'btnRemoveLogo', 'btnZoomLogo', 'modalZoomPreview');
+     initGaleriUpload('galeriTrigger', 'galeri', 'galeriDropZone', 'galeriPreviewGrid', 'modalZoomPreview');
+     initBerkasUpload('berkasTrigger', 'berkas[]', 'berkasDropZone', 'berkasFileList');
+   ============================================================ */
+
+/**
+ * Logo / Gambar Single Upload
+ */
+function initLogoUpload(inputId, wrapId, imgId, nameId, btnRemoveId, btnZoomId, modalId) {
+    var logoInput     = document.getElementById(inputId);
+    var logoWrap      = document.getElementById(wrapId);
+    var logoImg       = document.getElementById(imgId);
+    var logoName      = document.getElementById(nameId);
+    var btnRemoveLogo = document.getElementById(btnRemoveId);
+    var btnZoomLogo   = document.getElementById(btnZoomId);
+
+    if (!logoInput) return;
+
+    logoInput.addEventListener('change', function () {
+        var file = this.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            logoImg.src = e.target.result;
+            logoImg.style.width  = '130px';
+            logoImg.style.height = '96px';
+            logoImg.style.maxWidth  = '130px';
+            logoImg.style.maxHeight = '96px';
+            logoImg.style.objectFit = 'contain';
+            logoImg.style.display = 'block';
+            logoImg.style.margin  = '0 auto';
+            logoName.textContent = file.name;
+            if (logoWrap) {
+                logoWrap.style.display = 'block';
+                logoWrap.classList.remove('d-none');
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+
+    if (btnRemoveLogo) {
+        btnRemoveLogo.addEventListener('click', function () {
+            logoInput.value = '';
+            logoImg.src = '#';
+            logoName.textContent = '';
+            if (logoWrap) {
+                logoWrap.style.display = 'none';
+                logoWrap.classList.add('d-none');
+            }
+        });
+    }
+
+    if (btnZoomLogo && modalId) {
+        btnZoomLogo.addEventListener('click', function () {
+            var zoomImg  = document.getElementById('zoomPreviewImg');
+            var zoomName = document.getElementById('zoomPreviewName');
+            if (zoomImg)  zoomImg.src = logoImg.src;
+            if (zoomName) zoomName.textContent = logoName.textContent;
+            $('#' + modalId).modal('show');
+        });
+    }
+}
+
+/**
+ * Galeri Image Multiple — Drag & Drop
+ */
+function initGaleriUpload(triggerId, inputId, dropZoneId, gridId, modalId) {
+    var galeriTrigger = document.getElementById(triggerId);
+    var galeriInput   = document.getElementById(inputId);
+    var dropZone      = document.getElementById(dropZoneId);
+    var grid          = document.getElementById(gridId);
+    var dt            = new DataTransfer();
+
+    function addFiles(newFiles) {
+        Array.from(newFiles).forEach(function (file) {
+            var isDup = Array.from(dt.files).some(function (f) {
+                return f.name === file.name && f.size === file.size;
+            });
+            if (isDup) return;
+            dt.items.add(file);
+            renderGaleriThumb(file);
+        });
+        if (galeriInput) galeriInput.files = dt.files;
+    }
+
+    function renderGaleriThumb(file) {
+        var card = document.createElement('div');
+        card.className = 'galeri-thumb-card';
+        card.setAttribute('data-filename', file.name);
+        card.setAttribute('data-filesize', file.size);
+
+        var img = document.createElement('img');
+        img.alt   = file.name;
+        img.style.width      = '116px';
+        img.style.height     = '84px';
+        img.style.maxWidth   = '116px';
+        img.style.maxHeight  = '84px';
+        img.style.objectFit  = 'cover';
+        img.style.borderRadius = '6px';
+        img.style.display    = 'block';
+        img.style.margin     = '0 auto';
+        img.style.background = '#f4f6fa';
+        var reader = new FileReader();
+        reader.onload = function (e) { img.src = e.target.result; };
+        reader.readAsDataURL(file);
+
+        var actions = document.createElement('div');
+        actions.className = 'galeri-thumb-actions';
+
+        var btnZoom = document.createElement('button');
+        btnZoom.type      = 'button';
+        btnZoom.className = 'btn btn-xs btn-info';
+        btnZoom.title     = 'Perbesar';
+        btnZoom.innerHTML = '<i class="fa fa-search-plus"></i>';
+        if (modalId) {
+            btnZoom.addEventListener('click', function () {
+                var zoomImg  = document.getElementById('zoomPreviewImg');
+                var zoomName = document.getElementById('zoomPreviewName');
+                if (zoomImg)  zoomImg.src = img.src;
+                if (zoomName) zoomName.textContent = file.name;
+                $('#' + modalId).modal('show');
+            });
+        }
+
+        var btnDel = document.createElement('button');
+        btnDel.type      = 'button';
+        btnDel.className = 'btn btn-xs btn-danger';
+        btnDel.title     = 'Hapus';
+        btnDel.innerHTML = '<i class="fa fa-times"></i>';
+        btnDel.addEventListener('click', function () {
+            var newDt = new DataTransfer();
+            Array.from(dt.files).forEach(function (f) {
+                if (!(f.name === file.name && f.size === file.size)) newDt.items.add(f);
+            });
+            dt = newDt;
+            if (galeriInput) galeriInput.files = dt.files;
+            card.remove();
+        });
+
+        var nameEl = document.createElement('p');
+        nameEl.className   = 'galeri-thumb-name';
+        nameEl.textContent = file.name;
+
+        actions.appendChild(btnZoom);
+        actions.appendChild(btnDel);
+        card.appendChild(img);
+        card.appendChild(actions);
+        card.appendChild(nameEl);
+        if (grid) grid.appendChild(card);
+    }
+
+    if (galeriTrigger) {
+        galeriTrigger.addEventListener('change', function () {
+            addFiles(this.files);
+            this.value = '';
+        });
+    }
+
+    if (dropZone) {
+        dropZone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', function () {
+            this.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            addFiles(e.dataTransfer.files);
+        });
+    }
+}
+
+/**
+ * Berkas File Upload (PDF / Word — single atau multiple)
+ * @param triggerId  ID input[type=file] visible di drop zone
+ * @param inputId    ID input[type=file] hidden yang dikirim form (name="berkas[]")
+ * @param dropZoneId ID div drop zone
+ * @param listId     ID div tempat menampilkan daftar file
+ * @param multiple   true = multiple files
+ */
+function initBerkasUpload(triggerId, inputId, dropZoneId, listId, multiple) {
+    var berkasTrigger = document.getElementById(triggerId);
+    var berkasInput   = document.getElementById(inputId);
+    var dropZone      = document.getElementById(dropZoneId);
+    var fileList      = document.getElementById(listId);
+    var dt            = new DataTransfer();
+    multiple          = (multiple !== false); // default true
+
+    function iconClass(filename) {
+        var ext = filename.split('.').pop().toLowerCase();
+        if (['doc','docx'].indexOf(ext) >= 0) return 'fa fa-file-word-o word';
+        return 'fa fa-file-pdf-o'; // pdf & default
+    }
+
+    function addBerkasFiles(newFiles) {
+        Array.from(newFiles).forEach(function (file) {
+            if (!multiple) {
+                // reset jika tidak multiple
+                dt = new DataTransfer();
+                if (fileList) fileList.innerHTML = '';
+            }
+            var isDup = Array.from(dt.files).some(function (f) {
+                return f.name === file.name && f.size === file.size;
+            });
+            if (isDup) return;
+            dt.items.add(file);
+            renderBerkasItem(file);
+        });
+        if (berkasInput) berkasInput.files = dt.files;
+    }
+
+    function renderBerkasItem(file) {
+        var item = document.createElement('div');
+        item.className = 'berkas-file-item';
+        item.setAttribute('data-filename', file.name);
+        item.setAttribute('data-filesize', file.size);
+
+        var sizeKb = (file.size / 1024).toFixed(1) + ' KB';
+
+        item.innerHTML =
+            '<i class="' + iconClass(file.name) + ' file-icon"></i>' +
+            '<span class="file-name">' + file.name + ' <small class="text-muted">(' + sizeKb + ')</small></span>' +
+            '<button type="button" class="btn btn-xs btn-danger btn-remove-berkas" title="Hapus"><i class="fa fa-times"></i></button>';
+
+        item.querySelector('.btn-remove-berkas').addEventListener('click', function () {
+            var newDt = new DataTransfer();
+            Array.from(dt.files).forEach(function (f) {
+                if (!(f.name === file.name && f.size === file.size)) newDt.items.add(f);
+            });
+            dt = newDt;
+            if (berkasInput) berkasInput.files = dt.files;
+            item.remove();
+        });
+
+        if (fileList) fileList.appendChild(item);
+    }
+
+    if (berkasTrigger) {
+        berkasTrigger.addEventListener('change', function () {
+            addBerkasFiles(this.files);
+            this.value = '';
+        });
+    }
+
+    if (dropZone) {
+        dropZone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', function () {
+            this.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            addBerkasFiles(e.dataTransfer.files);
+        });
+    }
+}
+
+
+/* ============================================================
+   GLOBAL BTN-KIRIM HANDLER
+   Berlaku untuk semua modul: berita, galeri, unduhan, dll.
+   Cukup pakai class="btn-kirim" dan data-url="..." di tombol.
+   ============================================================ */
+$(document).on('click', '.btn-kirim[data-action="kirim"]', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var url   = $(this).data('url');
+    var label = $(this).data('label') || 'Data';
+
+    swal({
+        title  : 'Kirim ' + label + '?',
+        text   : label + ' akan dikirim untuk verifikasi.',
+        type   : 'warning',
+        showCancelButton  : true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor : '#d33',
+        confirmButtonText : 'Ya, Kirim!',
+        cancelButtonText  : 'Batal',
+        showLoaderOnConfirm: false
+    }, function (isConfirmed) {
+        if (isConfirmed) {
+            _btnKirimAjax(url, label);
+        }
+    });
+});
+
+function _btnKirimAjax(url, label) {
+    $.ajax({
+        url : url,
+        type: 'POST',
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content')
+                    || $('input[name="_token"]').val()
+        },
+        success: function (response) {
+            var ok  = response.status || response.success || false;
+            var msg = response.message || (ok ? 'Berhasil dikirim.' : 'Gagal mengirim data.');
+            swal({
+                title: ok ? 'Berhasil!' : 'Gagal!',
+                text : msg,
+                type : ok ? 'success' : 'error'
+            }, function () {
+                if (ok) location.reload();
+            });
+        },
+        error: function (xhr) {
+            var msg = 'Terjadi kesalahan pada server.';
+            try { msg = JSON.parse(xhr.responseText).message || msg; } catch (err) {}
+            swal({ title: 'Error!', text: msg, type: 'error' });
+        }
+    });
+}
+

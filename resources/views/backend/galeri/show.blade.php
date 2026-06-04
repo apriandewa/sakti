@@ -39,24 +39,22 @@
 				</div>
 			</div>
 			<div class="col-md-6">
-				{!! html()->span()->text("Gambar Sampul")->class("control-label") !!}
-				@if(!is_null($data->getfilebyalias('cover_galeri')))
-					@php
-						$file = $data->getfilebyalias('cover_galeri');
-					@endphp
-					@if($file)
-						<div class="form-group text-center">
-							{!! html()->img(url($file->link_stream), $file->name)->class('img-fluid img-thumbnail') !!}
-						</div>
-					@endif
-				@endif
-			</div>
+			{!! html()->span()->text("Gambar Sampul")->class("control-label") !!}
+			@php $logoFile = $data->getfilebyalias('logo'); @endphp
+			@if($logoFile)
+				<div class="form-group text-center">
+					{!! html()->img(url($logoFile->link_stream), $logoFile->name)->class('img-fluid img-thumbnail') !!}
+				</div>
+			@else
+				<p class="text-muted"><em>Belum ada gambar sampul.</em></p>
+			@endif
+		</div>
 
-			<div class="col-md-12">
-    {!! html()->span()->text("Gambar")->class("control-label mb-2 d-block") !!}
+		<div class="col-md-12">
+    {!! html()->span()->text("Galeri Gambar")->class("control-label mb-2 d-block") !!}
 
     @php
-        $files = $data->getfilesbyalias('gambar_galeri');
+        $files = $data->getfilesbyalias('galeri_gambar');
     @endphp
 
     @if($files && $files->count())
@@ -97,36 +95,11 @@
 
 
 		</div>
-		<div class="col-md-12">
-			<div class="form-group">
-				{!! html()->span()->text("Histori Verifikasi")->class("control-label") !!}
-				<div class="table-responsive">
-					<table class="table table-bordered table-striped">
-						<thead>
-							<tr>
-								<th>Tanggal</th>
-								<th>Status</th>
-								<th>Catatan</th>
-								<th>Verifikator</th>
-							</tr>
-						</thead>
-						<tbody>
-							@forelse($histori_verifikasi as $histori)
-								<tr>
-									<td>{{ \Carbon\Carbon::parse($histori->updated_at)->format('d-m-Y H:i') }}</td>
-									<td>{{ $histori->status }}</td>
-									<td>{{ $histori->catatan }}</td>
-									<td>{{ $histori->user->name ?? '-' }}</td>
-								</tr>
-							@empty
-								<tr>
-									<td colspan="4" class="text-center">Belum ada histori verifikasi.</td>
-								</tr>
-							@endforelse
-						</tbody>
-					</table>
-				</div>
-			</div>
+		<div class="col-md-12 mt-4">
+			<x-histori-verifikasi 
+				:verifiable_id="$data->id" 
+				:verifiable_type="get_class($data)" 
+			/>
 		</div>
     </div>
 </div>

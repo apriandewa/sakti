@@ -14,6 +14,7 @@ use App\Models\Galeri;
 use App\Models\Page;
 use App\Models\Pengaturan;
 use App\Models\Profil;
+use App\Services\VisitorService;
 use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,12 +44,22 @@ class AppServiceProvider extends ServiceProvider
 
         // Komposer untuk semua view
         View::composer('*', function ($view) {
-            $beritaList = Berita::select('kategori')->distinct()->pluck('kategori');
+            $beritaList  = Berita::select('kategori')->distinct()->pluck('kategori');
             $unduhanList = Unduhan::select('kategori')->distinct()->pluck('kategori');
             $galeriList  = Galeri::select('kategori')->distinct()->pluck('kategori');
-            $latestNews  = Berita::latest()->take(3)->get();
-            $pengaturan = Pengaturan::first();
-            $view->with(compact('beritaList', 'unduhanList', 'galeriList', 'latestNews', 'pengaturan'));
+            $latestNews  = Berita::latest()->take(5)->get();
+            $popularNews = Berita::orderBy('view', 'desc')->take(5)->get();
+            $pengaturan  = Pengaturan::first();
+
+            // Statistik kunjungan
+            $visitorService  = new VisitorService();
+            $visitorStats    = $visitorService->getStatistik();
+            $visitorInfo     = $visitorService->getVisitorInfo();
+
+            $view->with(compact(
+                'beritaList', 'unduhanList', 'galeriList', 'latestNews', 'popularNews', 'pengaturan',
+                'visitorStats', 'visitorInfo'
+            ));
         });
 
         View::share('pagemenu', Page::where('status', 'aktif')->where('kategori', 'profil')->orderBy('created_at', 'asc')->get());

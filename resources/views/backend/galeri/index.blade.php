@@ -54,75 +54,15 @@
         </div>
     </div>
 @endsection
+
+@push('css')
+    <link rel="stylesheet" href="{{ url($template.'/assets/vendor_plugins/summernote/summernote-lite.css') }}">
+@endpush
 @push('js')
-    <!-- jQuery dulu -->
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
-
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
-
     <script src="{{ url($template.'/assets/vendor_components/select2/dist/js/select2.js') }}"></script>
     <script src="{{ url($template.'/assets/vendor_components/sweetalert/sweetalert.min.js') }}"></script>
     <script src="{{ url($template.'/assets/vendor_components/jquery-validation-1.17.0/lib/jquery.form.js') }}"></script>
     <script src="{{ url($template.'/assets/vendor_components/datatable/datatables.min.js') }}"></script>
-     <script src="{{ url($template.'/assets/vendor_plugins/summernote/summernote-lite.min.js') }}"></script>
-    <script src="{{ url('/js/'.$backend.'/'.$page->code.'/datatable.js') }}"></script>
+    <script src="{{ url($template.'/assets/vendor_plugins/summernote/summernote-lite.min.js') }}"></script><script src="{{ url('/js/'.$backend.'/'.$page->code.'/datatable.js') }}"></script>
     <script src="{{ url('js/jquery-crud.js') }}"></script>
-
-    <script>
-        $(document).on('click', '.btn-kirim[data-action="kirim"]', function(e) {
-            e.preventDefault();
-            let url = $(this).data('url'); // URL untuk request send
-    
-            Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Galeri akan dikirim untuk verifikasi!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, kirim!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Kirim request AJAX ke server
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            if (response.status) {
-                                Swal.fire(
-                                    'Good job!',
-                                    response.message,
-                                    'success'
-                                ).then(() => {
-                                    window.location.reload(); // Reload the current page
-                                });
-                            } else {
-                                Swal.fire(
-                                    'Gagal!',
-                                    response.message,
-                                    'error'
-                                );
-                            }
-                        },
-                        error: function(xhr) {
-                            Swal.fire(
-                                'Gagal!',
-                                'Terjadi kesalahan pada server.',
-                                'error'
-                            );
-                        }
-                    });
-                }
-            });
-        });
-    </script>
-@endpush
-
-@push('css')
-    <link rel="stylesheet" href="{{ url($template.'/assets/vendor_plugins/summernote/summernote-lite.css') }}">
 @endpush

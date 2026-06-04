@@ -38,8 +38,8 @@
           {{-- ================== LIST GALERI ================== --}}
             @foreach($galeri as $foto)
               @php
-                  $imgSrc = $foto->getfilebyalias('cover_galeri') 
-                      ? url($foto->getfilebyalias('cover_galeri')->public_stream) 
+                  $imgSrc = $foto->getfilebyalias('logo') 
+                      ? url($foto->getfilebyalias('logo')->public_stream) 
                       : '';
               @endphp
 

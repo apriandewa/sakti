@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Testimoni;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class TestimoniController extends Controller
 {
@@ -24,6 +25,12 @@ class TestimoniController extends Controller
         $user = $request->user();
         $data=$this->model::all();
         return datatables()->of($data)
+        ->addColumn('status_badge', function ($row) {
+                return view('components.status-badge', [
+                    'status' => $row->status,
+                    'size'   => 'xs',
+                ])->render();
+            })
             ->addColumn('action', function ($data) use ($user) {
                 $button ='';
                 if($user->read){
@@ -38,7 +45,7 @@ class TestimoniController extends Controller
                 return "<div class='btn-group'>".$button."</div>";
             })
             ->addIndexColumn()
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'status_badge'])
             ->make();
     }
 
@@ -77,8 +84,17 @@ class TestimoniController extends Controller
 
     public function show($id)
     {
-        $data = $this->model::find($id);
-        return view($this->view.'.show', compact('data'));
+        $data = $this->model::findOrFail($id);
+        
+        $statusClass = match (strtoupper($data->status ?? '')) {
+            'DISETUJUI' => 'success',
+            'DITOLAK'   => 'danger',
+            default     => 'info',
+        };
+
+        $bisaDiproses = strtoupper($data->status ?? '') === 'TERKIRIM';
+        
+        return view($this->view.'.show', compact('data', 'statusClass', 'bisaDiproses'));
     }
 
     public function edit($id)
@@ -138,5 +154,41 @@ class TestimoniController extends Controller
             $response=[ 'status'=>TRUE, 'message'=>'Data berhasil dihapus'];
         }
         return response()->json($response ?? ['status'=>FALSE, 'message'=>'Data gagal dihapus']);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:DISETUJUI,DITOLAK',
+        ]);
+
+        try {
+            $data = $this->model::findOrFail($id);
+
+            if (strtoupper($data->status) !== 'TERKIRIM') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Status hanya dapat diubah dari kondisi TERKIRIM.',
+                ], 422);
+            }
+
+            $data->status         = strtoupper($request->status);
+            $data->user_id = $request->user()->id;
+            $data->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status berhasil diperbarui menjadi ' . $data->status,
+                'status'  => $data->status,
+            ]);
+
+        } catch (\Throwable $e) {
+            Log::error($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui status: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{!! config('master.app.profile.description') !!}">
     <meta name="author" content="{!! config('master.app.profile.author') !!}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@stack('title',config('master.app.profile.name')) | {!! config('master.app.profile.short_name') !!}</title>
     <link rel="icon" href="{{ url($template.config('master.app.web.favicon'))}}">
     <link rel="stylesheet" href="{{ url($template.'/css/vendors_css.css') }}">

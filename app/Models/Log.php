@@ -11,29 +11,42 @@ class Log extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
-    protected $casts=[
-        'id'=>'string', 'data'=>'array',
+    protected $table = 'logs';
+
+    protected $casts = [
+        'id'   => 'string',
+        'data' => 'array', // 🔥 cukup ini saja
     ];
 
-    protected $fillable=['alias', 'data', 'ip', 'user_agent'];
+    protected $fillable = [
+        'id',
+        'loggable_type',
+        'loggable_id',
+        'ip',
+        'user_agent',
+        'data'
+    ];
 
+    // 🔥 morph relation
     public function loggable()
     {
         return $this->morphTo();
     }
 
+    // 🔥 ambil user dari JSON
+    public function user()
+    {
+        return \App\Models\User::find($this->data['user_id'] ?? null);
+    }
+
+    // 🔥 format tanggal
     public function getDateAttribute()
     {
-        return date('d-m-Y', strtotime($this->created_at));
+        return $this->created_at?->format('d-m-Y');
     }
 
     public function getTimeAttribute()
     {
-        return date('H:i:s', strtotime($this->created_at));
-    }
-
-    public function getDataAttribute($value)
-    {
-        return json_decode($value);
+        return $this->created_at?->format('H:i:s');
     }
 }

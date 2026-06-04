@@ -37,35 +37,36 @@ class HomeController extends Controller
         |--------------------------------------------------------------------------
         */
         $getApiCount = function ($url, $cacheKey) {
+            // Cek cache terlebih dahulu agar tidak request ke API setiap kali halam dibuka
+            if (Cache::has($cacheKey)) {
+                return Cache::get($cacheKey);
+            }
 
             try {
-
-                $response = Http::timeout(8)->get($url);
+                // Set timeout lebih singkat agar tidak menunggu terlalu lama jika API mati
+                $response = Http::timeout(4)->get($url);
 
                 if ($response->successful()) {
-
                     $json = $response->json();
+                    $count = 0;
 
                     if (isset($json['data']) && is_array($json['data'])) {
                         $count = count($json['data']);
                     } elseif (is_array($json)) {
                         $count = count($json);
-                    } else {
-                        return Cache::get($cacheKey);
                     }
 
-                    // Simpan ke cache 1 jam
-                    Cache::put($cacheKey, $count, 3600);
-
-                    return $count;
+                    if ($count > 0) {
+                        // Simpan ke cache 1 jam (3600 detik)
+                        Cache::put($cacheKey, $count, 3600);
+                        return $count;
+                    }
                 }
-
             } catch (\Exception $e) {
-                // Jika gagal, ambil data lama dari cache
-                return Cache::get($cacheKey);
+                // Jika gagal, biarkan me-return nilai fallback atau 0
             }
 
-            return Cache::get($cacheKey);
+            return 0; // Return 0 jika API gagal dan cache belum ada
         };
 
         /*
@@ -123,9 +124,9 @@ class HomeController extends Controller
             'galeri'      => Galeri::where('status', 'TERVERIFIKASI')->latest()->limit(12)->get(),
 
             'client'      => Tautan::where('status', 'aktif')->oldest()->limit(20)->get(),
-            'slider'      => Slider::where('status', 'aktif')->oldest()->limit(10)->get(),
+            'slider'      => Slider::where('status', 'aktif')->latest()->limit(6)->get(),
             'struktur'    => Struktur::where('status', 'aktif')->oldest()->limit(15)->get(),
-            'testimoni'   => Testimoni::where('status', 'aktif')->oldest()->limit(10)->get(),
+            'testimoni'   => Testimoni::where('status', 'DISETUJUI')->oldest()->limit(10)->get(),
             'penghargaan' => Penghargaan::where('status', 'aktif')->oldest()->limit(10)->get(),
 
             'welcome' => Page::where('status', 'aktif')->where('kategori', 'welcome')->first(),

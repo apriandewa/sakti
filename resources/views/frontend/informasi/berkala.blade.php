@@ -12,32 +12,54 @@
       <div class="container section-title text-center" data-aos="fade-up">
         <h2>Daftar Informasi Publik Berkala</h2>
         <p>Berikut adalah Daftar Informasi Publik dan Informasi Kegiatan PPID Kabupaten Indragiri Hulu</p>
-        <div class="col-lg-5 col-12 mx-auto">      
-            <form action="/daftar informasi publik" method="get"     class="position-relative rounded-pill m-3" role="search">
-              @if (request('kategori'))
-                  <input type="hidden" name="kategori" value="{{ request('kategori') }}">
-              @endif
-              @if (request('author'))
-                  <input type="hidden" name="author" value="{{ request('author') }}">
-              @endif
-                <div class="input-group input-group">
-                    <input name="search" type="search" class="form-control" id="search" placeholder="Cari Daftar Informasi Publik Disini ..."
-                        aria-label="Search" value= {{request('search')}}>
-      
-                    <button type="submit" class="input-group-text bg-primary text-dark border-0 px-3" id="submit">
-                      <i class="bi bi-search"></i>  Cari
-                    </button>
-                </div>
-            </form>
-          </div>
+       <div class="col-lg-5 col-12 mx-auto">
+          {{-- ✅ action pakai route name, bukan URL dengan spasi --}}
+          <form action="{{ route('informasi.berkala') }}" method="get"
+                class="position-relative rounded-pill m-3" role="search">
+
+              <div class="input-group">
+                  <input
+                      name="search"
+                      type="search"
+                      class="form-control"
+                      id="search"
+                      placeholder="Cari Informasi Berkala Disini ..."
+                      aria-label="Search"
+                      value="{{ request('search') }}"  {{-- ✅ pakai quotes --}}
+                  >
+                  <button type="submit"
+                          class="input-group-text bg-primary text-dark border-0 px-3"
+                          id="submit">
+                      <i class="bi bi-search"></i> Cari
+                  </button>
+              </div>
+          </form>
+      </div>
       </div>
       <!-- End Section Title -->
 
       <div class="container">
 
         <div class="row gy-4">
+
+        {{-- ✅ Tambahkan info jumlah data di sini --}}
           @if($apiData->count() > 0)
-            @foreach($apiData as $item)
+            <div class="col-12 mb-2">
+              <p class="text-muted small mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                Menampilkan
+                <strong>{{ $apiData->firstItem() }}–{{ $apiData->lastItem() }}</strong>
+                dari <strong>{{ $apiData->total() }}</strong> data
+                @if(request('search'))
+                  untuk pencarian <strong>"{{ request('search') }}"</strong>
+                @endif
+              </p>
+            </div>
+          @endif
+
+
+          @if($apiData->count() > 0)
+              @foreach($apiData as $item)
               <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="service-item d-flex position-relative h-100">
                   <i class="bi bi-files icon flex-shrink-0"></i>
@@ -80,12 +102,18 @@
               </div>
             @endforeach
           @else
-            <div class="col-12">
-              <div class="alert alert-warning text-center">
-                Data dari JDIH belum tersedia.
+              <div class="col-12">
+                  <div class="alert alert-warning text-center">
+                      @if(request('search'))
+                          Tidak ada data yang cocok dengan pencarian
+                          <strong>"{{ request('search') }}"</strong>.
+                      @else
+                          Data dari sumber belum tersedia.
+                      @endif
+                  </div>
               </div>
-            </div>
           @endif
+          
         </div>
 
 

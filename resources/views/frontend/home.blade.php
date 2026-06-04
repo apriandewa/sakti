@@ -13,7 +13,7 @@
           <div class="row" data-aos="fade-up" data-aos-delay="100">
             <div class="col-lg-12">
               <h2><span>PPID </span> Indragiri Hulu</h2>
-              <p>Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indargiri Hulu</p>
+              <p>Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu</p>
               <a href="#featured-services" class="btn-get-started">Minta Data</a>
               <a href="#featured-services" class="btn-get-started">Transparansi</a>
             </div>
@@ -69,7 +69,7 @@
           <div class="col-lg-7 content">
             <h3>{{ $welcome->nama ?? '' }}</h3>
             <p>
-              {{ $welcome->nama ?? '' }}
+              {!! $welcome->desc ?? '' !!}
             </p>
           </div>
         </div>
@@ -192,44 +192,70 @@
     <!-- Team Section -->
     <section id="team" class="team section">
 
-      <!-- Section Title -->
-      <div class="container section-title text-center" data-aos="fade-up">
-        <h2>Struktur</h2>
-        <p>Berikut ini adalah Susunan Organisasi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu</p>
-      </div><!-- End Section Title -->
+      <!-- Team Start -->
+      <div class="container-fluid team pb-5">
+        <div class="container pb-5">
 
-      <div class="container">
+        <!-- Section Title -->
+        <div class="container section-title text-center" data-aos="fade-up">
+          <h2>Struktur Organisasi</h2>
+          <p>Berikut ini adalah Susunan Organisasi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu</p>
+         <!-- <a href="aparatur.html" class="btn btn-secondary rounded-pill py-3 px-3">- Semua Pegawai -</a> -->
+        </div>
+        <!-- End Section Title -->
 
-        <div class="row gy-4">
+          <!-- SWIPER -->
+          <div class="swiper teamSwiper">
+            <div class="swiper-wrapper">
 
-        @foreach($struktur as $member)
-          <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
-            <div class="team-member">
-              <div class="member-img">
-                @if(!is_null($member->getfilebyalias('gambar_struktur')))
-                    @php
-                      $file = $member->getfilebyalias('gambar_struktur');
-                    @endphp
-                    @if($file)
-                      <div class="form-group text-center">
-                        {!! html()->img(url($file->public_stream), $file->name)->class('img-fluid') !!}
+              @foreach($struktur as $member)
+              <!-- ITEM -->
+              <div class="swiper-slide">
+                <div class="team-item p-1">
+                  <div class="team-inner rounded">
+                    <div class="team-img">
+                      @if(!is_null($member->getfilebyalias('gambar_struktur')))
+                        @php
+                          $file = $member->getfilebyalias('gambar_struktur');
+                        @endphp
+                        @if($file)
+                          <div class="form-group text-center">
+                            {!! html()->img(url($file->public_stream), $file->name)->class('img-fluid rounded-top w-100') !!}
+                          </div>
+                        @endif
+                      @endif
+                          
+                      <div class="team-share">
+                        <a class="btn btn-secondary btn-md-square rounded-pill text-white mx-1">
+                          <i class="fas fa-share-alt"></i>
+                        </a>
                       </div>
-                    @endif
-                @endif
-                <div class="social">
-                  <p class="text-primary mt-2">{{$member->tugas}}</p>
+                      <div class="team-icon rounded-pill py-2 px-2">
+                        <a class="text-white">{{$member->tugas}}</a>
+                      </div>
+                    </div>
+                    <div class="bg-light rounded-bottom text-center py-4">
+                      <h4 class="title">{{$member->nama}}</h4>
+                      <span class="mb-0">{{$member->jabatan}}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="member-info">
-                <h5>{{$member->nama}}</h5>
-                <span>{{$member->jabatan}}</span>
-              </div>
+              @endforeach
             </div>
-          </div><!-- End Team Member -->
-        @endforeach
-        </div>
 
+            <!-- NAVIGATION -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+
+            <!-- DOTS -->
+            <div class="swiper-pagination"></div>
+
+          </div>
+        </div>
       </div>
+      <!-- Team End -->
+
 
     </section><!-- /Team Section -->
 
@@ -641,8 +667,8 @@
               {{-- ================== LIST GALERI ================== --}}
               @foreach($galeri as $foto)
                   @php
-                      $imgSrc = $foto->getfilebyalias('cover_galeri') 
-                          ? url($foto->getfilebyalias('cover_galeri')->public_stream) 
+                      $imgSrc = $foto->getfilebyalias('logo') 
+                          ? url($foto->getfilebyalias('logo')->public_stream) 
                           : '';
 
                       $categories = explode(',', $foto->kategori);
@@ -666,7 +692,7 @@
                           <h4>
                             <a href="{{ route('galeri.detail', $foto->slug) }}">{{ $foto->nama }}</a>
                           </h4>  
-                          <p>{{ $foto->desc }}</p>
+                          <p>{!! $foto->desc !!}</p>
 
                         @if($imgSrc)
                             @php
@@ -839,7 +865,21 @@
                     @endif
                 @endif
                 <h3>{{$testi->nama}}</h3>
-                <h4>{{$testi->keterangan}}</h4>
+                @php
+                    $ket = strtolower(trim($testi->keterangan));
+                    $ratingVal = 0;
+                    if($ket == 'buruk') $ratingVal = 1;
+                    elseif($ket == 'kurang baik') $ratingVal = 2;
+                    elseif($ket == 'cukup') $ratingVal = 3;
+                    elseif($ket == 'baik') $ratingVal = 4;
+                    elseif($ket == 'sangat baik') $ratingVal = 5;
+                @endphp
+                <div class="d-flex justify-content-center gap-1 mb-2">
+                    @for($i = 1; $i <= 5; $i++)
+                        <i class="bi {{ $i <= $ratingVal ? 'bi-star-fill text-warning' : 'bi-star text-secondary' }} fs-5"></i>
+                    @endfor
+                </div>
+                <h6 class="text-muted small text-capitalize mb-3">{{ $testi->keterangan }}</h6>
                 <p>
                   <i class="bi bi-quote quote-icon-left"></i>
                   <span>{{$testi->desc}}</span>

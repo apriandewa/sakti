@@ -20,6 +20,7 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		Route::prefix('testimoni')->as('testimoni')->group(function () {
 			Route::get('data', 'Testimoni\TestimoniController@data');
 			Route::get('delete/{id}', 'Testimoni\TestimoniController@delete');
+			Route::put('{id}/status', 'Testimoni\TestimoniController@updateStatus')->name('.update-status');
 		});
 		Route::resource('testimoni', 'Testimoni\TestimoniController');
 		//end-testimoni
@@ -86,6 +87,30 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		});
 		Route::resource('pengaturan', 'Pengaturan\PengaturanController');
 		//end-pengaturan
+		Route::prefix('tamu')->as('tamu.')->group(function () {
+
+			Route::get('data', 'Tamu\TamuController@data');
+
+			Route::get('delete/{id}', 'Tamu\TamuController@delete');
+
+			Route::get('grafik', 'Tamu\TamuController@grafik')
+				->name('grafik');
+
+			// update status tamu
+			Route::put('{id}/status', 'Tamu\TamuController@updateStatus')
+				->name('update-status');
+
+		});
+
+		Route::resource('tamu', 'Tamu\TamuController');
+		//end-tamu
+		//kategori
+		Route::prefix('kategori')->as('kategori')->group(function () {
+			Route::get('data', 'Kategori\KategoriController@data');
+			Route::get('delete/{id}', 'Kategori\KategoriController@delete');
+		});
+		Route::resource('kategori', 'Kategori\KategoriController');
+		//end-kategori
 		//{{route replacer}} DON'T REMOVE THIS LINE
     });
 });

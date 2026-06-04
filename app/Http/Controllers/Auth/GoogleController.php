@@ -19,15 +19,13 @@ class GoogleController extends Controller
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
 
-        $user = User::firstOrCreate(
-            ['email' => $googleUser->getEmail()],
-            [
-                'name' => $googleUser->getName(),
-                'password' => bcrypt(uniqid()), // random password
-                'level_id' => 3, // default level_id for new users
-                'access_group_id' => 3, // default level_id for new users
-            ]
-        );
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if (!$user) {
+            return redirect('/login')->withErrors([
+                'email' => 'Anda belum terdaftar sebagai pengguna sistem ini. Mohon kontak admin untuk melanjutkan.'
+            ]);
+        }
 
         Auth::login($user);
 

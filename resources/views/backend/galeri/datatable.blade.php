@@ -19,7 +19,7 @@ $(document).ready(function () {
 			{ data: 'desc' , 'defaultContent':''},
 			{ data: 'kategori' , 'defaultContent':''},
 			{ data: 'keterangan' , 'defaultContent':''},
-			{ data: 'status' , 'defaultContent':''},
+			{ data: 'status_badge' , 'defaultContent':''},
 			{ data: 'action', orderable: false, searchable: false , className: 'text-center'}
 		],
         dom: 'lBfrtip',

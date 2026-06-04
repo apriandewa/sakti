@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Cviebrock\EloquentSluggable\Sluggable;
+use App\Traits\Loggable;
 
 class Berita extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes, sluggable;
+    use HasFactory, HasUuids, SoftDeletes, sluggable, loggable;
 
     protected $fillable = ['id','nama','slug','desc','kategori','keterangan','view','status','user_id','verifikator_id'];
     protected $casts = [];

@@ -1,3 +1,5 @@
+@import './auth-background.css'; /* HARUS PALING ATAS */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

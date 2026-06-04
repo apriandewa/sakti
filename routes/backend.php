@@ -58,6 +58,13 @@ Route::group([
         });
         Route::resource('level', "Level\LevelController");
         //end-level
+        //log
+        Route::prefix('log')->as('log')->group(function () {
+            Route::get('data', "Log\LogController@data");
+            Route::get('delete/{id}', "Log\logController@delete");
+        });
+        Route::resource('log', "Log\LogController");
+        //end-log
         //access-menu
         Route::prefix('access-menu')->as('access-menu')->group(function () {
             Route::get('data', "AccessMenu\AccessMenuController@data");

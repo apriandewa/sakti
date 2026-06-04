@@ -22,9 +22,9 @@
           <div class="col-lg-8 ps-lg-5" data-aos="fade-up" data-aos-delay="200">
             <div class="row">
               <div class="col-md-6">
-                @if($news && $news->getfilebyalias('cover_galeri'))
+                @if($news && $news->getfilebyalias('logo'))
                     @php
-                        $file = $news->getfilebyalias('cover_galeri');
+                        $file = $news->getfilebyalias('logo');
                     @endphp
                     <div class="form-group text-center">
                         {!! html()->img(url($file->public_stream), $file->name)->class('img-fluid service-img') !!}
@@ -49,54 +49,6 @@
                   <i class="bi bi-person-circle me-2"></i>
                   <span>Penulis : {{ $news->user->name }}</span>
                 </div>
-                
-                
-                @if(!is_null($news->getfilebyalias('berkas_unduhan')))
-                  @php
-                      $file = $news->getfilebyalias('berkas_unduhan');
-                  @endphp
-
-                  @if($file)
-                      {{-- Baris Download --}}
-                      <div class="d-flex align-items-center mb-2 gap-2">
-                        <i class="bi bi-filetype-pdf me-2"></i>
-                          <span class="text-muted small">
-                              (diunduh : {{ $file->download ?? 0 }} kali)
-                          </span>
-                          <a href="{{ url($file->public_stream) }}" class="btn btn-success btn-sm" download>
-                              <i class="bi bi-download me-2"></i>Download
-                          </a>
-                      </div>
-
-                      {{-- Baris Lihat File --}}
-                      <div class="d-flex align-items-center gap-2">
-                          <i class="bi bi-filetype-pdf me-2"></i>
-                          <span class="text-muted small">
-                              (dilihat : {{ $file->view ?? 0 }} kali)
-                          </span>
-                          <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#pdfPreviewModal">
-                              <i class="bi bi-eye me-2"></i> Lihat File
-                          </button>
-                      </div>
-
-                      {{-- Modal Preview PDF --}}
-                      <div class="modal fade" id="pdfPreviewModal" tabindex="-1" aria-labelledby="pdfPreviewModalLabel" aria-hidden="true">
-                          <div class="modal-dialog modal-xl modal-dialog-centered">
-                              <div class="modal-content">
-                                  <div class="modal-header">
-                                      <h5 class="modal-title" id="pdfPreviewModalLabel">Preview File PDF</h5>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <div class="modal-body" style="height: 80vh;">
-                                      <iframe src="{{ url($file->public_stream) }}" width="100%" height="100%" style="border:none;"></iframe>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  @endif
-              @endif
-
-                
               </div>
 
             </div>
@@ -129,7 +81,7 @@
 
                
                   @php
-                      $files = $news->getfilesbyalias('gambar_galeri');
+                      $files = $news->getfilesbyalias('galeri_gambar');
                   @endphp
 
                   @if($files && $files->count())

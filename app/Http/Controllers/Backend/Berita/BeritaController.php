@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Berita;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Berita;
+use App\Models\Kategori;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Verifikasi;  
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,11 @@ class BeritaController extends Controller
 
     public function create()
     {
-        return view($this->view.'.create');
+        $parentKategori = Kategori::where('slug', 'berita')->first();
+        $kategoris = $parentKategori
+            ? Kategori::where('parent_id', $parentKategori->id)->pluck('nama', 'nama')
+            : collect();
+        return view($this->view.'.create', compact('kategoris'));
     }
 
     public function data(Request $request)
@@ -41,6 +46,12 @@ class BeritaController extends Controller
         }
 
         return datatables()->of($data)
+            ->addColumn('status_badge', function ($row) {
+                return view('components.status-badge', [
+                    'status' => $row->status,
+                    'size' => 'xs'
+                ])->render();
+            })
             ->addColumn('action', function ($data) use ($user) {
                 $button = '';
 
@@ -83,7 +94,7 @@ class BeritaController extends Controller
                 return "<div class='btn-group'>" . $button . "</div>";
             })
             ->addIndexColumn()
-            ->rawColumns(['action'])
+            ->rawColumns(['status_badge', 'action'])
             ->make();
     }
 
@@ -149,7 +160,11 @@ class BeritaController extends Controller
     public function edit($id)
     {
         $data = $this->model::find($id);
-        return view($this->view.'.edit', compact('data'));
+        $parentKategori = Kategori::where('slug', 'berita')->first();
+        $kategoris = $parentKategori
+            ? Kategori::where('parent_id', $parentKategori->id)->pluck('nama', 'nama')
+            : collect();
+        return view($this->view.'.edit', compact('data', 'kategoris'));
     }
 
     public function update(Request $request, $id)

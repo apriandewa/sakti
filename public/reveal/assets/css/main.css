@@ -9,35 +9,44 @@
   body {
     font-size: 13px;
   }
+
   h1 {
     font-size: 1.5rem;
   }
+
   h2 {
     font-size: 1.25rem;
   }
+
   h3 {
     font-size: 1.1rem;
   }
-  h4, h5, h6 {
+
+  h4,
+  h5,
+  h6 {
     font-size: 1rem;
   }
+
   .section-title h2 {
-  font-size: 26px;
-  font-weight: 500;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  position: relative;
+    font-size: 26px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    position: relative;
   }
+
   .hero .info h2 {
     font-size: 1rem;
   }
+
   .hero .info p,
-  .call-to-action .content-area > p,
+  .call-to-action .content-area>p,
   .features .content-wrapper p,
   .features-2 p {
     font-size: 0.95rem;
   }
-  
+
   .services .service-item .title,
   .team .team-member .member-info h4,
   .pricing h3,
@@ -51,6 +60,7 @@
   .features-2 h3 {
     font-size: 1rem;
   }
+
   .blog-posts .meta-top,
   .blog-details .meta-top,
   .blog-details .meta-bottom,
@@ -60,35 +70,48 @@
     font-size: 0.85rem;
   }
 }
+
 /*--------------------------------------------------------------
 # Font & Color Variables
 # Help: https://bootstrapmade.com/color-system/
 --------------------------------------------------------------*/
 /* Fonts */
 :root {
-  --default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --heading-font: "Montserrat",  sans-serif;
-  --nav-font: "Poppins",  sans-serif;
+  --default-font: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Plus Jakarta Sans", sans-serif;
+  --nav-font: "Poppins", sans-serif;
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
-:root { 
-  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
-  --default-color: #555555; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #0c2e8a; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #50d8af; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --surface-color: #0e2d89; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
-  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+:root {
+  --background-color: #ffffff;
+  /* Background color for the entire website, including individual sections */
+  --default-color: #555555;
+  /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #099126;
+  /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #d67407;
+  /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --surface-color: #50d882;
+  /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --contrast-color: #ffffff;
+  /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-  --nav-color: #555555;  /* The default color of the main navmenu links */
-  --nav-hover-color: #50d8af; /* Applied to main navmenu links when they are hovered over or active */
-  --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
-  --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #555555; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #50d8af; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-color: #555555;
+  /* The default color of the main navmenu links */
+  --nav-hover-color: #099126;
+  /* Applied to main navmenu links when they are hovered over or active */
+  --nav-mobile-background-color: #ffffff;
+  /* Used as the background color for mobile navigation menu */
+  --nav-dropdown-background-color: #ffffff;
+  /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
+  --nav-dropdown-color: #555555;
+  /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-dropdown-hover-color: #099126;
+  /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
@@ -261,24 +284,36 @@ h6 {
 
 @media (max-width: 575px) {
   .read-more {
-  /* border: 1px solid color-mix(in srgb, var(--default-color), transparent 40%); */
-  color: var(--heading-color);
+    /* border: 1px solid color-mix(in srgb, var(--default-color), transparent 40%); */
+    color: var(--heading-color);
+  }
+
+  .read-more a {
+    background: var(--accent-color);
+    color: var(--contrast-color);
+    display: inline-block;
+    padding: 8px 30px;
+    transition: 0.3s;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  .read-more a:hover {
+    background: color-mix(in srgb, var(--heading-color), transparent 20%);
+  }
 }
 
-.read-more a {
-  background: var(--accent-color);
+/* =========================
+   TANGGAL BOX
+========================= */
+.tanggal-box {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background-color: var(--accent-color);
   color: var(--contrast-color);
-  display: inline-block;
-  padding: 8px 30px;
-  transition: 0.3s;
-  font-size: 14px;
-  border-radius: 4px;
 }
 
-.read-more a:hover {
-  background: color-mix(in srgb, var(--heading-color), transparent 20%);
-}
-}
 
 /*--------------------------------------------------------------
 # Global Header
@@ -291,7 +326,7 @@ h6 {
 }
 
 .header .topbar {
-  background-color: var(--surface-color);
+  background-color: var(--heading-color);
   height: 40px;
   padding: 0;
   font-size: 14px;
@@ -371,6 +406,33 @@ h6 {
 
 .scrolled .header {
   box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================
+   RUNNING TEXT (INFO)
+========================= */
+#info-list {
+  position: relative;
+  height: 100%;
+}
+
+#info-list li {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.6s ease;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+#info-list li.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /*--------------------------------------------------------------
@@ -643,7 +705,7 @@ h6 {
     font-weight: 600;
     margin-bottom: 10px;
   }
-  
+
   .footer p {
     font-size: 10px;
     margin-bottom: 20px;
@@ -753,6 +815,19 @@ h6 {
   opacity: 1;
 }
 
+/* On mobile: lift scroll-top above mobile bottom nav */
+@media (max-width: 991.98px) {
+  .scroll-top {
+    right: 12px;
+    bottom: calc(70px + 12px);
+    /* mobile-bottom-nav height + gap */
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
 /*--------------------------------------------------------------
 # Disable aos animation delay on mobile devices
 --------------------------------------------------------------*/
@@ -802,7 +877,7 @@ h6 {
 .page-title nav ol li+li::before {
   content: "/";
   display: inline-block;
-  padding-right: 10px;
+  padding-right: 20px;
   color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
@@ -813,7 +888,7 @@ section,
 .section {
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 60px 0;
+  padding: 10px 0;
   scroll-margin-top: 118px;
   overflow: clip;
 }
@@ -860,35 +935,35 @@ section,
 }
 
 @media (max-width: 575px) {
-.section-title {
-  padding-bottom: 20px;
-  position: relative;
-}
+  .section-title {
+    padding-bottom: 20px;
+    position: relative;
+  }
 
-.section-title h2 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  position: relative;
-}
+  .section-title h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    position: relative;
+  }
 
 
-.section-title h2:after {
-  content: "";
-  position: absolute;
-  display: block;
-  width: 88px;
-  height: 3px;
-  background: var(--accent-color);
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-}
+  .section-title h2:after {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 88px;
+    height: 3px;
+    background: var(--accent-color);
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+  }
 
-.section-title p {
-  margin-bottom: 0;
-}
+  .section-title p {
+    margin-bottom: 0;
+  }
 }
 
 /*--------------------------------------------------------------
@@ -896,7 +971,7 @@ section,
 --------------------------------------------------------------*/
 .hero {
   width: 100%;
-  min-height: 84vh;
+  min-height: 96vh;
   position: relative;
   padding: 0;
   display: flex;
@@ -1071,23 +1146,29 @@ section,
 /* Mobile override */
 @media (max-width: 576px) {
   .hero {
-    min-height: 25vh;       /* hilangkan tinggi layar penuh */
-    height: auto;           /* biarkan ikut tinggi konten (gambar) */
-    display: block;         /* jangan paksa flex agar img + info ikut konten */
+    min-height: 25vh;
+    /* hilangkan tinggi layar penuh */
+    height: auto;
+    /* biarkan ikut tinggi konten (gambar) */
+    display: block;
+    /* jangan paksa flex agar img + info ikut konten */
   }
 
   .hero .carousel-item img {
     width: 100%;
-    height: auto;           /* tinggi menyesuaikan proporsi gambar */
-    object-fit: contain;    /* tidak terpotong */
-    position: relative;     /* jangan absolute, supaya ikut tinggi kontainer */
+    height: auto;
+    /* tinggi menyesuaikan proporsi gambar */
+    object-fit: contain;
+    /* tidak terpotong */
+    position: relative;
+    /* jangan absolute, supaya ikut tinggi kontainer */
   }
 
   /* Text & heading */
   .hero .info {
     margin-left: 20px;
     padding: 20px 10px;
-    text-align: left;   
+    text-align: left;
   }
 
   .hero .info h2 {
@@ -1121,8 +1202,8 @@ section,
 
 @media (max-width: 576px) {
   .about .content h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
+    font-size: 1.25rem;
+    font-weight: 600;
   }
 }
 
@@ -1209,7 +1290,7 @@ section,
   .services .service-item .description {
     font-size: 10px;
   }
-  
+
 }
 
 /*--------------------------------------------------------------
@@ -1359,7 +1440,7 @@ section,
 
 .testimonials .testimonial-item:hover {
   transform: translateY(-8px) scale(1.04);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .testimonials .testimonial-item .testimonial-img {
@@ -1673,124 +1754,188 @@ section,
 }
 
 /*--------------------------------------------------------------
-# Team Section
+# Team Section (Swiper Version) - FIX RAPI & SEJAJAR
 --------------------------------------------------------------*/
-.team .team-member {
-  background-color: var(--contrast-color);
-  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  border-radius: 5px;
-  width: 100%;          /* penuh sesuai kolom bootstrap */
-  max-width: 300px;     /* opsional, biar semua sama */
-  height: 500px;        /* tinggi fix */
-  margin: 0 auto;       /* center */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* bagi ruang antara img & info */
-  transition: all 0.3s ease-in-out;
+
+/*** Team Container ***/
+.teamSwiper {
+  padding-bottom: 50px;
 }
 
-.team .team-member:hover {
-  transform: translateY(-8px) scale(1.04);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-}
-
-/* responsif */
-@media (max-width: 576px) {
-  .team .team-member {
-    max-width: 100%;   /* biar ikut lebar layar */
-    height: 420px;     /* agak pendek di mobile */
-  }
-}
-
-
-
-.team .team-member .member-img {
-  position: relative;
-  overflow: hidden;
-  width: 100%;      /* lebar tetap */
-  height: 350px;     /* tinggi tetap */
-  margin: 0 auto;    /* supaya center */
-  background: #f8f9fa; /* background default */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.team .team-member .member-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;   /* gambar diisi penuh, auto crop kalau beda rasio */
-  display: block;
-}
-
-
-
-.team .team-member .social {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  height: 40px;
-  opacity: 0;
-  transition: ease-in-out 0.3s;
-  background: color-mix(in srgb, var(--background-color), transparent 20%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.team .team-member .social a {
-  transition: color 0.3s;
+/*** Swiper Navigation ***/
+.teamSwiper .swiper-button-next,
+.teamSwiper .swiper-button-prev {
   color: var(--heading-color);
-  margin: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.team .team-member .social a i {
-  line-height: 0;
-}
-
-.team .team-member .social a:hover {
-  color: var(--accent-color);
-}
-
-.team .team-member .social i {
-  font-size: 18px;
-  margin: 0 2px;
-}
-
-.team .team-member .member-info {
-  padding: 25px 15px;
+/*** Swiper Pagination (Dots) ***/
+.teamSwiper .swiper-pagination {
+  margin-top: 20px;
   text-align: center;
 }
 
-.team .team-member .member-info h4 {
-  font-weight: 700;
-  margin-bottom: 5px;
-  font-size: 18px;
-  color: color-mix(in srgb, var(--default-color), transparent 20%);
+.teamSwiper .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  opacity: 0.5;
+  transition: 0.3s;
 }
 
-.team .team-member .member-info span {
+.teamSwiper .swiper-pagination-bullet-active {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/*** Swiper Slide Fix (BIAR CARD SEJAJAR) ***/
+.teamSwiper .swiper-slide {
+  height: auto;
+  display: flex;
+}
+
+/*** Team Item ***/
+.team-item {
+  width: 100%;
+  height: 100%;
+}
+
+.team .team-item {
+  position: relative;
+  overflow: hidden;
+  background: var(--bs-white);
+  border: 1px solid var(--accent-color);
+  border-radius: 10px;
+
+  /* penting untuk sejajar */
+  display: flex;
+  flex-direction: column;
+}
+
+/*** Inner Card ***/
+.team .team-item .team-inner {
+  transition: 0.5s;
+  height: 100%;
+
+  /* biar isi fleksibel */
+  display: flex;
+  flex-direction: column;
+}
+
+/*** Hover Effect ***/
+.team .team-item:hover .team-inner {
+  box-shadow: 0 0 45px rgba(0, 0, 0, 0.2);
+}
+
+/*** =========================
+    IMAGE FIX (PALING PENTING)
+========================= ***/
+.team .team-item .team-inner .team-img {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  height: 350px;
+  /* SAMAKAN SEMUA FOTO */
+  overflow: hidden;
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* gambar auto crop rapi */
+.team .team-item .team-inner .team-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/*** Overlay Hover ***/
+.team .team-item .team-inner .team-img::after {
+  content: "";
+  width: 100%;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: rgba(0, 209, 249, 0.2);
+  transition: 0.5s;
+  z-index: 3;
+}
+
+.team .team-item:hover .team-inner .team-img::after {
+  height: 100%;
+}
+
+/*** Share Button ***/
+.team .team-item .team-inner .team-img .team-share {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  transition: 0.5s;
+  z-index: 4;
+}
+
+.team .team-item:hover .team-inner .team-img .team-share {
+  opacity: 0;
+}
+
+/*** Status Badge ***/
+.team .team-item .team-inner .team-img .team-icon {
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+  border-bottom-left-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+  display: inline-flex;
+  background: var(--accent-color);
+  transition: 0.5s;
+  z-index: 5;
+}
+
+.team .team-item:hover .team-inner .team-img .team-icon {
+  left: -5px;
+}
+
+/*** =========================
+    TEXT CONTENT
+========================= ***/
+.team .team-item .team-inner .team-content {
+  padding: 20px;
+
+  /* biar tinggi fleksibel & rata */
+  flex-grow: 1;
+}
+
+.team .team-item .team-inner h4 {
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-size: 16px;
+  color: color-mix(in srgb, var(--heading-color), transparent 20%);
+}
+
+.team .team-item .team-inner span {
   display: block;
   font-size: 13px;
   font-weight: 400;
+  margin-bottom: 10px;
   color: color-mix(in srgb, var(--default-color), transparent 40%);
 }
 
-.team .team-member .member-info p {
+.team .team-item .team-inner p {
   font-style: italic;
   font-size: 14px;
   line-height: 26px;
+  margin-bottom: 0;
   color: color-mix(in srgb, var(--default-color), transparent 40%);
 }
 
-.team .team-member:hover .social {
-  opacity: 1;
-}
+/*** Team End ***/
+
+
 
 /*--------------------------------------------------------------
 # Pricing Section
@@ -2042,7 +2187,7 @@ section,
   .faq .faq-container .faq-item h3 {
     font-size: 16px;
   }
-  
+
 }
 
 /*--------------------------------------------------------------
@@ -2402,7 +2547,7 @@ section,
   align-items: center;
   justify-content: center;
   transition: background 0.3s, color 0.3s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .blog-posts .owl-nav button.owl-prev:hover,
@@ -2444,7 +2589,8 @@ section,
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 520px; /* Sesuaikan dengan kebutuhan */
+  min-height: 520px;
+  /* Sesuaikan dengan kebutuhan */
 }
 
 
@@ -2454,13 +2600,13 @@ section,
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   padding: 30px;
   height: 100%;
-  transition: transform 0.3s cubic-bezier(.36,.07,.19,.97);
+  transition: transform 0.3s cubic-bezier(.36, .07, .19, .97);
   position: relative;
 }
 
 .blog-posts .blog-item article:hover {
   transform: translateY(-8px) scale(1.04);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .blog-posts .blog-item .post-img {
@@ -2472,8 +2618,10 @@ section,
 
 .blog-posts .blog-item .post-img img {
   width: 100%;
-  height: 260px;      /* fix tinggi sesuai kebutuhan */
-  object-fit: cover;  /* agar gambar di-scale & tidak gepeng */
+  height: 260px;
+  /* fix tinggi sesuai kebutuhan */
+  object-fit: cover;
+  /* agar gambar di-scale & tidak gepeng */
   object-position: center;
   display: block;
 }
@@ -2485,7 +2633,7 @@ section,
   left: 12px;
   top: 12px;
   background-color: var(--accent-color);
-  color: var(--heading-color);
+  color: var(--contrast-color);
   text-transform: uppercase;
   font-size: 12px;
   padding: 6px 12px;
@@ -2513,9 +2661,11 @@ section,
   font-weight: 500;
   padding: 0;
   margin: 26px 0;
-  min-height: 69px; /* jaga tinggi judul */
+  min-height: 69px;
+  /* jaga tinggi judul */
   display: -webkit-box;
-  -webkit-line-clamp: 4; /* batasi 4 baris */
+  -webkit-line-clamp: 4;
+  /* batasi 4 baris */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -2920,12 +3070,12 @@ section,
 }
 
 .stats .achievement-badge {
-  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #6366f1 30%));
+  background: linear-gradient(135deg, var(--surface-color), color-mix(in srgb, var(--surface-color), #6366f1 30%));
   border-radius: 2rem;
   padding: 1.25rem 2rem;
   display: inline-block;
   margin-bottom: 3rem;
-  box-shadow: 0 8px 32px color-mix(in srgb, var(--accent-color), transparent 70%);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--surface-color), transparent 70%);
 }
 
 .stats .achievement-badge .achievement-content {
@@ -3004,7 +3154,7 @@ section,
 }
 
 .stats .stat-item.featured {
-  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #6366f1 30%));
+  background: linear-gradient(135deg, var(--surface-color), color-mix(in srgb, var(--surface-color), #6366f1 30%));
   color: var(--contrast-color);
   transform: scale(1.05);
 }
@@ -3178,14 +3328,16 @@ section,
   .stats .main-headline {
     font-size: 1.05rem;
   }
+
   .stats .stat-label {
-  color: var(--heading-color);
-  font-size: 0.75rem;
-  font-weight: 500;
-  font-family: var(--heading-font);
-  margin-bottom: 0.75rem;
+    color: var(--heading-color);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-family: var(--heading-font);
+    margin-bottom: 0.75rem;
   }
 }
+
 /*--------------------------------------------------------------
 # Features Section
 --------------------------------------------------------------*/
@@ -3959,7 +4111,8 @@ section,
   border-radius: 8px;
   transition: 0.3s;
   height: 100%;
-  min-height: 260px; /* Sesuaikan dengan kebutuhan */
+  min-height: 260px;
+  /* Sesuaikan dengan kebutuhan */
 }
 
 /* === Label Kategori (pojok kiri atas) === */
@@ -3994,7 +4147,7 @@ section,
 .unduhan .unduhan-member:hover {
   border-color: color-mix(in srgb, var(--accent-color), transparent 70%);
   transform: translateY(-6px) scale(1.04);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 
@@ -4016,19 +4169,22 @@ section,
 .unduhan .unduhan-member .member-info {
   padding: 25px;
   text-align: left;
-  position: relative; /* wajib supaya absolute anaknya nempel */
+  position: relative;
+  /* wajib supaya absolute anaknya nempel */
 }
 
 .unduhan .unduhan-member .member-info .meta-top {
   position: absolute;
   bottom: 0;
-  left: 0;   /* jangan 25px */
+  left: 0;
+  /* jangan 25px */
   right: 0;
   background: var(--contrast-color);
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 25px; /* otomatis sejajar dengan isi card */
+  padding: 25px;
+  /* otomatis sejajar dengan isi card */
   border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
   color: color-mix(in srgb, var(--default-color), transparent 40%);
   min-height: 48px;
@@ -4139,7 +4295,7 @@ section,
   align-items: center;
   justify-content: center;
   transition: background 0.3s, color 0.3s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .unduhan .owl-nav button.owl-prev:hover,
@@ -4180,12 +4336,14 @@ section,
   .unduhan .unduhan-member {
     flex-direction: column;
   }
+
   .unduhan .unduhan-member .meta-top {
     position: static;
     justify-content: center;
     padding: 12px 10px;
     min-height: 40px;
   }
+
   .unduhan .unduhan-member .meta-top ul {
     gap: 12px;
   }
@@ -4208,19 +4366,19 @@ section,
   }
 
 
-.unduhan .unduhan-member .member-info a {
-  color: color-mix(in srgb, var(--default-color), transparent 40%);
-  font-size: 14px;
-  display: inline-block;
-  line-height: 1;
-  transition: color 0.3s;
-}
+  .unduhan .unduhan-member .member-info a {
+    color: color-mix(in srgb, var(--default-color), transparent 40%);
+    font-size: 14px;
+    display: inline-block;
+    line-height: 1;
+    transition: color 0.3s;
+  }
 
-.unduhan .unduhan-member .member-info a:hover {
-  color: var(--accent-color);
-}
+  .unduhan .unduhan-member .member-info a:hover {
+    color: var(--accent-color);
+  }
 
- /* Sesuaikan label kategori & tanggal untuk mobile */
+  /* Sesuaikan label kategori & tanggal untuk mobile */
   .unduhan .unduhan-member .unduhan-category,
   .unduhan .unduhan-member .unduhan-date {
     font-size: 10px;
@@ -4235,4 +4393,390 @@ section,
   display: flex !important;
   opacity: 1 !important;
   visibility: visible !important;
+}
+
+/*--------------------------------------------------------------
+# Visitor Statistics Section
+--------------------------------------------------------------*/
+
+/* Header statistik */
+.vstats-header {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 14px;
+}
+
+.vstats-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vstats-title i {
+  color: var(--accent-color);
+  font-size: 1.1rem;
+}
+
+.vstats-subtitle {
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--default-color), transparent 35%);
+  margin: 0;
+  font-style: italic;
+}
+
+/* Grid 2×2 kartu statistik */
+.vstats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Kartu statistik — mengikuti pola info-item template */
+.vstat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--heading-color), transparent 82%);
+  border-radius: 8px;
+  padding: 14px 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.vstat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent-color);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease;
+}
+
+.vstat-card:hover {
+  border-color: color-mix(in srgb, var(--accent-color), transparent 55%);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--accent-color), transparent 80%);
+  transform: translateY(-3px);
+}
+
+.vstat-card:hover::after {
+  transform: scaleX(1);
+}
+
+.vstat-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  background: var(--accent-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  color: var(--contrast-color);
+  transition: background 0.3s ease;
+}
+
+.vstat-card:hover .vstat-icon {
+  background: var(--heading-color);
+}
+
+.vstat-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.vstat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  line-height: 1.1;
+  font-family: 'Poppins', sans-serif;
+  animation: vstatsIn 0.5s ease both;
+}
+
+.vstat-label {
+  font-size: 0.68rem;
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Info Pengunjung — gaya senada info-item contact */
+.vvisitor-info {
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--heading-color), transparent 82%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vvisitor-info-title {
+  background: var(--heading-color);
+  color: var(--contrast-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vvisitor-info-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vvisitor-info-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.vvisitor-info-list li:last-child {
+  border-bottom: none;
+}
+
+.vvisitor-info-list li i {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vi-label {
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  flex: 1;
+  min-width: 0;
+}
+
+.vi-value {
+  color: var(--heading-color);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* Animasi angka */
+@keyframes vstatsIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .vstats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .vstat-number {
+    font-size: 1.2rem;
+  }
+
+  .vstat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .vstats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*--------------------------------------------------------------
+# Mobile Bottom Navigation
+--------------------------------------------------------------*/
+
+/* ── Container ─────────────────────────────────────────────── */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #ffffff;
+  border-top: 1px solid color-mix(in srgb, var(--heading-color), transparent 80%);
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  z-index: 9990;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.10);
+  padding: 0;
+  overflow: visible;
+  /* allow center circle to overflow upward */
+}
+
+/* ── Padding body to prevent content hidden behind nav ─────── */
+@media (max-width: 991.98px) {
+  body {
+    padding-bottom: 64px;
+  }
+}
+
+/* ── Each menu item ─────────────────────────────────────────── */
+.mbn-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  font-size: 0.62rem;
+  font-family: var(--default-font);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: color 0.25s ease;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.mbn-item:hover,
+.mbn-item.active {
+  color: var(--heading-color);
+  text-decoration: none;
+}
+
+/* ── Regular icon wrapper ───────────────────────────────────── */
+.mbn-icon-wrap {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 1.15rem;
+  color: inherit;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.mbn-item:hover .mbn-icon-wrap,
+.mbn-item.active .mbn-icon-wrap {
+  background: color-mix(in srgb, var(--heading-color), transparent 88%);
+  color: var(--heading-color);
+}
+
+/* ── Label text ─────────────────────────────────────────────── */
+.mbn-label {
+  font-size: 0.60rem;
+  line-height: 1;
+  transition: color 0.25s ease;
+}
+
+/* ── CENTER item (Beranda) ──────────────────────────────────── */
+.mbn-item.mbn-center {
+  flex: 1.1;
+  position: relative;
+  justify-content: flex-end;
+  /* push label to bottom of nav */
+  padding-bottom: 6px;
+  margin-top: -20px;
+  /* lift the item upward */
+  color: var(--heading-color);
+}
+
+.mbn-item.mbn-center .mbn-label {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+/* Circle button floating above nav bar */
+.mbn-center-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,
+      var(--heading-color) 0%,
+      color-mix(in srgb, var(--heading-color), var(--accent-color) 40%) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #ffffff;
+  box-shadow:
+    0 4px 16px color-mix(in srgb, var(--heading-color), transparent 45%),
+    0 0 0 4px #ffffff,
+    0 0 0 5px color-mix(in srgb, var(--heading-color), transparent 70%);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.mbn-item.mbn-center:hover .mbn-center-circle {
+  transform: translateY(-4px) scale(1.06);
+  box-shadow:
+    0 8px 24px color-mix(in srgb, var(--heading-color), transparent 35%),
+    0 0 0 4px #ffffff,
+    0 0 0 5px color-mix(in srgb, var(--heading-color), transparent 60%);
+}
+
+/* Active ripple indicator on regular items */
+.mbn-item.active::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--heading-color);
+}
+
+/*--------------------------------------------------------------
+# UserWay Widget — Mobile Position
+--------------------------------------------------------------*/
+
+/* On mobile, anchor userway to bottom-left above the bottom nav */
+@media (max-width: 991.98px) {
+
+  /* UserWay injects a <div> with id="userwayAccessibilityIcon" */
+  #userwayAccessibilityIcon,
+  [id^="userway"] {
+    bottom: calc(64px + 12px) !important;
+    /* above mobile bottom nav */
+    left: 12px !important;
+    right: auto !important;
+  }
 }

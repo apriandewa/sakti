@@ -60,37 +60,11 @@
 		
 		</div>
 
-
-		<div class="col-md-12">
-			<div class="form-group">
-				{!! html()->span()->text("Histori Verifikasi")->class("control-label") !!}
-				<div class="table-responsive">
-					<table class="table table-bordered table-striped">
-						<thead>
-							<tr>
-								<th>Tanggal</th>
-								<th>Status</th>
-								<th>Catatan</th>
-								<th>Verifikator</th>
-							</tr>
-						</thead>
-						<tbody>
-							@forelse($histori_verifikasi as $histori)
-								<tr>
-									<td>{{ \Carbon\Carbon::parse($histori->updated_at)->format('d-m-Y H:i') }}</td>
-									<td>{{ $histori->status }}</td>
-									<td>{{ $histori->catatan }}</td>
-									<td>{{ $histori->user->name ?? '-' }}</td>
-								</tr>
-							@empty
-								<tr>
-									<td colspan="4" class="text-center">Belum ada histori verifikasi.</td>
-								</tr>
-							@endforelse
-						</tbody>
-					</table>
-				</div>
-			</div>
+		<div class="col-md-12 mt-4">
+			<x-histori-verifikasi 
+				:verifiable_id="$data->id" 
+				:verifiable_type="get_class($data)" 
+			/>
 		</div>
 
     </div>

@@ -121,6 +121,66 @@
 
   window.addEventListener("load", initSwiper);
 
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+  new Swiper(".teamSwiper", {
+    loop: true,
+    speed: 800,
+    spaceBetween: 25,
+
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+
+    breakpoints: {
+      0: { slidesPerView: 1 },
+      576: { slidesPerView: 1 },
+      768: { slidesPerView: 2 },
+      992: { slidesPerView: 3 },
+      1200: { slidesPerView: 4 },
+    }
+  });
+
+});
+
+
+  /**
+   * End Swiper sliders init
+   */
+
+
+  /**
+   * Init swiper sliders
+   */
+  function initSwiper() {
+    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+      let config = JSON.parse(
+        swiperElement.querySelector(".swiper-config").innerHTML.trim()
+      );
+
+      if (swiperElement.classList.contains("swiper-tab")) {
+        initSwiperWithCustomPagination(swiperElement, config);
+      } else {
+        new Swiper(swiperElement, config);
+      }
+    });
+  }
+
+  window.addEventListener("load", initSwiper);
+
   /**
    * Initiate glightbox
    */
@@ -218,6 +278,57 @@
   document.addEventListener('scroll', navmenuScrollspy);
 
 })();
+
+/**
+   * Running Text
+   */
+document.addEventListener("DOMContentLoaded", function () {
+    const items = document.querySelectorAll("#info-list li");
+
+    if (items.length === 0) return;
+
+    let index = 0;
+
+    function showItem(i) {
+        items.forEach(el => el.classList.remove("active"));
+        items[i].classList.add("active");
+    }
+
+    showItem(index);
+
+    setInterval(() => {
+        index = (index + 1) % items.length;
+        showItem(index);
+    }, 3000);
+});
+
+
+/**
+   * Js Hari dan Tanggal
+   */
+
+document.addEventListener("DOMContentLoaded", function () {
+    const el = document.getElementById("tanggal-text");
+
+    const hari = [
+        "Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"
+    ];
+
+    const bulan = [
+        "Januari","Februari","Maret","April","Mei","Juni",
+        "Juli","Agustus","September","Oktober","November","Desember"
+    ];
+
+    const now = new Date();
+
+    const hariIni = hari[now.getDay()];
+    const tanggal = now.getDate();
+    const bulanIni = bulan[now.getMonth()];
+    const tahun = now.getFullYear();
+
+    el.innerHTML = `${hariIni}, ${tanggal} ${bulanIni} ${tahun}`;
+});
+
 
 /**
    * Initiate Pure Counter

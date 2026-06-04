@@ -95,19 +95,18 @@ class VerifikasiController extends Controller
 
     public function show($id)
     {
-        // Ambil data verifikasi berdasarkan id
         $verifikasi = $this->model::findOrFail($id);
-
-        // Ambil data asli dari relasi morph (Berita, Galeri, Unduhan, dll)
         $data = $verifikasi->verifiable;
+        
+        // Ambil nama class: 'Berita', 'Galeri', atau 'Unduhan'
+        $type = strtolower(class_basename($verifikasi->verifiable_type));
 
-        // Ambil histori verifikasi berdasarkan verifiable_id
         $histori_verifikasi = \App\Models\Verifikasi::with('user')
             ->where('verifiable_id', $verifikasi->verifiable_id)
             ->orderBy('updated_at', 'asc')
             ->get();
 
-        return view($this->view . '.show', compact('data', 'verifikasi', 'histori_verifikasi'));
+        return view($this->view . '.show', compact('data', 'verifikasi', 'histori_verifikasi', 'type'));
     }
 
 

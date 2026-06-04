@@ -8,12 +8,15 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\UnduhanController;
 use App\Http\Controllers\Frontend\GaleriController;
 use App\Http\Controllers\Frontend\InformasiController;
+use App\Http\Controllers\Frontend\PresensiController;
+use App\Http\Controllers\Frontend\PegawaiController;
 use App\Http\Controllers\Frontend\PageController;
+use App\Http\Controllers\Frontend\KunjunganController;
+use App\Http\Controllers\Frontend\UlasanController;
 use App\Http\Controllers\Frontend\BeritaController as FrontendBeritaController;
 use App\Http\Controllers\Backend\Berita\BeritaController as BackendBeritaController;
 use App\Http\Controllers\Backend\Galeri\GaleriController as BackendGaleriController;
-use App\Http\Controllers\Backend\Unduhan\UnduhanController as BackendUnduhanController; 
-
+use App\Http\Controllers\Backend\Unduhan\UnduhanController as BackendUnduhanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +32,9 @@ Route::get('/berita/{slug}', [FrontendBeritaController::class, 'show'])->name('b
 
 Route::get('/unduhan', [UnduhanController::class, 'index'])->name('unduhan');
 Route::get('/unduhan/{slug}', [UnduhanController::class, 'show'])->name('unduhan.detail');
+// untuk download dan view file unduhan
+Route::get('/unduhan/{slug}/download/{file}', [UnduhanController::class, 'download'])->name('unduhan.download');
+Route::post('/unduhan/{slug}/view/{file}', [UnduhanController::class, 'view'])->name('unduhan.view');
 
 Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
 Route::get('/galeri/{slug}', [GaleriController::class, 'show'])->name('galeri.detail');
@@ -37,6 +43,25 @@ Route::get('/informasi', [InformasiController::class, 'index'])->name('informasi
 Route::get('/berkala', [InformasiController::class, 'berkala'])->name('informasi.berkala');
 Route::get('/tersedia', [InformasiController::class, 'tersedia'])->name('informasi.tersedia');
 Route::get('/informasi/{slug}', [InformasiController::class, 'show'])->name('informasi.detail');
+
+Route::get('/tamu', [KunjunganController::class, 'create'])->name('kunjungan.create');
+Route::post('/tamu', [KunjunganController::class, 'store'])->name('kunjungan.store');
+Route::get('/tamu/{slug}', [KunjunganController::class, 'show'])->name('kunjungan.detail');
+
+Route::get('/ulasan', [UlasanController::class, 'create'])->name('ulasan.create');
+Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
+
+Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi');
+
+Route::prefix('presensi')->group(function () {
+    Route::get('/detail/{nip}', [PresensiController::class, 'detail'])->name('presensi.detail');
+    Route::get('/profil/{nip}', [PresensiController::class, 'profil'])->name('presensi.profil');
+});
+
+Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai');
+Route::get('/kantor', [PegawaiController::class, 'kantor'])->name('kantor');
+Route::get('/kehadiran', [PegawaiController::class, 'kehadiran'])->name('kehadiran');
+
 
 Route::get('/statistik', [InformasiController::class, 'statistik'])->name('informasi.statistik');
 
@@ -82,3 +107,8 @@ Route::post('/admin/unduhan/kirim/{id}', [BackendUnduhanController::class, 'kiri
 
 // ===== Auth Routes (Jetstream/Fortify) =====
 require __DIR__ . '/auth.php';
+
+// ===== Jetstream Profile override =====
+Route::middleware(['auth:sanctum', config('jetstream.auth_session', 'verified'), 'backend'])->group(function () {
+    Route::get('/admin/user/profile', [\Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController::class, 'show'])->name('profile.show');
+});

@@ -55,54 +55,110 @@
                   <span>Verifikator : {{ $news->verifikator->name }}</span>
                 </div>
                 
-                @if(!is_null($news->getfilebyalias('berkas_unduhan')))
-                  @php
-                      $file = $news->getfilebyalias('berkas_unduhan');
-                  @endphp
+                {{-- Baris Download --}}
+                <div class="d-flex align-items-center mb-2 gap-2">
+                  <i class="bi bi-filetype-pdf me-2"></i>
+                    <span class="text-muted small">
+                        (diunduh : {{ $news->download ?? 0 }} kali)
+                    </span>
+                </div>
 
-                  @if($file)
-                      {{-- Baris Download --}}
-                      <div class="d-flex align-items-center mb-2 gap-2">
-                        <i class="bi bi-filetype-pdf me-2"></i>
-                          <span class="text-muted small">
-                              (diunduh : {{ $file->download ?? 0 }} kali)
-                          </span>
-                          <a href="{{ url($file->public_stream) }}" class="btn btn-success btn-sm" download>
-                              <i class="bi bi-download me-2"></i>Download
-                          </a>
-                      </div>
-
-                      {{-- Baris Lihat File --}}
-                      <div class="d-flex align-items-center gap-2">
-                          <i class="bi bi-filetype-pdf me-2"></i>
-                          <span class="text-muted small">
-                              (dilihat : {{ $file->view ?? 0 }} kali)
-                          </span>
-                          <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#pdfPreviewModal">
-                              <i class="bi bi-eye me-2"></i> Lihat File
-                          </button>
-                      </div>
-
-                      {{-- Modal Preview PDF --}}
-                      <div class="modal fade" id="pdfPreviewModal" tabindex="-1" aria-labelledby="pdfPreviewModalLabel" aria-hidden="true">
-                          <div class="modal-dialog modal-xl modal-dialog-centered">
-                              <div class="modal-content">
-                                  <div class="modal-header">
-                                      <h5 class="modal-title" id="pdfPreviewModalLabel">Preview File PDF</h5>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <div class="modal-body" style="height: 80vh;">
-                                      <iframe src="{{ url($file->public_stream) }}" width="100%" height="100%" style="border:none;"></iframe>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  @endif
-              @endif
-
+                {{-- Baris Lihat File --}}
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-filetype-pdf me-2"></i>
+                    <span class="text-muted small">
+                        (dilihat : {{ $news->view ?? 0 }} kali)
+                    </span>
+                </div>
                 
               </div>
 
+              {{-- Daftar Berkas Unduhan --}}
+              @php
+                  $berkasFiles = $news->file()->where('alias', 'berkas_unduhan')->get();
+              @endphp
+
+              @if($berkasFiles->isNotEmpty())
+                  <div class="mt-3">
+                      <h6 class="fw-semibold mb-2"><i class="bi bi-paperclip me-1"></i>Berkas Unduhan</h6>
+                      <ul class="list-group list-group-flush">
+                          @foreach($berkasFiles as $berkas)
+                              @php
+                                  $ext = strtolower(pathinfo($berkas->name, PATHINFO_EXTENSION));
+                                  $iconClass = match($ext) {
+                                      'pdf'           => 'bi-filetype-pdf text-danger',
+                                      'doc', 'docx'   => 'bi-filetype-docx text-primary',
+                                      'xls', 'xlsx'   => 'bi-filetype-xlsx text-success',
+                                      'ppt', 'pptx'   => 'bi-filetype-pptx text-warning',
+                                      default         => 'bi-file-earmark text-secondary',
+                                  };
+                                  $previewable = in_array($ext, ['pdf']);
+                                  $modalId = 'previewModal_' . $berkas->id;
+                                  $downloadUrl = route('unduhan.download', [$news->slug, $berkas->id]);
+                                  $viewUrl     = route('unduhan.view', [$news->slug, $berkas->id]);
+                              @endphp
+
+                              <li class="list-group-item px-0">
+                                  <div class="d-flex align-items-start gap-2 flex-wrap">
+                                      {{-- Icon & Nama --}}
+                                      <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                          <i class="bi {{ $iconClass }} fs-4"></i>
+                                          <div>
+                                              <div class="fw-medium small">{{ $berkas->name }}</div>
+                                          </div>
+                                      </div>
+
+                                      {{-- Tombol Aksi --}}
+                                      <div class="d-flex gap-2 align-items-center">
+                                          {{-- Download --}}
+                                          <a href="{{ $downloadUrl }}"
+                                            class="btn btn-success btn-sm"
+                                            title="Download">
+                                              <i class="bi bi-download me-1"></i>Download
+                                          </a>
+
+                                          {{-- Lihat (hanya PDF) --}}
+                                          @if($previewable)
+                                              <button type="button"
+                                                      class="btn btn-warning btn-sm btn-lihat"
+                                                      data-modal-id="{{ $modalId }}"
+                                                      data-view-url="{{ $viewUrl }}"
+                                                      title="Lihat File">
+                                                  <i class="bi bi-eye me-1"></i>Lihat
+                                              </button>
+                                          @endif
+                                      </div>
+                                  </div>
+                              </li>
+
+                              {{-- Modal Preview (hanya PDF) --}}
+                              @if($previewable)
+                                  <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-hidden="true">
+                                      <div class="modal-dialog modal-xl modal-dialog-centered">
+                                          <div class="modal-content">
+                                              <div class="modal-header">
+                                                  <h5 class="modal-title">
+                                                      <i class="bi bi-filetype-pdf text-danger me-2"></i>{{ $berkas->name }}
+                                                  </h5>
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                              </div>
+                                              <div class="modal-body p-0" style="height:80vh;">
+                                                  <iframe src="" 
+                                                          class="pdf-iframe" 
+                                                          width="100%" 
+                                                          height="100%" 
+                                                          style="border:none;">
+                                                  </iframe>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              @endif
+
+                          @endforeach
+                      </ul>
+                  </div>
+              @endif
             </div>
 
           </div>
@@ -120,3 +176,40 @@
   </main>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.btn-lihat').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const modalId  = this.dataset.modalId;
+            const viewUrl  = this.dataset.viewUrl;
+            const modal    = document.getElementById(modalId);
+            const iframe   = modal.querySelector('.pdf-iframe');
+
+            // Catat view ke server (POST dengan CSRF)
+            fetch(viewUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Set src iframe setelah dapat URL dari server
+                iframe.src = data.url;
+            });
+
+            // Buka modal Bootstrap
+            new bootstrap.Modal(modal).show();
+
+            // Kosongkan iframe saat modal ditutup (hemat memori)
+            modal.addEventListener('hidden.bs.modal', function () {
+                iframe.src = '';
+            }, { once: true });
+        });
+    });
+});
+</script>
+@endpush

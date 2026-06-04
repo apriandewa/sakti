@@ -18,7 +18,7 @@ $(document).ready(function () {
 			{ data: 'slug' , 'defaultContent':''},
 			{ data: 'desc' , 'defaultContent':''},
 			{ data: 'kategori' , 'defaultContent':''},
-			{ data: 'status' , 'defaultContent':''},
+			{ data: 'status_badge' , 'defaultContent':''},
 			{ data: 'action', orderable: false, searchable: false , className: 'text-center'}
 		],
         dom: 'lBfrtip',

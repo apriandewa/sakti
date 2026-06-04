@@ -17,7 +17,7 @@ $(document).ready(function () {
             { data: 'nama' , 'defaultContent':''},
 			{ data: 'desc' , 'defaultContent':''},
 			{ data: 'keterangan' , 'defaultContent':''},
-			{ data: 'status' , 'defaultContent':''},
+			{ data: 'status_badge' , 'defaultContent':''},
 			{ data: 'action', orderable: false, searchable: false , className: 'text-center'}
 		],
         dom: 'lBfrtip',

@@ -12,12 +12,7 @@
 		<div class="form-group">
             {!! html()->label('Kategori')->class('control-label')->for('kategori') !!}
             
-            {!! html()->select('kategori', [
-                'Info Kegiatan PPID' => 'Info Kegiatan PPID',
-                'Sosialisasi PPID' => 'Sosialisasi PPID',
-                'Pelayanan Informasi' => 'Pelayanan Informasi',
-                'Sengketa Informasi' => 'Sengketa Informasi'
-            ])->placeholder('Pilih kategori di sini')->class('form-control select2')->id('kategori') !!}
+            {!! html()->select('kategori', $kategoris ?? [])->value($data->kategori ?? '')->placeholder('Pilih kategori di sini')->class('form-control select2')->id('kategori') !!}
         </div>
 		<div class='form-group'>
 			{!! html()->label()->class('control-label')->for('desc')->text('Desc') !!}

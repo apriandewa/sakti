@@ -69,7 +69,7 @@ Waves
 /****************************/
 /** Imports **/
 /****************************/
-@import url("https://fonts.googleapis.com/css?family=IBM+Plex+Sans:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i|Rubik:300,300i,400,400i,500,500i,700,700i,900,900i&display=swap");
+@import url("https://fonts.googleapis.com/css?family=IBM+Plex+Sans:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,700,700i,900,900i&display=swap");
 /*Social Media Colors*/
 /*Theme Colors*/
 /*Lite color*/
@@ -133,10 +133,10 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     color: #172b4c;
-    font-size: 1rem;
+    font-size: 0.925rem;
     font-style: normal;
     font-weight: 400;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Poppins", sans-serif;
     line-height: 1.5;
     background-color: #fafbfd;
 }
@@ -152,13 +152,13 @@ a:hover, a:active, a:focus {
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: "Rubik", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-weight: 400;
     line-height: 1.2;
 }
 
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small, .h1 small, .h2 small, .h3 small, .h4 small, .h5 small, .h6 small {
-    font-size: 65%;
+    font-size: 55%;
 }
 
 h4, .h4, h5, .h5, h6, .h6 {
@@ -207,11 +207,11 @@ img {
 }
 
 .base-font {
-    font-family: "IBM Plex Sans", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 .heading-font {
-    font-family: "Rubik", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 .fs-0 {
@@ -27024,7 +27024,7 @@ Height property
     height: 115px;
     width: 115px;
     line-height: 115px;
-    font-family: "Rubik", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 .icon i {
@@ -34095,7 +34095,7 @@ time {
 .grid-stack-item-content {
     background: #ffffff;
     color: #172b4c;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Poppins", sans-serif;
     text-align: center;
     font-size: 1.429rem;
 }
@@ -43049,7 +43049,7 @@ button.btn.dropdown-toggle:after {
 
 /* Morris chart */
 .morris-chart text {
-    font-family: "IBM Plex Sans", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 .morris-hover.morris-default-style {
@@ -43057,7 +43057,7 @@ button.btn.dropdown-toggle:after {
     padding: 10px 12px;
     background: #ffffff;
     border: none;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Poppins", sans-serif;
     box-shadow: 0 5px 25px 5px rgba(23, 43, 76, 0.14);
 }
 
@@ -43076,7 +43076,7 @@ button.btn.dropdown-toggle:after {
 .c-progress-steps {
     margin: 0;
     list-style-type: none;
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .c-progress-steps li {
@@ -43395,3 +43395,210 @@ img.away, img.busy, img.offline, img.online {
 }
 
 /*# sourceMappingURL=style.css.map */
+
+/* ============================================================
+   UPLOAD COMPONENTS — Logo/Gambar, Galeri, Berkas (Global)
+   Digunakan oleh: galeri/create, galeri/edit,
+                   unduhan/create, unduhan/edit
+   ============================================================ */
+
+/* ── Upload Area (klik untuk pilih file) ─────────────────────── */
+.logo-upload-area {
+    border: 2px dashed #c8cfe4;
+    border-radius: 10px;
+    padding: 22px 16px;
+    text-align: center;
+    cursor: pointer;
+    background: #fafbff;
+    transition: border-color .2s ease, background .2s ease;
+    display: block;
+}
+.logo-upload-area:hover {
+    border-color: #5b73e8;
+    background: #f0f3ff;
+}
+.logo-drop-label {
+    cursor: pointer;
+    margin: 0;
+    display: block;
+}
+.logo-drop-label > i {
+    color: #a0aec0;
+    display: block;
+    margin-bottom: 8px;
+}
+.logo-drop-label > span {
+    font-size: 13px;
+    color: #718096;
+}
+
+/* ── Logo / Gambar Single — Thumbnail Card ───────────────────── */
+.logo-thumb-card {
+    display: inline-block;
+    width: 150px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    text-align: center;
+    vertical-align: top;
+    overflow: hidden;
+}
+.logo-thumb-img {
+    width: 130px !important;
+    height: 96px !important;
+    max-width: 130px !important;
+    max-height: 96px !important;
+    object-fit: contain !important;
+    border-radius: 6px !important;
+    display: block !important;
+    margin: 0 auto !important;
+    background: #f4f6fa;
+    border: 1px solid #eef0f4;
+}
+.logo-thumb-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+.logo-thumb-name {
+    font-size: 11px;
+    color: #6b7280;
+    margin: 6px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+    text-align: center;
+}
+
+/* ── Drop Zone (Galeri & Berkas) ─────────────────────────────── */
+.galeri-drop-zone,
+.berkas-drop-zone {
+    border: 2px dashed #c8cfe4;
+    border-radius: 10px;
+    padding: 30px 20px;
+    text-align: center;
+    background: #fafbff;
+    transition: border-color .2s ease, background .2s ease;
+    display: block;
+}
+.galeri-drop-zone:hover,
+.berkas-drop-zone:hover {
+    border-color: #8898b8;
+}
+.galeri-drop-zone.drag-over,
+.berkas-drop-zone.drag-over {
+    border-color: #5b73e8;
+    background: #eef1ff;
+    box-shadow: 0 0 0 4px rgba(91,115,232,.1);
+}
+
+/* ── Galeri Thumbnail Grid ───────────────────────────────────── */
+.galeri-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+.galeri-thumb-card {
+    display: inline-block;
+    width: 130px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 6px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.07);
+    text-align: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.galeri-thumb-card img {
+    width: 116px !important;
+    height: 84px !important;
+    max-width: 116px !important;
+    max-height: 84px !important;
+    object-fit: cover !important;
+    border-radius: 6px !important;
+    display: block !important;
+    margin: 0 auto !important;
+    background: #f4f6fa;
+}
+.galeri-thumb-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 6px;
+}
+.galeri-thumb-name {
+    font-size: 10px;
+    color: #6b7280;
+    margin: 5px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 116px;
+    text-align: center;
+}
+
+/* ── Berkas File List (PDF / Word) ───────────────────────────── */
+.berkas-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+.berkas-file-item {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.berkas-file-item .file-icon {
+    font-size: 22px;
+    margin-right: 10px;
+    color: #e05252;
+    flex-shrink: 0;
+}
+.berkas-file-item .file-icon.word {
+    color: #2b579a;
+}
+.berkas-file-item .file-name {
+    flex: 1;
+    word-break: break-all;
+    line-height: 1.4;
+    color: #374151;
+    min-width: 0;
+}
+.berkas-file-item .file-name small {
+    color: #9ca3af;
+}
+.berkas-file-item .btn-remove-berkas {
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+/* ── Dark Skin Support ───────────────────────────────────────── */
+.dark-skin .logo-upload-area        { background: #1e2a3a; border-color: #2d3e52; }
+.dark-skin .logo-upload-area:hover  { background: #22334a; border-color: #5b73e8; }
+.dark-skin .logo-thumb-card         { background: #1a2638; border-color: #2d3e52; }
+.dark-skin .logo-thumb-img          { background: #0f1c2e; border-color: #2d3e52; }
+.dark-skin .logo-thumb-name,
+.dark-skin .logo-drop-label > span  { color: #8899af; }
+.dark-skin .galeri-drop-zone,
+.dark-skin .berkas-drop-zone        { background: #1e2a3a; border-color: #2d3e52; }
+.dark-skin .galeri-drop-zone.drag-over,
+.dark-skin .berkas-drop-zone.drag-over { background: #1c2c4a; }
+.dark-skin .galeri-thumb-card       { background: #1a2638; border-color: #2d3e52; }
+.dark-skin .galeri-thumb-card img   { background: #0f1c2e; }
+.dark-skin .galeri-thumb-name       { color: #8899af; }
+.dark-skin .berkas-file-item        { background: #1a2638; border-color: #2d3e52; }
+.dark-skin .berkas-file-item .file-name { color: #cdd5e0; }
+

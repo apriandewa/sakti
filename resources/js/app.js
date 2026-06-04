@@ -1,4 +1,5 @@
 import './bootstrap';
+
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('togglePassword');
     const password = document.getElementById('password');

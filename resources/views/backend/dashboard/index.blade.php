@@ -5,24 +5,24 @@
         <div class="container-full">
             <section class="content">
                 <div class="row align-items-end">
-                    <div class="col-md-6 col-12">
-                        <div class="box bg-primary-light overflow-hidden pull-up">
-                            <div class="box-body pe-0 ps-lg-50 ps-15 py-0">
+                    <div class="col-md-7 col-12">
+                        <div class="box bg-primary-light">
+                            <div class="box-body">
                                 <div class="row align-items-center">
                                     <div class="col-12 col-lg-8">
-                                        <h1 class="fs-40 text-dark">Halo, {{ $user->name }}!</h1>
-                                        <p class="text-dark mb-0 fs-20">
-                                            Selamat datang di {!! config('master.app.profile.name') !!}, 
+                                        <h3 class="fs-26 text-dark">Selamat Datang <br> {{ $user->name }}</h3>
+                                        <p class="text-dark mb-2 fs-20">
+                                            Website {!! config('master.app.profile.name') !!}
                                         </p>
                                     </div>
                                     <div class="col-12 col-lg-4">
-                                        <img src="{{ url($template."/images/svg-icon/color-svg/custom-15.svg") }}" alt="">
+                                        <img src="{{ url($template."/images/svg-icon/color-svg/custom-14.svg") }}" alt="">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-4 order-1">
+                    <div class="col-lg-5 col-md-4 order-1">
                         <div class="row">
                             <div class="col-lg-4 col-md-6 col-4 mb-4">
                                 <div class="card">
@@ -30,7 +30,7 @@
                                     <div class="card-title d-flex align-items-start justify-content-between">
                                     <div class="avatar flex-shrink-0">
                                         <img
-                                        src="{{ url($template."/images/svg-icon/color-svg/010-refresh.svg") }}"
+                                        src="{{ url($template."/images/svg-icon/color-svg/berita.svg") }}"
                                         alt="Credit Card"
                                         class="rounded"
                                         />
@@ -38,7 +38,7 @@
                                     
                                     </div>
                                     <span>Berita Saya</span>
-                                    <h3 class="card-title text-nowrap mb-1 text-info">{{ $berita_saya }}</h3>
+                                    <h3 class="card-title text-nowrap mb-1 text-warning">{{ $berita_saya }}</h3>
                                     
                                 </div>
                                 </div>
@@ -49,7 +49,7 @@
                                     <div class="card-title d-flex align-items-start justify-content-between">
                                     <div class="avatar flex-shrink-0">
                                         <img
-                                        src="{{ url($template."/images/svg-icon/color-svg/010-refresh.svg") }}"
+                                        src="{{ url($template."/images/svg-icon/color-svg/galeri.svg") }}"
                                         alt="Credit Card"
                                         class="rounded"
                                         />
@@ -57,7 +57,7 @@
                                     
                                     </div>
                                     <span>Galeri Saya</span>
-                                    <h3 class="card-title text-nowrap mb-1 text-info">{{ $galeri_saya }}</h3>
+                                    <h3 class="card-title text-nowrap mb-1 text-warning">{{ $galeri_saya }}</h3>
                                     
                                 </div>
                                 </div>
@@ -68,7 +68,7 @@
                                     <div class="card-title d-flex align-items-start justify-content-between">
                                     <div class="avatar flex-shrink-0">
                                         <img
-                                        src="{{ url($template."/images/svg-icon/color-svg/010-refresh.svg") }}"
+                                        src="{{ url($template."/images/svg-icon/color-svg/unduhan.svg") }}"
                                         alt="Credit Card"
                                         class="rounded"
                                         />
@@ -76,7 +76,7 @@
                                     
                                     </div>
                                     <span>Unduhan Saya</span>
-                                    <h3 class="card-title text-nowrap mb-1 text-info">{{ $unduhan_saya }}</h3>
+                                    <h3 class="card-title text-nowrap mb-1 text-warning">{{ $unduhan_saya }}</h3>
                                     
                                 </div>
                                 </div>
@@ -93,7 +93,7 @@
                       <div class="card-title d-flex align-items-start justify-content-between">
                         <div class="avatar flex-shrink-0">
                           <img
-                            src="{{ url($template."/images/svg-icon/color-svg/010-refresh.svg") }}"
+                            src="{{ url($template."/images/svg-icon/color-svg/berita.svg") }}"
                             alt="Credit Card"
                             class="rounded"
                           />
@@ -112,7 +112,7 @@
                       <div class="card-title d-flex align-items-start justify-content-between">
                         <div class="avatar flex-shrink-0">
                           <img
-                            src="{{ url($template."/images/svg-icon/color-svg/010-refresh.svg") }}"
+                            src="{{ url($template."/images/svg-icon/color-svg/galeri.svg") }}"
                             alt="Credit Card"
                             class="rounded"
                           />
@@ -131,7 +131,7 @@
                       <div class="card-title d-flex align-items-start justify-content-between">
                         <div class="avatar flex-shrink-0">
                           <img
-                            src="{{ url($template."/images/svg-icon/color-svg/010-refresh.svg") }}"
+                            src="{{ url($template."/images/svg-icon/color-svg/unduhan.svg") }}"
                             alt="Credit Card"
                             class="rounded"
                           />

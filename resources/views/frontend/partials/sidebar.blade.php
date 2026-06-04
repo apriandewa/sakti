@@ -26,6 +26,70 @@
               <!-- End Services List -->
 
               <div class="service-box">
+                <div class="services-list">
+                  <h4>Berita Terbaru</h4>
+                  @foreach($latestNews as $news)
+                    <a href="{{ url('berita/'.$news->slug) }}" class="d-flex align-items-center mb-3">
+                        
+                        {{-- Thumbnail pakai getfilebyalias --}}
+                        @if(!is_null($news->getfilebyalias('gambar_berita')))
+                            @php
+                                $file = $news->getfilebyalias('gambar_berita');
+                            @endphp
+                            @if($file)
+                                <img src="{{ url($file->public_stream) }}" 
+                                    alt="{{ $file->name }}" 
+                                    class="me-2 rounded"
+                                    style="width:60px; height:50px; object-fit:cover;">
+                            @endif
+                        @endif
+
+                        {{-- Judul & tanggal --}}
+                      <div>
+                      <div class="fw-bold">{{ $news->nama }}</div>
+                        <small class="text-muted d-flex align-items-center gap-2">
+                          <span><i class="bi bi-calendar"></i> {{ $news->created_at->format('d M Y') }}</span>
+                          <span><i class="bi bi-eye"></i> {{ $news->view ?? 0 }} kali</span>
+                        </small>
+                      </div>
+                    </a>
+                  @endforeach
+                </div>
+              </div>
+
+              <div class="service-box">
+                <div class="services-list">
+                  <h4>Berita Terpopuler</h4>
+                  @foreach($popularNews as $viral)
+                    <a href="{{ url('berita/'.$viral->slug) }}" class="d-flex align-items-center mb-3">
+                        
+                        {{-- Thumbnail pakai getfilebyalias --}}
+                        @if(!is_null($viral->getfilebyalias('gambar_berita')))
+                            @php
+                                $file = $viral->getfilebyalias('gambar_berita');
+                            @endphp
+                            @if($file)
+                                <img src="{{ url($file->public_stream) }}" 
+                                    alt="{{ $file->name }}" 
+                                    class="me-2 rounded"
+                                    style="width:60px; height:50px; object-fit:cover;">
+                            @endif
+                        @endif
+
+                        {{-- Judul & tanggal --}}
+                      <div>
+                      <div class="fw-bold">{{ $viral->nama }}</div>
+                        <small class="text-muted d-flex align-items-center gap-2">
+                          <span><i class="bi bi-calendar"></i> {{ $viral->created_at->format('d M Y') }}</span>
+                          <span><i class="bi bi-eye"></i> {{ $viral->view ?? 0 }} kali</span>
+                        </small>
+                      </div>
+                    </a>
+                  @endforeach
+                </div>
+              </div>
+
+              <div class="service-box">
                   <div class="services-list">
                       <h4>Kategori Berita</h4>
                       @foreach($beritaList as $berita)
@@ -80,52 +144,6 @@
               </div>    
               <!-- End Services List -->
 
-              <div class="service-box">
-                <div class="services-list">
-                  <h4>Berita Terbaru</h4>
-                  @foreach($latestNews as $news)
-                    <a href="{{ url('berita/'.$news->slug) }}" class="d-flex align-items-center mb-3">
-                        
-                        {{-- Thumbnail pakai getfilebyalias --}}
-                        @if(!is_null($news->getfilebyalias('gambar_berita')))
-                            @php
-                                $file = $news->getfilebyalias('gambar_berita');
-                            @endphp
-                            @if($file)
-                                <img src="{{ url($file->public_stream) }}" 
-                                    alt="{{ $file->name }}" 
-                                    class="me-2 rounded"
-                                    style="width:60px; height:50px; object-fit:cover;">
-                            @endif
-                        @endif
-
-                        {{-- Judul & tanggal --}}
-                      <div>
-                      <div class="fw-bold">{{ $news->nama }}</div>
-                        <small class="text-muted d-flex align-items-center gap-2">
-                          <span><i class="bi bi-calendar"></i> {{ $news->created_at->format('d M Y') }}</span>
-                          <span><i class="bi bi-eye"></i> {{ $news->view ?? 0 }} kali</span>
-                        </small>
-                      </div>
-                    </a>
-                  @endforeach
-                </div>
-              </div>
-
-
-              <div class="service-box">
-                <h4>Download Catalog</h4>
-                <div class="services-list">
-                  <a href="#"><i class="bi bi-filetype-pdf"></i><span>Catalog PDF</span></a>
-                  <a href="#"><i class="bi bi-file-earmark-word"></i><span>Catalog DOC</span></a>
-                </div>
-              </div><!-- End Services List -->
-
-              <div class="help-box d-flex flex-column justify-content-center align-items-center">
-                <i class="bi bi-headset help-icon"></i>
-                <h4>Have a Question?</h4>
-                <p class="d-flex align-items-center mt-2 mb-0"><i class="bi bi-telephone me-2"></i> <span>+1 5589 55488 55</span></p>
-                <p class="d-flex align-items-center mt-1 mb-0"><i class="bi bi-envelope me-2"></i> <a href="mailto:contact@example.com">contact@example.com</a></p>
-              </div>
+              
 
           </div>
