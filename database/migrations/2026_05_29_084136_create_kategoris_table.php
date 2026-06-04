@@ -26,9 +26,6 @@ return new class extends Migration
 			$table->softDeletes();
         });
 
-        Schema::table('kategoris', function (Blueprint $table) {
-            $table->foreign("parent_id")->references("id")->on("kategoris")->onDelete("cascade");
-        });
     }
 
     /**
