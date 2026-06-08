@@ -15,12 +15,13 @@
 
                 <div class="flex-grow-1 position-relative overflow-hidden" style="height:100%;">
                   <ul id="info-list" class="list-unstyled m-0 p-0 position-relative h-100">
-                    <li class="position-absolute w-100">Selamat Datang di Website Resmi Desa Senang Hati Kecamatan Batang Terendam</li>
-                    <li class="position-absolute w-100">Selamat Memperingati Hari Proklamasi</li>
-                    <li class="position-absolute w-100">Selamat Memperingati Hari Guru</li>
-                    <li class="position-absolute w-100">Tetap Semangat Melayani Masyarakat</li>
-                    <li>Selamat Datang di Website Resmi</li>
-                    <li>Tetap Semangat Melayani Masyarakat</li>
+                    @forelse($navTicker as $ticker)
+                    <li class="position-absolute w-100">
+                      <a href="{{ $ticker['url'] }}" class="text-dark text-decoration-none text-white">{{ $ticker['label'] }}</a>
+                    </li>
+                    @empty
+                    <li class="position-absolute w-100">Selamat Datang di Website Resmi</li>
+                    @endforelse
                   </ul>
                 </div>
 
@@ -30,10 +31,10 @@
             <!-- KANAN (social links) -->
             <div class="social-links d-none d-md-flex align-items-center">
               <div class="d-inline-flex align-items-center h-100">
-                <a href="#"><small class="me-3 text-dark"><i class="fa fa-user text-primary me-2"></i>Survey</small></a>
-                <a href="#"><small class="me-3 text-dark"><i class="fa fa-star text-primary me-2"></i>Ulasan</small></a>
-                <a href="/tamu"><small class="me-3 text-dark"><i class="fa fa-desktop text-primary me-2"></i>e-Tamu</small></a>
-                <a href="/login"><small class="text-dark"><i class="fa fa-sign-in text-primary me-2"></i>Login</small></a>
+                <a href="https://skm.inhukab.go.id/home/ques/27"><small class="me-3 text-dark"><i class="fa fa-user text-primary me-2"></i>Survey</small></a>
+                <a href="{{ url('ulasan') }}"><small class="me-3 text-dark"><i class="fa fa-star text-primary me-2"></i>Ulasan</small></a>
+                <a href="{{ url('tamu') }}"><small class="me-3 text-dark"><i class="fa fa-desktop text-primary me-2"></i>e-Tamu</small></a>
+                <a href="{{ url('login') }}"><small class="text-dark"><i class="fa fa-sign-in text-primary me-2"></i>Login</small></a>
               </div>
             </div>
 
@@ -43,7 +44,7 @@
         <div class="branding d-flex align-items-cente">
 
           <div class="container position-relative d-flex align-items-center justify-content-between">
-            <a href="/" class="d-flex align-items-center">
+            <a href="{{ url('/') }}" class="d-flex align-items-center">
               <!-- Uncomment the line below if you also wish to use an image logo -->
               <i class="dark-logo"><img src="{{ url($template).config('master.app.web.logo_dark')}}" alt="logo" width="140"></i>
               <!-- <img src="reveal/assets/img/logo.png" alt=""> -->
@@ -52,7 +53,7 @@
 
             <nav id="navmenu" class="navmenu">
               <ul>
-                <li><a href="/" class="active">Beranda</a></li>
+                <li><a href="{{ url('/') }}" class="active">Beranda</a></li>
                 <li class="dropdown"><a href="{{ url('/#services') }}"><span>Profil</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                   <ul>
                     @foreach($pagemenu as $p)
@@ -65,7 +66,7 @@
                   <ul>
                     
                     <li><a href="{{ url('berkala') }}">Informasi Berkala</a></li>
-                    <li><a href="{{ url('serta-merta') }}">Informasi Serta Merta</a></li>
+                    <li><a href="{{ url('tersedia') }}">Informasi Serta Merta</a></li>
                     <li><a href="{{ url('setiap-saat') }}">Informasi Tersedia Setiap Saat</a></li>
                     <li><a href="{{ url('dikecualikan') }}">Informasi dikecualikan</a></li>
                     
@@ -90,7 +91,7 @@
                     @endforeach
                   </ul>
                 </li>
-                <li><a href="#contact">Hubungi Kami</a></li>
+                <li><a href="{{ url('/#contact') }}">Hubungi Kami</a></li>
               </ul>
               <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>

@@ -189,7 +189,7 @@
   <nav class="mobile-bottom-nav d-lg-none" aria-label="Mobile Navigation">
 
     <!-- Item: Survey -->
-    <a href="#" class="mbn-item">
+    <a href="https://skm.inhukab.go.id/home/ques/27" class="mbn-item">
       <span class="mbn-icon-wrap">
         <i class="fa fa-user"></i>
       </span>
@@ -197,7 +197,7 @@
     </a>
 
     <!-- Item: Ulasan -->
-    <a href="#" class="mbn-item">
+    <a href="{{ url('ulasan') }}" class="mbn-item">
       <span class="mbn-icon-wrap">
         <i class="fa fa-star"></i>
       </span>
@@ -205,7 +205,7 @@
     </a>
 
     <!-- Item: Beranda (CENTER - elevated circle) -->
-    <a href="/" class="mbn-item mbn-center">
+    <a href="{{ url('/') }}" class="mbn-item mbn-center">
       <span class="mbn-center-circle">
         <i class="fa fa-home"></i>
       </span>
@@ -213,7 +213,7 @@
     </a>
 
     <!-- Item: e-Tamu -->
-    <a href="/tamu" class="mbn-item">
+    <a href="{{ url('tamu') }}" class="mbn-item">
       <span class="mbn-icon-wrap">
         <i class="fa fa-desktop"></i>
       </span>
@@ -221,7 +221,7 @@
     </a>
 
     <!-- Item: Login -->
-    <a href="login" class="mbn-item">
+    <a href="{{ url('login') }}" class="mbn-item">
       <span class="mbn-icon-wrap">
         <i class="fa fa-sign-in"></i>
       </span>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\View;
 use App\Models\Berita;
 use App\Models\Unduhan;
 use App\Models\Galeri;
+use App\Models\Slider;
 use App\Models\Page;
 use App\Models\Pengaturan;
 use App\Models\Profil;
@@ -56,9 +57,36 @@ class AppServiceProvider extends ServiceProvider
             $visitorStats    = $visitorService->getStatistik();
             $visitorInfo     = $visitorService->getVisitorInfo();
 
+            // Ticker navbar: ambil nama dari Slider, Berita, Galeri, Unduhan
+            $navTicker = collect();
+
+            Slider::where('status', 'aktif')->latest()->take(3)->get()
+                ->each(fn($item) => $navTicker->push([
+                    'label' => '🖼 ' . $item->nama,
+                    'url'   => url('/'),
+                ]));
+
+            Berita::where('status', 'terverifikasi')->latest()->take(3)->get()
+                ->each(fn($item) => $navTicker->push([
+                    'label' => '📰 ' . $item->nama,
+                    'url'   => route('berita.detail', $item->slug),
+                ]));
+
+            Galeri::where('status', 'terverifikasi')->latest()->take(2)->get()
+                ->each(fn($item) => $navTicker->push([
+                    'label' => '🖼 ' . $item->nama,
+                    'url'   => route('galeri.detail', $item->slug),
+                ]));
+
+            Unduhan::where('status', 'terverifikasi')->latest()->take(2)->get()
+                ->each(fn($item) => $navTicker->push([
+                    'label' => '📥 ' . $item->nama,
+                    'url'   => route('unduhan.detail', $item->slug),
+                ]));
+
             $view->with(compact(
                 'beritaList', 'unduhanList', 'galeriList', 'latestNews', 'popularNews', 'pengaturan',
-                'visitorStats', 'visitorInfo'
+                'visitorStats', 'visitorInfo', 'navTicker'
             ));
         });
 
