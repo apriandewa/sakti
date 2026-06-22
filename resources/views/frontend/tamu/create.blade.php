@@ -252,8 +252,8 @@
                       <i class="bi bi-camera fs-4 text-muted d-block mb-1"></i>
                       <input type="file" name="foto" id="fotoInput"
                             class="form-control form-control-sm @error('foto') is-invalid @enderror"
-                            accept="image/*" capture="environment">
-                      <div class="form-text">Galeri / kamera · Maks. 2MB</div>
+                            accept="image/*">
+                      <div class="form-text" id="fotoHelpText">Galeri / kamera · Maks. 2MB</div>
                     </div>
                     @error('foto')
                       <div class="text-danger small mt-1">{{ $message }}</div>
@@ -410,6 +410,69 @@ function hapusTmp(jenis) {
   if (hiddenInput) hiddenInput.remove();
   if (uploadBox)   uploadBox.removeAttribute('style');
 }
+
+// Client-side image compression
+document.addEventListener('DOMContentLoaded', function() {
+  const fotoInput = document.getElementById('fotoInput');
+  const fotoHelpText = document.getElementById('fotoHelpText');
+
+  if (fotoInput) {
+    fotoInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Jika ukuran file > 2MB (2 * 1024 * 1024 bytes)
+      if (file.size > 2 * 1024 * 1024) {
+        if (fotoHelpText) fotoHelpText.innerText = 'Mengkompresi gambar...';
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(event) {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 1280;
+            const MAX_HEIGHT = 1280;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Kompres menjadi JPEG dengan kualitas 0.7
+            canvas.toBlob(function(blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+              });
+
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(compressedFile);
+              fotoInput.files = dataTransfer.files;
+
+              if (fotoHelpText) fotoHelpText.innerText = 'Galeri / kamera · Maks. 2MB (Berhasil dikompresi otomatis)';
+            }, 'image/jpeg', 0.7);
+          };
+        };
+      }
+    });
+  }
+});
 </script>
 
 @endsection
