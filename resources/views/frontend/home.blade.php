@@ -150,7 +150,7 @@
 
       </div>
       <div class="cta-button text-center mt-3" data-aos="fade-up" data-aos-delay="200">
-        <a href="/statistik" class="btn">
+        <a href="{{url('/statistik')}}" class="btn">
           <span>Statistik Pelayanan Informasi</span>
           <i class="bi bi-arrow-right"></i>
         </a>
@@ -272,7 +272,7 @@
         <div class="stats-grid">
           <div class="row g-4">
             <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="100">
-              <a href="{{ url('/berkala') }}" class="text-decoration-none">
+              <a href="{{ url('/informasi/berkala') }}" class="text-decoration-none">
                 <div class="stat-item featured hover-shadow">
                   <div class="stat-icon">
                     <i class="bi bi-people-fill"></i>
@@ -291,7 +291,7 @@
               </a>
             </div>
             <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="100">
-              <a href="{{ url('/tersedia') }}" class="text-decoration-none">
+              <a href="{{ url('/informasi/tersedia') }}" class="text-decoration-none">
                 <div class="stat-item featured hover-shadow">
                   <div class="stat-icon">
                     <i class="bi bi-people-fill"></i>
@@ -311,39 +311,43 @@
             </div>
 
             <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="300">
-              <div class="stat-item featured">
-                <div class="stat-icon">
-                  <i class="bi bi-award-fill"></i>
-                </div>
-                <div class="stat-content">
-                  <div class="stat-number">
-                    <span data-purecounter-start="0" data-purecounter-end="{{$diberikan}}" data-purecounter-duration="2" class="purecounter"></span>
+              <a href="{{ url('/informasi/sertamerta') }}" class="text-decoration-none">
+                <div class="stat-item featured hover-shadow">
+                  <div class="stat-icon">
+                    <i class="bi bi-award-fill"></i>
                   </div>
-                  <div class="stat-label">Informasi Serta Merta</div>
+                  <div class="stat-content">
+                    <div class="stat-number">
+                      <span data-purecounter-start="0" data-purecounter-end="{{$infosetiapsaat}}" data-purecounter-duration="2" class="purecounter"></span>
+                    </div>
+                    <div class="stat-label">Informasi Serta Merta</div>
+                  </div>
                 </div>
-              </div>
+              </a>
             </div>
 
             <div class="col-xl-3 col-lg-6 col-md-6 col-6" data-aos="fade-up" data-aos-delay="400">
-              <div class="stat-item featured">
-                <div class="stat-icon">
-                  <i class="bi bi-globe"></i>
-                </div>
-                <div class="stat-content">
-                  <div class="stat-number">
-                    <span data-purecounter-start="0" data-purecounter-end="{{$ditolak}}" data-purecounter-duration="2" class="purecounter"></span>
+              <a href="{{ url('/informasi/dikecualikan') }}" class="text-decoration-none">
+                <div class="stat-item featured hover-shadow">
+                  <div class="stat-icon">
+                    <i class="bi bi-globe"></i>
                   </div>
-                  <div class="stat-label">Informasi Dikecualikan</div>
+                  <div class="stat-content">
+                    <div class="stat-number">
+                      <span data-purecounter-start="0" data-purecounter-end="{{$infodikecualikan}}" data-purecounter-duration="2" class="purecounter"></span>
+                    </div>
+                    <div class="stat-label">Informasi Dikecualikan</div>
+                  </div>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </div>
 
       </div>
       <div class="cta-button text-center mt-3" data-aos="fade-up" data-aos-delay="200">
-        <a href="#" class="btn">
-          <span>Statistik Pelayanan Informasi</span>
+        <a href="{{url('/informasi')}}" class="btn">
+          <span>Daftar Informasi Publik</span>
           <i class="bi bi-arrow-right"></i>
         </a>
       </div>

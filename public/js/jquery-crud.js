@@ -236,6 +236,7 @@ $(window.document).on('click', '.delete-file', function (e) {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
             })
                 .then(async (response) => {

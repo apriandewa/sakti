@@ -46,12 +46,11 @@ class FileController extends Controller
     public function deleteFile($id, $filename)
     {
         if ($file=File::find($id)) {
-            if ($file->exists()) {
-                $file->delete();
-                return response()->json(['status'=>TRUE, 'message'=>"File $filename has been deleted"]);
-            }
+            // Kita tetap menghapus record database meskipun file fisik tidak ditemukan
+            $file->delete();
+            return response()->json(['status'=>TRUE, 'message'=>"File $filename has been deleted"]);
         }
-        throw new ModelNotFoundException("File $filename not found", 404);
+        return response()->json(['status'=>FALSE, 'message'=>"File $filename not found"], 404);
     }
 
     public function publicFileStream(Request $request, $code_menu)

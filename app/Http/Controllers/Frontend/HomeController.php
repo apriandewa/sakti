@@ -13,6 +13,7 @@ use App\Models\Unduhan;
 use App\Models\Galeri;
 use App\Models\Page;
 use App\Models\Penghargaan;
+use App\Models\Informasi;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
@@ -43,8 +44,8 @@ class HomeController extends Controller
             }
 
             try {
-                // Set timeout lebih singkat agar tidak menunggu terlalu lama jika API mati
-                $response = Http::timeout(4)->get($url);
+                // Set timeout sedikit lebih lama agar API yang lambat tidak langsung timeout
+                $response = Http::timeout(15)->get($url);
 
                 if ($response->successful()) {
                     $json = $response->json();
@@ -89,6 +90,9 @@ class HomeController extends Controller
             }
         }
 
+        $dbInfotersedia = Informasi::where('tipe', 'TERSEDIA')->where('status', 'DITERIMA')->count();
+        $infotersedia += $dbInfotersedia;
+
         /*
         |--------------------------------------------------------------------------
         | INFORMASI BERKALA
@@ -107,6 +111,17 @@ class HomeController extends Controller
                 $infoberkala += $result;
             }
         }
+
+        $dbInfoberkala = Informasi::where('tipe', 'BERKALA')->where('status', 'DITERIMA')->count();
+        $infoberkala += $dbInfoberkala;
+
+        /*
+        |--------------------------------------------------------------------------
+        | INFORMASI SERTA MERTA & DIKECUALIKAN (INTERNAL DATABASE)
+        |--------------------------------------------------------------------------
+        */
+        $infosetiapsaat = Informasi::where('tipe', 'SERTA MERTA')->where('status', 'DITERIMA')->count();
+        $infodikecualikan = Informasi::where('tipe', 'DIKECUALIKAN')->where('status', 'DITERIMA')->count();
 
         /*
         |--------------------------------------------------------------------------
@@ -139,9 +154,11 @@ class HomeController extends Controller
             'diberikan' => $totalDiberikan,
             'ditolak'   => $totalDitolak,
 
-            // Statistik API
+            // Statistik API & Internal Informasi
             'infotersedia' => $infotersedia,
             'infoberkala'  => $infoberkala,
+            'infosetiapsaat' => $infosetiapsaat,
+            'infodikecualikan' => $infodikecualikan,
         ]);
     }
 }

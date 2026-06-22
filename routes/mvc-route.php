@@ -111,6 +111,13 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		});
 		Route::resource('kategori', 'Kategori\KategoriController');
 		//end-kategori
+		//informasi
+		Route::prefix('informasi')->as('informasi')->group(function () {
+			Route::get('data', 'InformasiController@data');
+			Route::get('delete/{id}', 'InformasiController@delete');
+		});
+		Route::resource('informasi', 'InformasiController');
+		//end-informasi
 		//{{route replacer}} DON'T REMOVE THIS LINE
     });
 });

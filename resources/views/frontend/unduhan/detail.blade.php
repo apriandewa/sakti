@@ -75,16 +75,17 @@
 
               {{-- Daftar Berkas Unduhan --}}
               @php
-                  $berkasFiles = $news->file()->where('alias', 'berkas_unduhan')->get();
+                  $berkasFiles = $news->files->where('alias', 'berkas_unduhan');
               @endphp
 
-              @if($berkasFiles->isNotEmpty())
+              @if($berkasFiles->count())
                   <div class="mt-3">
                       <h6 class="fw-semibold mb-2"><i class="bi bi-paperclip me-1"></i>Berkas Unduhan</h6>
                       <ul class="list-group list-group-flush">
                           @foreach($berkasFiles as $berkas)
                               @php
-                                  $ext = strtolower(pathinfo($berkas->name, PATHINFO_EXTENSION));
+                                  $fileName = $berkas->data['name'] ?? $berkas->name ?? 'Dokumen';
+                                  $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                                   $iconClass = match($ext) {
                                       'pdf'           => 'bi-filetype-pdf text-danger',
                                       'doc', 'docx'   => 'bi-filetype-docx text-primary',
@@ -104,7 +105,7 @@
                                       <div class="d-flex align-items-center gap-2 flex-grow-1">
                                           <i class="bi {{ $iconClass }} fs-4"></i>
                                           <div>
-                                              <div class="fw-medium small">{{ $berkas->name }}</div>
+                                              <div class="fw-medium small">{{ $fileName }}</div>
                                           </div>
                                       </div>
 
@@ -138,7 +139,7 @@
                                           <div class="modal-content">
                                               <div class="modal-header">
                                                   <h5 class="modal-title">
-                                                      <i class="bi bi-filetype-pdf text-danger me-2"></i>{{ $berkas->name }}
+                                                      <i class="bi bi-filetype-pdf text-danger me-2"></i>{{ $fileName }}
                                                   </h5>
                                                   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                               </div>

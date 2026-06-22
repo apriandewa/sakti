@@ -39,9 +39,11 @@ Route::post('/unduhan/{slug}/view/{file}', [UnduhanController::class, 'view'])->
 Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
 Route::get('/galeri/{slug}', [GaleriController::class, 'show'])->name('galeri.detail');
 
-Route::get('/informasi', [InformasiController::class, 'index'])->name('informasi');
-Route::get('/berkala', [InformasiController::class, 'berkala'])->name('informasi.berkala');
-Route::get('/tersedia', [InformasiController::class, 'tersedia'])->name('informasi.tersedia');
+Route::get('/informasi', [InformasiController::class, 'index'])->name('informasi.index');
+Route::get('/informasi/berkala', [InformasiController::class, 'berkala'])->name('informasi.berkala');
+Route::get('/informasi/tersedia', [InformasiController::class, 'tersedia'])->name('informasi.tersedia');
+Route::get('/informasi/sertamerta', [InformasiController::class, 'sertamerta'])->name('informasi.sertamerta');
+Route::get('/informasi/dikecualikan', [InformasiController::class, 'dikecualikan'])->name('informasi.dikecualikan');
 Route::get('/informasi/{slug}', [InformasiController::class, 'show'])->name('informasi.detail');
 
 Route::get('/tamu', [KunjunganController::class, 'create'])->name('kunjungan.create');
@@ -104,6 +106,8 @@ Route::prefix('js')->as('js.')->group(function () {
 Route::post('/admin/berita/kirim/{id}', [BackendBeritaController::class, 'kirim'])->name('berita.kirim');
 Route::post('/admin/galeri/kirim/{id}', [BackendGaleriController::class, 'kirim'])->name('galeri.kirim');
 Route::post('/admin/unduhan/kirim/{id}', [BackendUnduhanController::class, 'kirim'])->name('unduhan.kirim');
+Route::post('/admin/informasi/kirim/{id}', [\App\Http\Controllers\Backend\InformasiController::class, 'kirim'])->name('informasi.kirim');
+Route::post('/admin/informasi/verifikasi/{id}', [\App\Http\Controllers\Backend\InformasiController::class, 'verifikasi'])->name('informasi.verifikasi');
 
 // ===== Auth Routes (Jetstream/Fortify) =====
 require __DIR__ . '/auth.php';

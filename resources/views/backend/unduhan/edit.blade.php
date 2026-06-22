@@ -83,12 +83,11 @@
                     <thead><tr><th>Nama File</th><th class="text-center w-0">Aksi</th></tr></thead>
                     <tbody>
                         @foreach($berkasFiles as $berkas)
-                            <tr>
+                            <tr id="file-row-{{ $berkas->id }}">
                                 <td><i class="fa fa-file-pdf-o text-danger"></i> {{ $berkas->data['name'] ?? $berkas->id }}</td>
                                 <td class="text-center">
-                                    <a href="{{ url($berkas->link_download) }}" target="_blank" class="btn btn-xs btn-primary" title="Unduh"><i class="fa fa-download"></i></a>
                                     <a href="{{ url($berkas->link_stream) }}" target="_blank" class="btn btn-xs btn-info" title="Lihat"><i class="fa fa-eye"></i></a>
-                                    <a href="#delete" class="delete btn btn-xs btn-danger" data-url="{{ url($berkas->link_delete) }}" title="Hapus"><i class="fa fa-trash"></i></a>
+                                    <a href="#delete" class="delete-file btn btn-xs btn-danger" data-id="file-row-{{ $berkas->id }}" data-url="{{ url($berkas->link_delete) }}" data-title="Hapus Berkas" data-message="Apakah Anda yakin ingin menghapus berkas ini?" title="Hapus"><i class="fa fa-trash"></i></a>
                                 </td>
                             </tr>
                         @endforeach

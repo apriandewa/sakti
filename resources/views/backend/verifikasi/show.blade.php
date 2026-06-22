@@ -157,25 +157,24 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label>Berkas Lampiran :</label>
-                        @if(!$data->file->isEmpty())
+                        @php $berkasFiles = $data->files->where('alias', 'berkas_unduhan'); @endphp
+                        @if($berkasFiles->count())
                             <ul>
-                                @foreach($data->file as $file)
-                                    @if($file->type == 'file')
-                                        <li class="row mb-2">
-                                            <div class="col-md-6">
-                                                {{ $file->name }} — File Size: {{ $file->size }}
-                                            </div>
-                                            <div class="col-md-5">
-                                                <a href="{{ $file->link_download }}" class="btn btn-success btn-sm">
-                                                    <i class="fa fa-download"></i> Unduh
-                                                </a>
-                                                |
-                                                <a href="{{ $file->link_stream }}" target="_blank" class="btn btn-info btn-sm">
-                                                    <i class="fa fa-eye"></i> Lihat
-                                                </a>
-                                            </div>
-                                        </li>
-                                    @endif
+                                @foreach($berkasFiles as $file)
+                                    <li class="row mb-2">
+                                        <div class="col-md-6">
+                                            <i class="fa fa-file-pdf-o text-danger"></i> {{ $file->data['name'] ?? $file->id }}
+                                        </div>
+                                        <div class="col-md-5">
+                                            <a href="{{ url($file->link_download) }}" class="btn btn-success btn-sm">
+                                                <i class="fa fa-download"></i> Unduh
+                                            </a>
+                                            |
+                                            <a href="{{ url($file->link_stream) }}" target="_blank" class="btn btn-info btn-sm">
+                                                <i class="fa fa-eye"></i> Lihat
+                                            </a>
+                                        </div>
+                                    </li>
                                 @endforeach
                             </ul>
                         @else

@@ -21,11 +21,11 @@ Route::group([
         Route::post('response', "Question\QuestionController@response");
     });
     Route::resource('question', "Question\QuestionController")->name('index', 'question');
-    //file
     Route::prefix('file')->as('file')->group(function () {
         Route::get('stream/{id}/{name}', "File\FileController@getFile");
         Route::get('download/{id}/{name}', "File\FileController@downloadFile");
         Route::get('delete/{id}/{name}', "File\FileController@deleteFile");
+        Route::delete('delete/{id}/{name}', "File\FileController@deleteFile");
         Route::post('upload-image-editor','File\FileController@handleEditorImageUpload');
     });
     Route::group(['middleware'=>['userRoles']], function () {

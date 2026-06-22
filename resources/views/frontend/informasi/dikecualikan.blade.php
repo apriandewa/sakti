@@ -7,12 +7,12 @@
   <section id="services" class="services section">
 
     <div class="container section-title text-center" data-aos="fade-up">
-      <h2>Daftar Informasi Publik Tersedia Setiap Saat</h2>
+      <h2>Daftar Informasi Publik Dikecualikan</h2>
       <p>Berikut adalah Daftar Informasi Publik dan Informasi Kegiatan PPID Kabupaten Indragiri Hulu</p>
 
       <div class="col-lg-5 col-12 mx-auto">
         {{-- ✅ action pakai route name --}}
-        <form action="{{ route('informasi.tersedia') }}" method="get"
+        <form action="{{ route('informasi.dikecualikan') }}" method="get"
               class="position-relative rounded-pill m-3" role="search">
           <div class="input-group">
             <input
@@ -20,7 +20,7 @@
               type="search"
               class="form-control"
               id="search"
-              placeholder="Cari Informasi Tersedia Disini ..."
+              placeholder="Cari Informasi Dikecualikan Disini ..."
               aria-label="Search"
               value="{{ request('search') }}"
             >
@@ -69,7 +69,7 @@
 
               {{-- Tombol reset jika ada pencarian --}}
               @if(request('search'))
-                <a href="{{ route('informasi.tersedia') }}" class="btn btn-sm btn-outline-secondary">
+                <a href="{{ route('informasi.dikecualikan') }}" class="btn btn-sm btn-outline-secondary">
                   <i class="bi bi-x-circle me-1"></i> Reset
                 </a>
               @endif
@@ -85,11 +85,12 @@
 
           @foreach($apiData as $item)
             @php
-              $tipe      = $item['tipe_label'] ?? 'TERSEDIA';
+              $tipe      = $item['tipe_label'] ?? 'DIKECUALIKAN';
               $badgeClass = match(strtoupper($tipe)) {
                   'BERKALA'      => 'bg-success',
                   'TERSEDIA'     => 'bg-primary',
                   'SETIAP SAAT'  => 'bg-info text-dark',
+                  'SERTA MERTA'  => 'bg-info text-dark',
                   'DIKECUALIKAN' => 'bg-danger',
                   'TRANSPARANSI' => 'bg-warning text-dark',
                   default        => 'bg-secondary',
@@ -98,6 +99,7 @@
                   'BERKALA'      => 'bi-arrow-repeat',
                   'TERSEDIA'     => 'bi-check-circle',
                   'SETIAP SAAT'  => 'bi-clock-history',
+                  'SERTA MERTA'  => 'bi-clock-history',
                   'DIKECUALIKAN' => 'bi-shield-lock',
                   'TRANSPARANSI' => 'bi-currency-dollar',
                   default        => 'bi-globe',
@@ -199,7 +201,7 @@
               @if(request('search'))
                 Tidak ada data yang cocok dengan pencarian
                 <strong>"{{ request('search') }}"</strong>.
-                <br><a href="{{ route('informasi.tersedia') }}" class="btn btn-sm btn-outline-secondary mt-2">
+                <br><a href="{{ route('informasi.dikecualikan') }}" class="btn btn-sm btn-outline-secondary mt-2">
                   <i class="bi bi-arrow-left me-1"></i> Tampilkan Semua
                 </a>
               @else
