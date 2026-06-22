@@ -183,11 +183,20 @@
                     <div class="border rounded-3 p-3 text-center bg-light"
                         id="fotoUploadBox"
                         style="{{ session('foto_tmp') ? 'display:none;' : '' }}border-style:dashed!important">
-                      <i class="bi bi-camera fs-4 text-muted d-block mb-1"></i>
+                      <i class="bi bi-camera fs-4 text-muted d-block mb-2"></i>
+                      <div class="d-flex justify-content-center gap-2 mb-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('fotoInput').setAttribute('capture', 'environment'); document.getElementById('fotoInput').click();">
+                          <i class="bi bi-camera me-1"></i> Kamera
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="document.getElementById('fotoInput').removeAttribute('capture'); document.getElementById('fotoInput').click();">
+                          <i class="bi bi-images me-1"></i> Galeri
+                        </button>
+                      </div>
                       <input type="file" name="foto" id="fotoInput"
-                            class="form-control form-control-sm @error('foto') is-invalid @enderror"
+                            class="form-control form-control-sm d-none @error('foto') is-invalid @enderror"
                             accept="image/*">
-                      <div class="form-text" id="fotoHelpText">Galeri / kamera · Maks. 2MB</div>
+                      <div id="fotoFileName" class="small fw-semibold mt-2 text-primary"></div>
+                      <div class="form-text" id="fotoHelpText">Maks. 2MB</div>
                     </div>
                     @error('foto')
                       <div class="text-danger small mt-1">{{ $message }}</div>
@@ -385,6 +394,9 @@ document.addEventListener('DOMContentLoaded', function() {
     fotoInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
+
+      const fileNameDisplay = document.getElementById('fotoFileName');
+      if (fileNameDisplay) fileNameDisplay.innerText = 'Terpilih: ' + file.name;
 
       // Jika ukuran file > 2MB (2 * 1024 * 1024 bytes)
       if (file.size > 2 * 1024 * 1024) {
