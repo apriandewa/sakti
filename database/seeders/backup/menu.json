@@ -1,20 +1,5 @@
 [
     {
-        "title": "Question",
-        "subtitle": "Frequently Asked Questions",
-        "code": "question",
-        "model": "Faq",
-        "url": "question",
-        "icon": "fa fa-question-circle-o",
-        "type": "backend",
-        "show": false,
-        "active": true,
-        "sort": 4,
-        "coming_soon": 0,
-        "maintenance": 0,
-        "children": []
-    },
-    {
         "title": "Master",
         "subtitle": "Master",
         "code": "master",
@@ -84,36 +69,6 @@
                 "show": true,
                 "active": true,
                 "sort": 4,
-                "coming_soon": 0,
-                "maintenance": 0,
-                "children": []
-            },
-            {
-                "title": "Announcement",
-                "subtitle": "Manage Announcement",
-                "code": "announcement",
-                "model": "Announcement",
-                "url": "announcement",
-                "icon": "fa fa-bullhorn",
-                "type": "backend",
-                "show": true,
-                "active": true,
-                "sort": 5,
-                "coming_soon": 0,
-                "maintenance": 0,
-                "children": []
-            },
-            {
-                "title": "Faq",
-                "subtitle": "Frequently Asked Questions",
-                "code": "faq",
-                "model": "Faq",
-                "url": "faq",
-                "icon": "fa fa-question-circle",
-                "type": "backend",
-                "show": true,
-                "active": true,
-                "sort": 6,
                 "coming_soon": 0,
                 "maintenance": 0,
                 "children": []

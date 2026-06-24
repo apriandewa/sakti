@@ -11,12 +11,12 @@
             <h1>{{ config('master.app.profile.short_name') }}</h1>
             <h2>{{ config('master.app.profile.name') }}</h2>
             <p>Selamat datang di Website Resmi <br>
-                <strong> PPID</strong> Kabupaten Indragiri Hulu</p>
+                <strong>{{ $pengaturan->judul ?? 'Diskominfotik Kabupaten Indragiri Hulu' }}</strong></p>
         </section>
 
         <section class="right" aria-label="Sign in form">
             <img class="header-img"
-                 src="{{ asset(config('master.app.web.template') . '/images/logoppidinhu.png') }}"
+                 src="{{ asset(config('master.app.web.template') . '/images/logodiskominfotik.png') }}"
                  alt="Logo Aplikasi">
             <p class="description">Sign in to continue to {{ config('master.app.profile.short_name') }}</p>
 

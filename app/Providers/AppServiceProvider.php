@@ -14,7 +14,7 @@ use App\Models\Galeri;
 use App\Models\Slider;
 use App\Models\Page;
 use App\Models\Pengaturan;
-use App\Models\Profil;
+
 use App\Services\VisitorService;
 use Carbon\Carbon;
 
@@ -84,15 +84,15 @@ class AppServiceProvider extends ServiceProvider
                     'url'   => route('unduhan.detail', $item->slug),
                 ]));
 
+            $pagemenu = Page::where('status', 'aktif')->where('kategori', 'profil')->orderBy('created_at', 'asc')->get();
+            $saluranmenu = Page::where('status', 'aktif')->where('kategori', 'saluran')->orderBy('created_at', 'asc')->get();
+            $unduhanmenu = Unduhan::select('kategori')->distinct()->pluck('kategori');
+
             $view->with(compact(
                 'beritaList', 'unduhanList', 'galeriList', 'latestNews', 'popularNews', 'pengaturan',
-                'visitorStats', 'visitorInfo', 'navTicker'
+                'visitorStats', 'visitorInfo', 'navTicker', 'pagemenu', 'saluranmenu', 'unduhanmenu'
             ));
         });
-
-        View::share('pagemenu', Page::where('status', 'aktif')->where('kategori', 'profil')->orderBy('created_at', 'asc')->get());
-        View::share('saluranmenu', Page::where('status', 'aktif')->where('kategori', 'saluran')->orderBy('created_at', 'asc')->get());
-        View::share('unduhanmenu', Unduhan::select('kategori')->distinct()->pluck('kategori'));
         
        // Bikin $template bisa dipakai di semua Blade
         View::share('template', config('master.app.web.template'));

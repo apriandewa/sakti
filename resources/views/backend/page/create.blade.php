@@ -21,8 +21,8 @@
                     {!! html()->select('kategori', [
                         'welcome' => 'Welcome',
                         'profil' => 'Profil',
-                        'saluran' => 'Saluran Informasi',
-                        'banner' => 'Banner',
+                        'program' => 'Program Kegiatan',
+                        'bidang' => 'Bidang',
                         'single_page' => 'Single Page',
                         'lainnya' => 'Lainnya'
                     ])->placeholder('Pilih kategori di sini')->class('form-control select2')->id('kategori') !!}

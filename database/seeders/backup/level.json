@@ -31,5 +31,16 @@
             "delete": true,
             "update": true
         }
+    },
+    {
+        "id": 4,
+        "code": "verifikator",
+        "name": "Verifikator",
+        "access": {
+            "read": true,
+            "create": true,
+            "delete": true,
+            "update": true
+        }
     }
 ]

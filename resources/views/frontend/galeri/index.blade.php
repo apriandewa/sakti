@@ -1,83 +1,122 @@
 @extends('frontend.main')
 
-    @section('container')
+@section('container')
+<main class="main">
 
-  
-  <main class="main">
+  <!-- Page Title Section -->
+  <div class="page-title-section">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-2">
+          <li class="breadcrumb-item"><a href="{{ url('/') }}">Beranda</a></li>
+          <li class="breadcrumb-item active text-white" aria-current="page">Galeri</li>
+        </ol>
+      </nav>
+      <h1 class="text-white">{{ $judul ?? 'Galeri Kegiatan' }}</h1>
+      <p class="text-secondary">{{ $subjudul ?? 'Dokumentasi visual program kerja, pelayanan publik, dan pembangunan di Kabupaten Indragiri Hulu.' }}</p>
+    </div>
+  </div>
 
-     <!-- Portfolio Section -->
-    <section id="portfolio" class="portfolio section">
+  <!-- Portfolio Section -->
+  <section id="portfolio" class="section-dark">
+    <div class="container">
 
-      <!-- Section Title -->
-      <div class="container section-title text-center" data-aos="fade-up">
-        <h2>Galeri </h2>
-        <p>Berikut adalah Galeri Kegiatan PPID Kabupaten Indragiri Hulu</p>
-        <div class="col-lg-5 col-12 mx-auto">      
-            <form action="/galeri" method="get"     class="position-relative rounded-pill m-3" role="search">
-              @if (request('kategori'))
-                  <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+      <!-- Search and Filter Panel -->
+      <div class="glass-card mb-5" data-aos="fade-up">
+        <form action="{{ url('galeri') }}" method="get" class="search-form form-cyber">
+          @if (request('kategori'))
+            <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+          @endif
+          <div class="row g-3">
+            <div class="col-lg-8 col-md-7">
+              <input 
+                name="search" 
+                type="search" 
+                class="form-control ps-4" 
+                placeholder="Cari dokumentasi galeri..." 
+                value="{{ request('search') }}"
+                aria-label="Cari Galeri"
+              >
+            </div>
+            <div class="col-lg-4 col-md-5 d-flex gap-2">
+              <button type="submit" class="btn-cyber w-100 justify-content-center">
+                <i class="bi bi-search"></i> Cari Album
+              </button>
+              @if(request('search') || request('kategori'))
+                <a href="{{ url('galeri') }}" class="btn-cyber-outline justify-content-center" title="Reset">
+                  <i class="bi bi-x-lg"></i>
+                </a>
               @endif
-              @if (request('author'))
-                  <input type="hidden" name="author" value="{{ request('author') }}">
-              @endif
-                <div class="input-group input-group">
-                    <input name="search" type="search" class="form-control" id="search" placeholder="Cari Galeri Disini ..."
-                        aria-label="Search" value= {{request('search')}}>
-      
-                    <button type="submit" class="input-group-text bg-primary text-dark border-0 px-3" id="submit">
-                      <i class="bi bi-search"></i>  Cari
-                    </button>
-                </div>
-            </form>
+            </div>
           </div>
+        </form>
+
+        <!-- Active Filter Badge -->
+        @if(request('kategori') || request('search'))
+          <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
+            <span class="text-muted small">Filter Aktif:</span>
+            @if(request('search'))
+              <span class="badge bg-secondary px-3 py-2">Kata Kunci: "{{ request('search') }}"</span>
+            @endif
+            @if(request('kategori'))
+              <span class="badge bg-success px-3 py-2">Kategori: {{ request('kategori') }}</span>
+            @endif
+          </div>
+        @endif
       </div>
-      <!-- End Section Title -->
 
-      <div class="container">
-        <div class="row gy-4">
-          {{-- ================== LIST GALERI ================== --}}
-            @foreach($galeri as $foto)
-              @php
-                  $imgSrc = $foto->getfilebyalias('logo') 
-                      ? url($foto->getfilebyalias('logo')->public_stream) 
-                      : '';
-              @endphp
+      <!-- Portfolio Grid -->
+      <div class="row gy-4" data-aos="fade-up" data-aos-delay="200">
+        @forelse($galeri as $fotoIndex => $foto)
+          @php
+            $imgSrc = $foto->getfilebyalias('logo') 
+              ? url($foto->getfilebyalias('logo')->public_stream) 
+              : '';
+            $categories = explode(',', $foto->kategori);
+            $firstCat = $categories[0] ?? 'default';
+            $galleryGroup = 'gallery-' . strtolower(str_replace(' ', '-', trim($firstCat)));
+          @endphp
 
-              <div class="col-lg-4 col-md-6 portfolio-item isotope-item">
+          <div class="col-lg-4 col-md-6">
+            <div class="portfolio-card">
+              @if($imgSrc)
+                <img src="{{ $imgSrc }}" alt="{{ $foto->nama }}">
+              @else
+                <div class="d-flex align-items-center justify-content-center bg-secondary" style="height: 100%; min-height: 250px;">
+                  <span class="text-muted">Tidak Ada Gambar</span>
+                </div>
+              @endif
+              <div class="portfolio-overlay">
+                <h4>{{ $foto->nama }}</h4>
+                <p>{!! strip_tags(Str::limit($foto->desc, 100)) !!}</p>
+                <div class="portfolio-links">
                   @if($imgSrc)
-                      <img src="{{ $imgSrc }}" class="img-fluid" alt="{{ $foto->nama }}">
-                  @else
-                      <div class="img-fluid d-flex align-items-center justify-content-center" 
-                          style="height:200px;background-color:#f0f0f0;color:#888;">
-                          Tidak ada gambar
-                      </div>
+                    <a href="{{ $imgSrc }}" data-gallery="{{ $galleryGroup }}" class="glightbox" title="{{ $foto->nama }}"><i class="bi bi-zoom-in"></i></a>
                   @endif
-
-                  <div class="portfolio-info">
-                    <h4>
-
-                      <a href="{{ route('galeri.detail', $foto->slug) }}">{{ $foto->nama }}</a>
-                    </h4>    
-                    <p>{!! $foto->desc !!}</p>
-                    <a href="{{ route('galeri.detail', $foto->slug) }}" 
-                      title="More Details" 
-                      class="details-link">
-                      <i class="bi bi-link-45deg"></i>
-                    </a>
-                  </div>
-              </div><!-- End Portfolio Item -->
-            @endforeach
-          {{-- ================== END LIST GALERI ================== --}}
-        </div>
-      </div><!-- End Portfolio Container -->
-
-      <div class="d-flex justify-content-center mt-4" data-aos="fade-up" data-aos-delay="200">
-        {{ $galeri->links() }}
+                  <a href="{{ route('galeri.detail', $foto->slug) }}"><i class="bi bi-link-45deg"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        @empty
+          <div class="col-12 text-center py-5">
+            <div class="glass-card py-5">
+              <i class="bi bi-images fs-1 text-muted mb-3 d-block"></i>
+              <h4 class="text-white">Dokumentasi Tidak Ditemukan</h4>
+              <p class="text-secondary">Maaf, kami tidak menemukan album galeri yang cocok dengan filter pencarian Anda.</p>
+              <a href="{{ url('galeri') }}" class="btn-cyber mt-3">Tampilkan Semua Galeri</a>
+            </div>
+          </div>
+        @endforelse
       </div>
 
-    </section>
-    <!-- /Portfolio Section -->
+      <!-- Pagination -->
+      <div class="d-flex justify-content-center mt-5" data-aos="fade-up">
+        {{ $galeri->appends(request()->input())->links() }}
+      </div>
 
-  </main>
+    </div>
+  </section>
 
+</main>
 @endsection

@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\DB;
 class BeritaController extends Controller
 {
     public function index() {
-       
+        $pengaturan = \App\Models\Pengaturan::first();
         return view('frontend.berita.index', [
-            "title" => "PPID Indragiri Hulu",
-            "judul" => "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
-            "subjudul" => "Website Resmi PPID Kabupaten Indragiri Hulu",
+            "title" => $pengaturan->judul ?? "Diskominfotik Indragiri Hulu",
+            "judul" => $pengaturan->subjudul ?? "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
+            "subjudul" => $pengaturan->deskripsi ?? "Website Resmi Diskominfotik Kabupaten Indragiri Hulu",
             'berita' => Berita::with('user')
             ->where('status', 'TERVERIFIKASI')
             ->latest()
@@ -44,10 +44,12 @@ public function show($slug)
         session()->put($sessionKey, true);
     }
 
+    $pengaturan = \App\Models\Pengaturan::first();
+
     return view('frontend.berita.detail', [
-        "title"    => "Detail Berita",
-        "judul"    => "Berita PPID Kabupaten Indragiri Hulu",
-        "subjudul" => "Detail Berita PPID Kabupaten Indragiri Hulu",
+        "title"    => $pengaturan->judul ?? "Detail Berita",
+        "judul"    => $pengaturan->subjudul ?? "Berita Diskominfotik Kabupaten Indragiri Hulu",
+        "subjudul" => $pengaturan->deskripsi ?? "Detail Berita Diskominfotik Kabupaten Indragiri Hulu",
         "news"     => $berita,
     ]);
 }

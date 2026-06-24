@@ -123,7 +123,6 @@ class NotificationController extends Controller
     {
         try {
             $response['sidebar_notification'] = [
-                'announcement' => 0,
                 'user' => 0,
                 'level' => 0
             ];

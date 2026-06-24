@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\DB;
 class UlasanController extends Controller
 {
     public function create() {
-       
+        $pengaturan = \App\Models\Pengaturan::first();
         return view('frontend.ulasan.create', [
-            "title" => "PPID Indragiri Hulu",
-            "judul" => "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
-            "subjudul" => "Website Resmi PPID Kabupaten Indragiri Hulu",
+            "title" => $pengaturan->judul ?? "Diskominfotik Indragiri Hulu",
+            "judul" => $pengaturan->subjudul ?? "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
+            "subjudul" => $pengaturan->deskripsi ?? "Website Resmi Diskominfotik Kabupaten Indragiri Hulu",
                
         ]);
     }
@@ -110,7 +110,7 @@ class UlasanController extends Controller
         }
 
         return redirect()->route('ulasan.create')
-            ->with('success', 'Terima kasih sudah memberikan ulasan ke PPID Kabupaten Indragiri Hulu, Data Anda telah berhasil dikirim.');
+            ->with('success', 'Terima kasih sudah memberikan ulasan ke Diskominfotik Kabupaten Indragiri Hulu, Data Anda telah berhasil dikirim.');
     }
 
 

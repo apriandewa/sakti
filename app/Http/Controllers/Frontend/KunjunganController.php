@@ -14,10 +14,11 @@ class KunjunganController extends Controller
     // ── Halaman utama (daftar tamu yang disetujui) ────────────────────────────
     public function index()
     {
+        $pengaturan = \App\Models\Pengaturan::first();
         return view('frontend.page.index', [
-            'title'    => 'PPID Indragiri Hulu',
-            'judul'    => 'Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu',
-            'subjudul' => 'Website Resmi PPID Kabupaten Indragiri Hulu',
+            'title'    => $pengaturan->judul ?? 'Diskominfotik Indragiri Hulu',
+            'judul'    => $pengaturan->subjudul ?? 'Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu',
+            'subjudul' => $pengaturan->deskripsi ?? 'Website Resmi Diskominfotik Kabupaten Indragiri Hulu',
             'tamu'     => Tamu::where('status', 'disetujui')
                               ->orderBy('tanggal_kunjungan', 'desc')
                               ->paginate(12)
@@ -38,10 +39,11 @@ class KunjunganController extends Controller
                         ->orderBy('nama')
                         ->get();
 
+        $pengaturan = \App\Models\Pengaturan::first();
         return view('frontend.tamu.create', [
-            'title'     => 'PPID Indragiri Hulu',
-            'judul'     => 'Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu',
-            'subjudul'  => 'Form Pengisian Buku Tamu PPID Kabupaten Indragiri Hulu',
+            'title'     => $pengaturan->judul ?? 'Diskominfotik Indragiri Hulu',
+            'judul'     => $pengaturan->subjudul ?? 'Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu',
+            'subjudul'  => $pengaturan->deskripsi ?? 'Form Pengisian Buku Tamu Diskominfotik Kabupaten Indragiri Hulu',
             'pekerjaan' => $pekerjaan,
             'keperluan' => $keperluan,
         ]);
@@ -199,6 +201,6 @@ class KunjunganController extends Controller
         ]);
 
         return redirect()->route('kunjungan.create')
-            ->with('success', 'Terima kasih sudah datang ke PPID Kabupaten Indragiri Hulu, Data Anda telah berhasil dikirim.');
+            ->with('success', 'Terima kasih sudah datang ke Diskominfotik Kabupaten Indragiri Hulu, Data Anda telah berhasil dikirim.');
     }
 }

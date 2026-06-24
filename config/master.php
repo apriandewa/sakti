@@ -9,10 +9,10 @@
 return [
     'app'=>[
         'profile'=>[
-            'name'=>'PPID Kabupaten Indragiri Hulu', // Your application name
-            'short_name'=>'PPID Inhu', // Short name for your application
-            'description'=>'Website Resmi PPID Kabupaten Indragiri Hulu', // Description of your application
-            'keywords'=>'PPID, Indragiri Hulu, Website Resmi, Informasi Publik', // Keywords for your application
+            'name'=>'Diskominfotik Kabupaten Indragiri Hulu', // Your application name
+            'short_name'=>'Diskominfotik Inhu', // Short name for your application
+            'description'=>'Website Resmi Diskominfotik Kabupaten Indragiri Hulu', // Description of your application
+            'keywords'=>'Diskominfotik, Indragiri Hulu, Website Resmi, Informasi Publik', // Keywords for your application
             'author'=>'@arwahyupradana', // Your name or company
             'version'=>'1.0.1', // major.minor.patch
             'laravel'=>'12', // Laravel version
@@ -34,8 +34,8 @@ return [
         'web'=>[
             'template'=>'eduadmin', // template for frontend view (default: eduadmin)
             'icon'=>'',
-            'logo_light'=>'/images/logoppidinhu.png',
-            'logo_dark'=>'/images/logoppidinhu.png',
+            'logo_light'=>'/images/logodiskominfotik.png',
+            'logo_dark'=>'/images/logodiskominfotik.png',
             'favicon'=>'/images/logoppidinhu.jpg',
             'background'=>'/images/auth-bg/bg-1.jpg',
         ],

@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\Storage;
 class UnduhanController extends Controller
 {
     public function index() {
+        $pengaturan = \App\Models\Pengaturan::first();
         return view('frontend.unduhan.index', [
-            "title" => "PPID Indragiri Hulu",
-            "judul" => "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
-            "subjudul" => "Website Resmi PPID Kabupaten Indragiri Hulu",
+            "title" => $pengaturan->judul ?? "Diskominfotik Indragiri Hulu",
+            "judul" => $pengaturan->subjudul ?? "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
+            "subjudul" => $pengaturan->deskripsi ?? "Website Resmi Diskominfotik Kabupaten Indragiri Hulu",
             'unduhan' => Unduhan::where('status', 'TERVERIFIKASI')
                 ->orderBy('created_at', 'desc')
                 ->filter(request(['search', 'kategori']))
@@ -31,10 +32,11 @@ class UnduhanController extends Controller
         $Unduhan->view = (int) $Unduhan->view + 1;
         $Unduhan->save();
 
+        $pengaturan = \App\Models\Pengaturan::first();
         return view('frontend.unduhan.detail', [
-            "title"    => "Detail Unduhan",
-            "judul"    => "Unduhan PPID Kabupaten Indragiri Hulu",
-            "subjudul" => "Detail Unduhan PPID Kabupaten Indragiri Hulu",
+            "title"    => $pengaturan->judul ?? "Detail Unduhan",
+            "judul"    => $pengaturan->subjudul ?? "Unduhan Diskominfotik Kabupaten Indragiri Hulu",
+            "subjudul" => $pengaturan->deskripsi ?? "Detail Unduhan Diskominfotik Kabupaten Indragiri Hulu",
             'news'     => $Unduhan,
         ]);
     }

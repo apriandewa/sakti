@@ -148,7 +148,6 @@
             
             </div>
 
-
                     @include('backend.main.menu.announcement')
                 </div>
             </section>

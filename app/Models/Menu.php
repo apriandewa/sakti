@@ -31,7 +31,6 @@ class Menu extends Model
     {
         return $this->hasMany(Menu::class, 'parent_id')->sort();
     }
-
     public function announcement() : object
     {
         return $this->hasMany(Announcement::class, 'menu_id')->whereDate('end', '>=', date('Y-m-d'))->orderBy('start', 'desc');

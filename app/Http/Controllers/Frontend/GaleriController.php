@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 class GaleriController extends Controller
 {
     public function index() {
-       
+        $pengaturan = \App\Models\Pengaturan::first();
         return view('frontend.galeri.index', [
-            "title" => "PPID Indragiri Hulu",
-            "judul" => "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
-            "subjudul" => "Website Resmi PPID Kabupaten Indragiri Hulu",
+            "title" => $pengaturan->judul ?? "Diskominfotik Indragiri Hulu",
+            "judul" => $pengaturan->subjudul ?? "Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu",
+            "subjudul" => $pengaturan->deskripsi ?? "Website Resmi Diskominfotik Kabupaten Indragiri Hulu",
             'galeri' => Galeri::where('status', 'TERVERIFIKASI')->orderBy('created_at', 'desc')->filter(request(['search', 'kategori']))->paginate(12)->withQueryString(),
            
         ]);
@@ -23,11 +23,11 @@ class GaleriController extends Controller
     {
 
         $Galeri = Galeri::where('slug', $slug)->where('status', 'TERVERIFIKASI')->first();
-        
+        $pengaturan = \App\Models\Pengaturan::first();
             return view('frontend.galeri.detail', [
-            "title" => "Detail Galeri",
-            "judul" => "Galeri PPID Kabupaten Indragiri Hulu",
-            "subjudul" => "Detail Galeri PPID Kabupaten Indragiri Hulu",
+            "title" => $pengaturan->judul ?? "Detail Galeri",
+            "judul" => $pengaturan->subjudul ?? "Galeri Diskominfotik Kabupaten Indragiri Hulu",
+            "subjudul" => $pengaturan->deskripsi ?? "Detail Galeri Diskominfotik Kabupaten Indragiri Hulu",
             'news' => $Galeri,
             ]);
 

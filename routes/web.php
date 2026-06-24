@@ -7,9 +7,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\UnduhanController;
 use App\Http\Controllers\Frontend\GaleriController;
-use App\Http\Controllers\Frontend\InformasiController;
-use App\Http\Controllers\Frontend\PresensiController;
-use App\Http\Controllers\Frontend\PegawaiController;
+
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\KunjunganController;
 use App\Http\Controllers\Frontend\UlasanController;
@@ -39,12 +37,7 @@ Route::post('/unduhan/{slug}/view/{file}', [UnduhanController::class, 'view'])->
 Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
 Route::get('/galeri/{slug}', [GaleriController::class, 'show'])->name('galeri.detail');
 
-Route::get('/informasi', [InformasiController::class, 'index'])->name('informasi.index');
-Route::get('/informasi/berkala', [InformasiController::class, 'berkala'])->name('informasi.berkala');
-Route::get('/informasi/tersedia', [InformasiController::class, 'tersedia'])->name('informasi.tersedia');
-Route::get('/informasi/sertamerta', [InformasiController::class, 'sertamerta'])->name('informasi.sertamerta');
-Route::get('/informasi/dikecualikan', [InformasiController::class, 'dikecualikan'])->name('informasi.dikecualikan');
-Route::get('/informasi/{slug}', [InformasiController::class, 'show'])->name('informasi.detail');
+
 
 Route::get('/tamu', [KunjunganController::class, 'create'])->name('kunjungan.create');
 Route::post('/tamu', [KunjunganController::class, 'store'])->name('kunjungan.store');
@@ -53,19 +46,10 @@ Route::get('/tamu/{slug}', [KunjunganController::class, 'show'])->name('kunjunga
 Route::get('/ulasan', [UlasanController::class, 'create'])->name('ulasan.create');
 Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
 
-Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi');
-
-Route::prefix('presensi')->group(function () {
-    Route::get('/detail/{nip}', [PresensiController::class, 'detail'])->name('presensi.detail');
-    Route::get('/profil/{nip}', [PresensiController::class, 'profil'])->name('presensi.profil');
-});
-
-Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai');
-Route::get('/kantor', [PegawaiController::class, 'kantor'])->name('kantor');
-Route::get('/kehadiran', [PegawaiController::class, 'kehadiran'])->name('kehadiran');
 
 
-Route::get('/statistik', [InformasiController::class, 'statistik'])->name('informasi.statistik');
+
+
 
 Route::get('/page', [PageController::class, 'index'])->name('page');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.detail');
@@ -106,8 +90,7 @@ Route::prefix('js')->as('js.')->group(function () {
 Route::post('/admin/berita/kirim/{id}', [BackendBeritaController::class, 'kirim'])->name('berita.kirim');
 Route::post('/admin/galeri/kirim/{id}', [BackendGaleriController::class, 'kirim'])->name('galeri.kirim');
 Route::post('/admin/unduhan/kirim/{id}', [BackendUnduhanController::class, 'kirim'])->name('unduhan.kirim');
-Route::post('/admin/informasi/kirim/{id}', [\App\Http\Controllers\Backend\InformasiController::class, 'kirim'])->name('informasi.kirim');
-Route::post('/admin/informasi/verifikasi/{id}', [\App\Http\Controllers\Backend\InformasiController::class, 'verifikasi'])->name('informasi.verifikasi');
+
 
 // ===== Auth Routes (Jetstream/Fortify) =====
 require __DIR__ . '/auth.php';

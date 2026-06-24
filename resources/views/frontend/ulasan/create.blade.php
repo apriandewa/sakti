@@ -1,22 +1,30 @@
 @extends('frontend.main')
 
 @section('container')
-
 <main class="main">
 
-  <section id="ulasan" class="service-details section">
-
-    <div class="container section-title text-center" data-aos="fade-up">
-      <h2>Ulasan</h2>
-      <p>Berikut adalah Ulasan dan Umpan Balik dari masyarakat untuk PPID Kabupaten Indragiri Hulu</p>
+  <!-- Page Title Section -->
+  <div class="page-title-section">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-2">
+          <li class="breadcrumb-item"><a href="{{ url('/') }}">Beranda</a></li>
+          <li class="breadcrumb-item active text-white" aria-current="page">Ulasan</li>
+        </ol>
+      </nav>
+      <h1 class="text-white">{{ $judul ?? 'Ulasan & Umpan Balik' }}</h1>
+      <p class="text-secondary">{{ $subjudul ?? 'Kirimkan apresiasi, saran, dan masukan Anda demi meningkatkan kualitas pelayanan informasi kami.' }}</p>
     </div>
+  </div>
 
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
+  <section id="ulasan" class="section-dark">
+    <div class="container">
       <div class="row gy-4">
 
+        <!-- Form Column -->
         <div class="col-lg-8" data-aos="fade-up" data-aos-delay="150">
 
-          {{-- Alert sukses --}}
+          <!-- Alert success -->
           @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
               <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
@@ -24,7 +32,7 @@
             </div>
           @endif
 
-          {{-- Alert error --}}
+          <!-- Alert error -->
           @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" role="alert">
               <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -38,66 +46,53 @@
             </div>
           @endif
 
-          {{-- ╔══════════════════════ CARD FORM ══════════════════════╗ --}}
-          <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-
-            {{-- Header card --}}
-            <div class="card-header text-white d-flex align-items-center gap-2 py-3 px-4"
-                 style="background-color: var(--heading-color);">
-              <div class="rounded-circle d-flex align-items-center justify-content-center"
-                   style="width:40px;height:40px;background:rgba(255,255,255,0.2);">
+          <!-- Glass Form Card -->
+          <div class="glass-card p-0 overflow-hidden">
+            
+            <!-- Card Header -->
+            <div class="d-flex align-items-center gap-3 py-3 px-4 border-bottom border-secondary" style="background: rgba(5, 150, 105, 0.15);">
+              <div class="rounded-circle d-flex align-items-center justify-content-center bg-success text-white" style="width: 44px; height: 44px; box-shadow: 0 0 10px var(--brand-green-glow);">
                 <i class="bi bi-journal-text fs-5"></i>
               </div>
               <div>
-                <h5 class="mb-0 fs-5 fw-semibold opacity-75 text-white">Isi Ulasan</h5>
-                <small class="opacity-75">Silakan lengkapi data ulasan Anda</small>
+                <h5 class="mb-0 text-white fw-bold">Isi Ulasan</h5>
+                <small class="text-secondary">Silakan lengkapi data ulasan Anda</small>
               </div>
             </div>
 
-            {{-- Body card --}}
-            <div class="card-body p-4">
-
-              <form action="{{ route('ulasan.store') }}" method="POST"
-                    enctype="multipart/form-data" id="formUlasan" novalidate autocomplete="off">
+            <!-- Card Body -->
+            <div class="p-4">
+              <form action="{{ route('ulasan.store') }}" method="POST" enctype="multipart/form-data" id="formUlasan" novalidate autocomplete="off" class="form-cyber">
                 @csrf
 
-                {{-- ── Seksi: Data Diri ──────────────────────────── --}}
+                <!-- Section: Data Diri -->
                 <div class="d-flex align-items-center gap-2 mb-3 mt-1">
-                  <i class="bi bi-person-fill text-secondary"></i>
+                  <i class="bi bi-person-fill text-success"></i>
                   <span class="small fw-semibold text-uppercase text-secondary ls-1">Data Diri</span>
-                  <hr class="flex-grow-1 my-0">
+                  <hr class="flex-grow-1 my-0 border-secondary">
                 </div>
 
                 <div class="row g-3 mb-3">
                   <div class="col-sm-7">
-                    <label class="form-label fw-semibold small">
-                      Nama Lengkap <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" name="nama"
-                           class="form-control form-control-sm @error('nama') is-invalid @enderror"
-                           placeholder="Masukkan nama lengkap Anda"
-                           value="{{ old('nama') }}" required>
+                    <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" placeholder="Masukkan nama lengkap Anda" value="{{ old('nama') }}" required>
                     @error('nama') <div class="invalid-feedback">{{ $message }}</div> @enderror
                   </div>
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label fw-semibold small">desc / Kesan &amp; Saran</label>
-                  <textarea name="desc" id="descInput" rows="4" maxlength="1000"
-                            class="form-control form-control-sm @error('desc') is-invalid @enderror"
-                            placeholder="Tuliskan desc, kesan, atau saran Anda...">{{ old('desc') }}</textarea>
+                  <label class="form-label">Kesan & Saran</label>
+                  <textarea name="desc" id="descInput" rows="4" maxlength="1000" class="form-control @error('desc') is-invalid @enderror" placeholder="Tuliskan kesan, pesan, atau saran Anda...">{{ old('desc') }}</textarea>
                   <div class="text-end mt-1">
                     <small class="text-muted" id="descCount">0 / 1000</small>
                   </div>
                   @error('desc') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
-                {{-- ── Seksi: Keterangan (Rating) ────────────────────── --}}
+                <!-- Section: Penilaian -->
                 <div class="mb-4 mt-2">
-                  <label class="form-label fw-semibold small">
-                    Keterangan (Penilaian) <span class="text-danger">*</span>
-                  </label>
-                  <div class="d-flex align-items-center gap-3">
+                  <label class="form-label d-block">Penilaian Anda <span class="text-danger">*</span></label>
+                  <div class="d-flex align-items-center gap-3 flex-wrap">
                     <div class="star-rating d-flex gap-2" id="starRating">
                       <i class="bi bi-star star-icon" data-value="1" title="Buruk"></i>
                       <i class="bi bi-star star-icon" data-value="2" title="Kurang Baik"></i>
@@ -105,111 +100,77 @@
                       <i class="bi bi-star star-icon" data-value="4" title="Baik"></i>
                       <i class="bi bi-star star-icon" data-value="5" title="Sangat Baik"></i>
                     </div>
-                    <span id="ratingText" class="badge rounded-pill bg-light text-secondary border px-3 py-2" style="transition: all 0.3s; min-width: 100px; text-align: center;">Belum Dinilai</span>
+                    <span id="ratingText" class="badge rounded-pill bg-dark text-secondary border border-secondary px-3 py-2" style="transition: all 0.3s; min-width: 100px; text-align: center;">Belum Dinilai</span>
                   </div>
                   <input type="hidden" name="keterangan" id="keteranganInput" value="{{ old('keterangan') }}">
-                  @error('keterangan') <div class="invalid-feedback d-block mt-2">{{ $message }}</div> @enderror
+                  @error('keterangan') <div class="text-danger small mt-2 d-block">{{ $message }}</div> @enderror
                 </div>
 
-                <style>
-                  .star-rating .star-icon {
-                    font-size: 2.2rem;
-                    color: #e4e5e9; /* redup / dim */
-                    cursor: pointer;
-                    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
-                  }
-                  .star-rating .star-icon:hover {
-                    transform: scale(1.15);
-                  }
-                  .star-rating .star-icon.active {
-                    color: #ffc107; /* kuning bercahaya */
-                    text-shadow: 0 0 15px rgba(255, 193, 7, 0.6);
-                  }
-                </style>
-
-              {{-- ── Seksi: Lampiran ───────────────────────────── --}}
+                <!-- Section: Lampiran -->
                 <div class="d-flex align-items-center gap-2 mb-3 mt-4">
-                  <i class="bi bi-paperclip text-secondary"></i>
+                  <i class="bi bi-paperclip text-success"></i>
                   <span class="small fw-semibold text-uppercase text-secondary">Lampiran</span>
-                  <hr class="flex-grow-1 my-0">
+                  <hr class="flex-grow-1 my-0 border-secondary">
                 </div>
 
                 <div class="row g-3 mb-3">
-
-                  {{-- ── Foto Wajah ── --}}
+                  <!-- Foto Diri -->
                   <div class="col-sm-6">
-                    <label class="form-label fw-semibold small">
-                      Foto Wajah / Diri
-                      <span class="fw-normal text-muted">(opsional)</span>
-                    </label>
+                    <label class="form-label">Foto Wajah / Diri <span class="fw-normal text-muted">(opsional)</span></label>
 
                     @if (session('foto_tmp'))
-                      {{-- Preview file sebelumnya --}}
                       <input type="hidden" name="foto_tmp" value="{{ session('foto_tmp') }}">
-                      <div class="alert alert-info py-2 px-3 mb-2 d-flex align-items-center gap-2 rounded-3"
-                          id="fotoPreviewBox">
+                      <div class="alert alert-info py-2 px-3 mb-2 d-flex align-items-center gap-2 rounded-3" id="fotoPreviewBox" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.2);">
                         @php
                           $fotoMime = session('foto_tmp_mime', '');
                           $fotoIsImg = str_starts_with($fotoMime, 'image/');
                         @endphp
                         @if ($fotoIsImg)
-                          <img src="{{ Storage::disk('public')->url(session('foto_tmp')) }}"
-                              alt="preview foto"
-                              class="rounded"
-                              style="width:48px;height:48px;object-fit:cover;border:2px solid #0dcaf0;">
+                          <img src="{{ Storage::disk('public')->url(session('foto_tmp')) }}" alt="preview foto" class="rounded" style="width:48px;height:48px;object-fit:cover;border:2px solid var(--accent-color);">
                         @else
-                          <div class="rounded d-flex align-items-center justify-content-center bg-white border"
-                              style="width:48px;height:48px;min-width:48px;">
+                          <div class="rounded d-flex align-items-center justify-content-center bg-white border" style="width:48px;height:48px;min-width:48px;">
                             <i class="bi bi-image fs-4 text-info"></i>
                           </div>
                         @endif
                         <div class="flex-grow-1 overflow-hidden">
-                          <div class="small fw-semibold text-truncate">
+                          <div class="small fw-semibold text-truncate text-white">
                             {{ session('foto_tmp_name', 'foto-sebelumnya') }}
                           </div>
                           <div class="text-muted" style="font-size:11px">
                             <i class="bi bi-info-circle me-1"></i>File tersimpan sementara
                           </div>
                         </div>
-                        <button type="button"
-                                class="btn btn-sm btn-outline-danger py-0 px-1 flex-shrink-0"
-                                onclick="hapusTmp('foto')"
-                                title="Hapus dan upload ulang">
+                        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1 flex-shrink-0" onclick="hapusTmp('foto')" title="Hapus dan upload ulang">
                           <i class="bi bi-x-lg"></i>
                         </button>
                       </div>
                     @endif
 
-                    <div class="border rounded-3 p-3 text-center bg-light"
-                        id="fotoUploadBox"
-                        style="{{ session('foto_tmp') ? 'display:none;' : '' }}border-style:dashed!important">
-                      <i class="bi bi-camera fs-4 text-muted d-block mb-2"></i>
+                    <div class="border rounded-3 p-3 text-center bg-dark" id="fotoUploadBox" style="{{ session('foto_tmp') ? 'display:none;' : '' }} border-style:dashed!important; border-color: var(--glass-border) !important;">
+                      <i class="bi bi-camera fs-3 text-muted d-block mb-2"></i>
                       <div class="d-flex justify-content-center gap-2 mb-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('fotoInput').setAttribute('capture', 'environment'); document.getElementById('fotoInput').click();">
+                        <button type="button" class="btn btn-sm btn-cyber" onclick="document.getElementById('fotoInput').setAttribute('capture', 'environment'); document.getElementById('fotoInput').click();">
                           <i class="bi bi-camera me-1"></i> Kamera
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="document.getElementById('fotoInput').removeAttribute('capture'); document.getElementById('fotoInput').click();">
+                        <button type="button" class="btn btn-sm btn-cyber-outline" onclick="document.getElementById('fotoInput').removeAttribute('capture'); document.getElementById('fotoInput').click();">
                           <i class="bi bi-images me-1"></i> Galeri
                         </button>
                       </div>
-                      <input type="file" name="foto" id="fotoInput"
-                            class="form-control form-control-sm d-none @error('foto') is-invalid @enderror"
-                            accept="image/*">
-                      <div id="fotoFileName" class="small fw-semibold mt-2 text-primary"></div>
-                      <div class="form-text" id="fotoHelpText">Maks. 2MB</div>
+                      <input type="file" name="foto" id="fotoInput" class="form-control d-none @error('foto') is-invalid @enderror" accept="image/*">
+                      <div id="fotoFileName" class="small fw-semibold mt-2 text-success"></div>
+                      <div class="form-text text-muted" id="fotoHelpText">Maks. 2MB</div>
                     </div>
                     @error('foto')
                       <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
                   </div>
-
                 </div>
 
-                {{-- ── Seksi: Verifikasi (Captcha) ───────────────── --}}
+                <!-- Section: Verifikasi -->
                 <div class="d-flex align-items-center gap-2 mb-3 mt-4">
-                  <i class="bi bi-shield-check text-secondary"></i>
+                  <i class="bi bi-shield-check text-success"></i>
                   <span class="small fw-semibold text-uppercase text-secondary">Verifikasi</span>
-                  <hr class="flex-grow-1 my-0">
+                  <hr class="flex-grow-1 my-0 border-secondary">
                 </div>
 
                 <div class="mb-2">
@@ -219,15 +180,14 @@
               </form>
             </div>
 
-            {{-- Footer card --}}
-            <div class="card-footer bg-light d-flex justify-content-between align-items-center px-4 py-3">
-              <small class="text-muted"><span class="text-danger">*</span> Wajib diisi</small>
+            <!-- Card Footer -->
+            <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top border-secondary" style="background: rgba(15, 23, 42, 0.4);">
+              <small class="text-secondary"><span class="text-danger">*</span> Wajib diisi</small>
               <div class="d-flex gap-2">
-                <button type="reset" form="formUlasan" class="btn btn-sm btn-outline-secondary">
+                <button type="reset" form="formUlasan" class="btn-cyber-outline" style="font-size: 0.85rem; padding: 6px 16px;">
                   <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
                 </button>
-                <button type="submit" form="formUlasan" class="btn btn-sm px-4" id="submitBtn"
-                        style="background-color: var(--accent-color); border-color: var(--accent-color); color:#fff;">
+                <button type="submit" form="formUlasan" class="btn-cyber" id="submitBtn" style="font-size: 0.85rem; padding: 6px 20px;">
                   <i class="bi bi-send me-1"></i>
                   <span id="submitLabel">Kirim Ulasan</span>
                 </button>
@@ -235,18 +195,33 @@
             </div>
 
           </div>
-          {{-- ╚══════════════════════ /CARD FORM ═════════════════════╝ --}}
 
-        </div>{{-- /col form --}}
+        </div>
 
+        <!-- Sidebar Column -->
         @include('frontend.partials.sidebar')
 
       </div>
     </div>
-
   </section>
 
 </main>
+
+<style>
+  .star-rating .star-icon {
+    font-size: 2.2rem;
+    color: #334155; /* dark grey star fill */
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+  }
+  .star-rating .star-icon:hover {
+    transform: scale(1.15);
+  }
+  .star-rating .star-icon.active {
+    color: #ffc107; /* yellow active */
+    text-shadow: 0 0 15px rgba(255, 193, 7, 0.6);
+  }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -309,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(() => ratingText.style.transform = 'scale(1)', 200);
     } else {
       ratingText.textContent = 'Belum Dinilai';
-      ratingText.className = 'badge rounded-pill bg-light text-secondary border px-3 py-2';
+      ratingText.className = 'badge rounded-pill bg-dark text-secondary border border-secondary px-3 py-2';
     }
   }
 
@@ -359,8 +334,10 @@ document.addEventListener('DOMContentLoaded', function () {
         showCancelButton: true,
         confirmButtonText: 'Ya, Kirim',
         cancelButtonText: 'Batal',
-        confirmButtonColor: '#0d6efd',
-        cancelButtonColor: '#6c757d',
+        confirmButtonColor: '#059669',
+        cancelButtonColor: '#475569',
+        background: '#0b1528',
+        color: '#fff'
       }).then((result) => {
         if (result.isConfirmed) {
           btn.disabled = true;
@@ -374,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script>
-  // Hapus preview tmp dan tampilkan kembali input file
+// Hapus preview tmp dan tampilkan kembali input file
 function hapusTmp(jenis) {
   const previewBox  = document.getElementById(jenis + 'PreviewBox');
   const uploadBox   = document.getElementById(jenis + 'UploadBox');
@@ -451,5 +428,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-
 @endsection

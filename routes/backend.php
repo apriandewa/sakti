@@ -8,19 +8,13 @@ Route::group([
     Route::resource('dashboard', "Dashboard\DashboardController")->name('index', 'dashboard');
     Route::get('/list-menu', "Menu\MenuController@listMenu")->name('menu.list-menu');
     Route::get('announcement-detail/{id}/{slug}', "Announcement\AnnouncementController@detail")->name('announcement');
+
     Route::get('sidebar-notification', 'Notification\NotificationController@getSideBarNotification');
     Route::get('get-notification', 'Notification\NotificationController@getNotification');
     Route::get('clear-notification', 'Notification\NotificationController@markAsRead');
     Route::post('logout','Auth\AuthController@logout')->name('logout');
     //end public route
-    //question
-    Route::prefix('question')->as('question')->group(function () {
-        Route::get('data', "Question\QuestionController@data");
-        Route::get('page/{page}', "Question\QuestionController@page");
-        Route::get('viewer', "Question\QuestionController@updateViewer");
-        Route::post('response', "Question\QuestionController@response");
-    });
-    Route::resource('question', "Question\QuestionController")->name('index', 'question');
+
     Route::prefix('file')->as('file')->group(function () {
         Route::get('stream/{id}/{name}', "File\FileController@getFile");
         Route::get('download/{id}/{name}', "File\FileController@downloadFile");
@@ -72,13 +66,7 @@ Route::group([
         });
         Route::resource('access-menu', "AccessMenu\AccessMenuController");
         //end-access-menu
-        //faq
-        Route::prefix('faq')->as('faq')->group(function () {
-            Route::get('data', "Faq\FaqController@data");
-            Route::get('delete/{id}', "Faq\FaqController@delete");
-        });
-        Route::resource('faq', "Faq\FaqController");
-        //end-faq
+
     	//announcement
 		Route::prefix('announcement')->as('announcement')->group(function () {
 			Route::get('data', 'Announcement\AnnouncementController@data');
@@ -86,6 +74,7 @@ Route::group([
 		});
 		Route::resource('announcement', 'Announcement\AnnouncementController');
 		//end-announcement
+
         //notification
 		Route::prefix('notification')->as('notification')->group(function () {
 			Route::get('data', 'Notification\NotificationController@data');

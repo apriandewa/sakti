@@ -1,149 +1,132 @@
-<div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+<div class="col-lg-4 sidebar d-flex flex-column gap-4" data-aos="fade-up" data-aos-delay="300">
 
-              <div class="service-box">
-                <div class="services-list"> 
-                  <h4>Pencarian</h4>
-                    <div class="col-12 mx-auto">      
-                        <form action="/berita" method="get"     class="position-relative rounded-pill m-3" role="search">
-                          @if (request('kategori'))
-                              <input type="hidden" name="kategori" value="{{ request('kategori') }}">
-                          @endif
-                          @if (request('author'))
-                              <input type="hidden" name="author" value="{{ request('author') }}">
-                          @endif
-                            <div class="input-group input-group">
-                                <input name="search" type="search" class="form-control" id="search" placeholder="Cari Berita Disini ..."
-                                    aria-label="Search" value= {{request('search')}}>
-                  
-                                <button type="submit" class="input-group-text bg-primary text-dark border-0 px-3" id="submit">
-                                  <i class="bi bi-search"></i>  Cari
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-              </div>
-              <!-- End Services List -->
+  <!-- Widget: Search -->
+  <div class="glass-card">
+    <h4 class="sidebar-title">Pencarian Berita</h4>
+    <form action="{{ url('berita') }}" method="get" class="search-form form-cyber mt-3">
+      @if (request('kategori'))
+        <input type="hidden" name="kategori" value="{{ request('kategori') }}">
+      @endif
+      @if (request('author'))
+        <input type="hidden" name="author" value="{{ request('author') }}">
+      @endif
+      <div class="input-group">
+        <input 
+          name="search" 
+          type="search" 
+          class="form-control" 
+          placeholder="Cari kata kunci..." 
+          aria-label="Cari Berita" 
+          value="{{ request('search') }}"
+        >
+        <button type="submit" class="btn-search btn-cyber py-2 px-3">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
 
-              <div class="service-box">
-                <div class="services-list">
-                  <h4>Berita Terbaru</h4>
-                  @foreach($latestNews as $news)
-                    <a href="{{ url('berita/'.$news->slug) }}" class="d-flex align-items-center mb-3">
-                        
-                        {{-- Thumbnail pakai getfilebyalias --}}
-                        @if(!is_null($news->getfilebyalias('gambar_berita')))
-                            @php
-                                $file = $news->getfilebyalias('gambar_berita');
-                            @endphp
-                            @if($file)
-                                <img src="{{ url($file->public_stream) }}" 
-                                    alt="{{ $file->name }}" 
-                                    class="me-2 rounded"
-                                    style="width:60px; height:50px; object-fit:cover;">
-                            @endif
-                        @endif
-
-                        {{-- Judul & tanggal --}}
-                      <div>
-                      <div class="fw-bold">{{ $news->nama }}</div>
-                        <small class="text-muted d-flex align-items-center gap-2">
-                          <span><i class="bi bi-calendar"></i> {{ $news->created_at->format('d M Y') }}</span>
-                          <span><i class="bi bi-eye"></i> {{ $news->view ?? 0 }} kali</span>
-                        </small>
-                      </div>
-                    </a>
-                  @endforeach
-                </div>
-              </div>
-
-              <div class="service-box">
-                <div class="services-list">
-                  <h4>Berita Terpopuler</h4>
-                  @foreach($popularNews as $viral)
-                    <a href="{{ url('berita/'.$viral->slug) }}" class="d-flex align-items-center mb-3">
-                        
-                        {{-- Thumbnail pakai getfilebyalias --}}
-                        @if(!is_null($viral->getfilebyalias('gambar_berita')))
-                            @php
-                                $file = $viral->getfilebyalias('gambar_berita');
-                            @endphp
-                            @if($file)
-                                <img src="{{ url($file->public_stream) }}" 
-                                    alt="{{ $file->name }}" 
-                                    class="me-2 rounded"
-                                    style="width:60px; height:50px; object-fit:cover;">
-                            @endif
-                        @endif
-
-                        {{-- Judul & tanggal --}}
-                      <div>
-                      <div class="fw-bold">{{ $viral->nama }}</div>
-                        <small class="text-muted d-flex align-items-center gap-2">
-                          <span><i class="bi bi-calendar"></i> {{ $viral->created_at->format('d M Y') }}</span>
-                          <span><i class="bi bi-eye"></i> {{ $viral->view ?? 0 }} kali</span>
-                        </small>
-                      </div>
-                    </a>
-                  @endforeach
-                </div>
-              </div>
-
-              <div class="service-box">
-                  <div class="services-list">
-                      <h4>Kategori Berita</h4>
-                      @foreach($beritaList as $berita)
-                          @php
-                              $slugBerita = str_replace(' ', '-', strtolower($berita));
-                          @endphp
-                          <a href="{{ url('berita') }}?kategori={{ $slugBerita }}"
-                            class="{{ request('kategori') == $slugBerita ? 'active' : '' }}">
-                              <i class="bi bi-arrow-right-circle"></i>
-                              <span>{{ $berita }}</span>
-                          </a>
-
-                      @endforeach
-                  </div>
-              </div>    
-              <!-- End Services List -->
-
-              <!-- End Services List -->
-              <div class="service-box">
-                  <div class="services-list">
-                      <h4>Kategori galeri</h4>
-                      @foreach($galeriList as $galeri)
-                          @php
-                              $slugGaleri = str_replace(' ', '-', strtolower($galeri));
-                          @endphp
-                          <a href="{{ url('galeri') }}?kategori={{ $slugGaleri }}"
-                            class="{{ request('kategori') == $slugGaleri ? 'active' : '' }}">
-                              <i class="bi bi-arrow-right-circle"></i>
-                              <span>{{ $galeri }}</span>
-                          </a>
-
-                      @endforeach
-                  </div>
-              </div>    
-              <!-- End Services List -->
-
-              <div class="service-box">
-                  <div class="services-list">
-                      <h4>Kategori Unduhan</h4>
-                      @foreach($unduhanList as $unduhan)
-                          @php
-                              $slugUnduhan = str_replace(' ', '-', strtolower($unduhan));
-                          @endphp
-                          <a href="{{ url('unduhan') }}?kategori={{ $slugUnduhan }}"
-                            class="{{ request('kategori') == $slugUnduhan ? 'active' : '' }}">
-                              <i class="bi bi-arrow-right-circle"></i>
-                              <span>{{ $unduhan }}</span>
-                          </a>
-
-                      @endforeach
-                  </div>
-              </div>    
-              <!-- End Services List -->
-
-              
-
+  <!-- Widget: Latest News -->
+  <div class="glass-card">
+    <h4 class="sidebar-title">Berita Terbaru</h4>
+    <div class="d-flex flex-column gap-3 mt-3">
+      @forelse($latestNews as $latest)
+        @php
+          $file = $latest->getfilebyalias('gambar_berita');
+          $imgUrl = $file ? url($file->public_stream) : 'https://via.placeholder.com/80?text=News';
+        @endphp
+        <div class="sidebar-news-item">
+          <a href="{{ url('berita/' . $latest->slug) }}" class="flex-shrink-0">
+            <img src="{{ $imgUrl }}" alt="{{ $latest->nama }}" style="width: 70px; height: 60px; object-fit: cover;">
+          </a>
+          <div class="sidebar-news-info">
+            <h5 class="m-0 text-white" style="font-size: 0.85rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              <a href="{{ url('berita/' . $latest->slug) }}" class="text-white text-decoration-none">{{ $latest->nama }}</a>
+            </h5>
+            <span class="small text-muted"><i class="bi bi-calendar3 me-1"></i> {{ $latest->created_at->format('d M Y') }}</span>
           </div>
+        </div>
+      @empty
+        <p class="text-secondary small mb-0">Belum ada berita terbaru.</p>
+      @endforelse
+    </div>
+  </div>
+
+  <!-- Widget: Popular News -->
+  <div class="glass-card">
+    <h4 class="sidebar-title">Berita Terpopuler</h4>
+    <div class="d-flex flex-column gap-3 mt-3">
+      @forelse($popularNews as $popular)
+        @php
+          $file = $popular->getfilebyalias('gambar_berita');
+          $imgUrl = $file ? url($file->public_stream) : 'https://via.placeholder.com/80?text=News';
+        @endphp
+        <div class="sidebar-news-item">
+          <a href="{{ url('berita/' . $popular->slug) }}" class="flex-shrink-0">
+            <img src="{{ $imgUrl }}" alt="{{ $popular->nama }}" style="width: 70px; height: 60px; object-fit: cover;">
+          </a>
+          <div class="sidebar-news-info">
+            <h5 class="m-0 text-white" style="font-size: 0.85rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              <a href="{{ url('berita/' . $popular->slug) }}" class="text-white text-decoration-none">{{ $popular->nama }}</a>
+            </h5>
+            <span class="small text-muted"><i class="bi bi-eye me-1"></i> {{ number_format($popular->view ?? 0) }} dilihat</span>
+          </div>
+        </div>
+      @empty
+        <p class="text-secondary small mb-0">Belum ada berita populer.</p>
+      @endforelse
+    </div>
+  </div>
+
+  <!-- Widget: News Categories -->
+  <div class="glass-card">
+    <h4 class="sidebar-title">Kategori Berita</h4>
+    <ul class="sidebar-list mt-3">
+      @foreach($beritaList as $cat)
+        @php
+          $slugBerita = str_replace(' ', '-', strtolower($cat));
+        @endphp
+        <li>
+          <a href="{{ url('berita') }}?kategori={{ $slugBerita }}" class="text-decoration-none {{ request('kategori') == $slugBerita ? 'text-success fw-bold' : '' }}">
+            <span><i class="bi bi-chevron-right me-1 small"></i> {{ $cat }}</span>
+          </a>
+        </li>
+      @endforeach
+    </ul>
+  </div>
+
+  <!-- Widget: Gallery Categories -->
+  <div class="glass-card">
+    <h4 class="sidebar-title">Kategori Galeri</h4>
+    <ul class="sidebar-list mt-3">
+      @foreach($galeriList as $cat)
+        @php
+          $slugGaleri = str_replace(' ', '-', strtolower($cat));
+        @endphp
+        <li>
+          <a href="{{ url('galeri') }}?kategori={{ $slugGaleri }}" class="text-decoration-none {{ request('kategori') == $slugGaleri ? 'text-success fw-bold' : '' }}">
+            <span><i class="bi bi-chevron-right me-1 small"></i> {{ $cat }}</span>
+          </a>
+        </li>
+      @endforeach
+    </ul>
+  </div>
+
+  <!-- Widget: Download Categories -->
+  <div class="glass-card">
+    <h4 class="sidebar-title">Kategori Unduhan</h4>
+    <ul class="sidebar-list mt-3">
+      @foreach($unduhanList as $cat)
+        @php
+          $slugUnduhan = str_replace(' ', '-', strtolower($cat));
+        @endphp
+        <li>
+          <a href="{{ url('unduhan') }}?kategori={{ $slugUnduhan }}" class="text-decoration-none {{ request('kategori') == $slugUnduhan ? 'text-success fw-bold' : '' }}">
+            <span><i class="bi bi-chevron-right me-1 small"></i> {{ $cat }}</span>
+          </a>
+        </li>
+      @endforeach
+    </ul>
+  </div>
+
+</div>

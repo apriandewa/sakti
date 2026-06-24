@@ -97,10 +97,10 @@ body {
 
 .right .header-img {
     display: block;
-    justify-content: center; /* center horizontal */
-    max-width: 100%;
-    margin-bottom: 10px;
-    text-align: center;
+    max-height: 75px;
+    width: auto;
+    margin: 0 auto 20px auto;
+    object-fit: contain;
 }
 
 .right h3 {
