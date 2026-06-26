@@ -137,84 +137,108 @@ $(window.document).on('click', '.submit-data', function (e) {
     if (!formValidate([formId])) {
         return false;
     }
-    $('#' + formId).ajaxForm({
-        dataType: 'json',
-        uploadProgress: function (event, position, total, percentComplete) {
-            const percentVal = percentComplete + '%';
-            progress.width(percentVal);
-            progress.html(percentComplete === 100 ? 'Please Wait ...' : percentVal);
-        },
-        beforeSubmit: function () {
-            btnSubmit.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
-            btnSubmit.disabled = true;
-            progress.width('0%');
-            progress.html('0% Complete');
-            dismiss.prop('disabled', true);
-            $('.progress').show();
-        },
-        success: function (response, status, xhr, $form) {
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = icon !== '' ? icon.outerHTML + ' ' + textBtn : textBtn;
-            $('.progress').hide();
-            dismiss.prop('disabled', false);
 
-            if (response.status === true) {
-                const _targetTable = $form.find('input[name="table-id"]').val();
-                const _targetFunction = $form.find('input[name="function"]').val();
-                const _redirect = $form.find('input[name="redirect"]').val() || '';
-                const _removeAlert = $form.find('input[name="remove-alert"]').val() || 0;
+    const executeSubmit = () => {
+        $('#' + formId).ajaxForm({
+            dataType: 'json',
+            uploadProgress: function (event, position, total, percentComplete) {
+                const percentVal = percentComplete + '%';
+                progress.width(percentVal);
+                progress.html(percentComplete === 100 ? 'Please Wait ...' : percentVal);
+            },
+            beforeSubmit: function () {
+                btnSubmit.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+                btnSubmit.disabled = true;
+                progress.width('0%');
+                progress.html('0% Complete');
+                dismiss.prop('disabled', true);
+                $('.progress').show();
+            },
+            success: function (response, status, xhr, $form) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = icon !== '' ? icon.outerHTML + ' ' + textBtn : textBtn;
+                $('.progress').hide();
+                dismiss.prop('disabled', false);
 
-                if (_removeAlert === 0) {
-                    swal({
-                        title: response.title || 'Good job!',
-                        text: response.message,
-                        type: 'success',
-                        timer: 2000,
-                        showConfirmButton: true
-                    }, function () {
-                        swal.close();
+                if (response.status === true) {
+                    const _targetTable = $form.find('input[name="table-id"]').val();
+                    const _targetFunction = $form.find('input[name="function"]').val();
+                    const _redirect = $form.find('input[name="redirect"]').val() || '';
+                    const _removeAlert = $form.find('input[name="remove-alert"]').val() || 0;
+
+                    if (_removeAlert === 0) {
+                        swal({
+                            title: response.title || 'Good job!',
+                            text: response.message,
+                            type: 'success',
+                            timer: 2000,
+                            showConfirmButton: true
+                        }, function () {
+                            swal.close();
+                            if (_redirect) {
+                                window.location.href = _redirect;
+                            }
+                        });
+                    }else{
                         if (_redirect) {
                             window.location.href = _redirect;
                         }
-                    });
-                }else{
-                    if (_redirect) {
-                        window.location.href = _redirect;
+                    }
+
+                    if (_targetTable) {
+                        _targetTable.split(',').forEach((tableId) => {
+                            $(`#${tableId}`).DataTable().ajax.reload();
+                        });
+                    }
+
+                    if (_targetFunction) {
+                        targetFunction(_targetFunction);
+                    }
+                    $('.modal').modal('hide');
+                } else {
+                    if (response.hasOwnProperty('data')) {
+                        errorBuilder(response.data);
+                    } else {
+                        swal({
+                            title: response.title || 'Oops!',
+                            text: response.message,
+                            type: 'error',
+                            timer: 2500,
+                            showConfirmButton: true,
+                        });
                     }
                 }
-
-                if (_targetTable) {
-                    _targetTable.split(',').forEach((tableId) => {
-                        $(`#${tableId}`).DataTable().ajax.reload();
-                    });
-                }
-
-                if (_targetFunction) {
-                    targetFunction(_targetFunction);
-                }
-                $('.modal').modal('hide');
-            } else {
-                if (response.hasOwnProperty('data')) {
-                    errorBuilder(response.data);
-                } else {
-                    swal({
-                        title: response.title || 'Oops!',
-                        text: response.message,
-                        type: 'error',
-                        timer: 2500,
-                        showConfirmButton: true,
-                    });
-                }
+            },
+            error: function (xhr) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = icon !== '' ? icon.outerHTML + ' ' + textBtn : textBtn;
+                $('.progress').hide();
+                dismiss.prop('disabled', false);
+                errorBuilder(xhr);
             }
-        },
-        error: function (xhr) {
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = icon !== '' ? icon.outerHTML + ' ' + textBtn : textBtn;
-            $('.progress').hide();
-            dismiss.prop('disabled', false);
-            errorBuilder(xhr);
-        }
-    }).submit();
+        }).submit();
+    };
+
+    const confirmMessage = $('#' + formId).data('confirm');
+    if (confirmMessage) {
+        swal({
+            title: "Konfirmasi",
+            text: confirmMessage,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#059669",
+            confirmButtonText: "Ya, Simpan!",
+            cancelButtonText: "Batal",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        }, function (isConfirm) {
+            if (isConfirm) {
+                executeSubmit();
+            }
+        });
+    } else {
+        executeSubmit();
+    }
 });
 
 $(window.document).on('click', '.delete-file', function (e) {

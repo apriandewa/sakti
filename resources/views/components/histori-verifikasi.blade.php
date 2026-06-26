@@ -4,6 +4,26 @@
     </h6>
     
     @forelse($histori as $item)
+        @php
+            $isObj = is_object($item);
+            $status = $isObj ? ($item->status ?? '') : ($item['status'] ?? '');
+            
+            if ($isObj) {
+                $dateObj = $item->updated_at ?? $item->created_at ?? null;
+                $dateStr = $dateObj ? $dateObj->format('d M Y H:i') : '-';
+                $hasUser = !empty($item->user);
+                $userName = $hasUser ? ($item->user->name ?? 'N/A') : 'N/A';
+            } else {
+                $dateStr = $item['formatted_date'] ?? $item['created_at'] ?? '-';
+                if ($dateStr instanceof \DateTimeInterface) {
+                    $dateStr = $dateStr->format('d M Y H:i');
+                }
+                $userName = $item['user_name'] ?? null;
+                $hasUser = !empty($userName);
+            }
+
+            $catatan = $isObj ? ($item->catatan ?? '') : ($item['catatan'] ?? '');
+        @endphp
         <div class="position-relative ms-4 mb-4">
             <!-- Timeline Dot -->
             <div class="position-absolute bg-white rounded-circle shadow-sm border border-2 border-primary" 
@@ -13,26 +33,26 @@
             <div class="card shadow-sm border-0 border-top border-3 border-primary">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-light">
-                        <x-status-badge :status="$item->status" size="xs" />
+                        <x-status-badge :status="$status" size="xs" />
                         <span class="badge bg-light text-dark border">
-                            <i class="fa fa-clock-o me-1 text-muted"></i> {{ $item->updated_at->format('d M Y H:i') }}
+                            <i class="fa fa-clock-o me-1 text-muted"></i> {{ $dateStr }}
                         </span>
                     </div>
 
-                    @if($item->user)
+                    @if($hasUser)
                         <div class="d-flex align-items-center mb-2 mt-2">
                             <div class="bg-light rounded-circle p-2 me-2 d-flex align-items-center justify-content-center border" style="width: 32px; height: 32px;">
                                 <i class="fa fa-user text-primary"></i>
                             </div>
-                            <span class="fw-semibold text-dark">{{ $item->user->name }}</span>
+                            <span class="fw-semibold text-dark">{{ $userName }}</span>
                         </div>
                     @endif
 
-                    @if(!empty($item->catatan))
+                    @if(!empty($catatan))
                         <div class="bg-light p-2 rounded mt-2 border-start border-3 border-info">
                             <p class="mb-0 small text-secondary">
                                 <i class="fa fa-quote-left text-muted me-1"></i>
-                                <em>{{ $item->catatan }}</em>
+                                <em>{{ $catatan }}</em>
                             </p>
                         </div>
                     @endif

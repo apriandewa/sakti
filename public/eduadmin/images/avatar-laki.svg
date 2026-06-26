@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffebd5"/>
+      <stop offset="100%" stop-color="#fddfbe"/>
+    </linearGradient>
+    <linearGradient id="skinShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fddfbe"/>
+      <stop offset="100%" stop-color="#f5b882"/>
+    </linearGradient>
+    <linearGradient id="hairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="suitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="tieGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+    
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background Circle (gives it a neat profile card look) -->
+  <circle cx="100" cy="100" r="96" fill="url(#bgGrad)" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- Neck shadow -->
+  <path d="M 86,115 C 86,135 114,135 114,115 Z" fill="url(#skinShadow)"/>
+  
+  <!-- Neck -->
+  <path d="M 88,112 L 88,135 C 88,135 100,142 112,135 L 112,112 Z" fill="url(#skinGrad)"/>
+
+  <!-- Ears -->
+  <path d="M 64,80 C 58,80 58,94 64,94 Z" fill="url(#skinGrad)"/>
+  <path d="M 136,80 C 142,80 142,94 136,94 Z" fill="url(#skinGrad)"/>
+  <path d="M 64,84 C 61,84 61,90 64,90 Z" fill="url(#skinShadow)"/>
+  <path d="M 136,84 C 139,84 139,90 136,90 Z" fill="url(#skinShadow)"/>
+
+  <!-- Face (oval shaped with a defined chin) -->
+  <path d="M 66,74 C 66,48 134,48 134,74 C 134,106 100,122 100,122 C 100,122 66,106 66,74 Z" fill="url(#skinGrad)"/>
+
+  <!-- Eyebrows -->
+  <path d="M 74,70 C 78,65 88,65 92,69" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 126,70 C 122,65 112,65 108,69" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Eyes (Almond shape, white eyeballs, blue iris, black pupil, highlights) -->
+  <!-- Left Eye -->
+  <path d="M 76,78 C 80,75 88,75 92,78 C 88,81 80,81 76,78 Z" fill="#ffffff" stroke="#334155" stroke-width="0.5"/>
+  <circle cx="84" cy="78" r="4.5" fill="#2563eb"/>
+  <circle cx="84" cy="78" r="2.5" fill="#0f172a"/>
+  <circle cx="85.5" cy="76.5" r="1" fill="#ffffff"/>
+  
+  <!-- Right Eye -->
+  <path d="M 124,78 C 120,75 112,75 108,78 C 112,81 120,81 124,78 Z" fill="#ffffff" stroke="#334155" stroke-width="0.5"/>
+  <circle cx="116" cy="78" r="4.5" fill="#2563eb"/>
+  <circle cx="116" cy="78" r="2.5" fill="#0f172a"/>
+  <circle cx="117.5" cy="76.5" r="1" fill="#ffffff"/>
+
+  <!-- Nose -->
+  <path d="M 96,82 L 100,94 L 104,82" fill="none" stroke="url(#skinShadow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Smile / Mouth -->
+  <path d="M 84,102 C 90,108 110,108 116,102" fill="none" stroke="#991b1b" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Cheeks blush (subtle) -->
+  <ellipse cx="73" cy="92" rx="6" ry="4" fill="#fca5a5" opacity="0.3"/>
+  <ellipse cx="127" cy="92" rx="6" ry="4" fill="#fca5a5" opacity="0.3"/>
+
+  <!-- Hair (Neat corporate side-parted hairstyle) -->
+  <path d="M 66,74 C 64,68 64,55 72,48 C 80,41 94,40 102,44 C 110,40 124,41 130,48 C 136,54 136,68 134,74 C 132,74 130,70 128,68 C 124,65 116,66 114,70 C 110,65 98,62 90,68 C 84,65 74,68 66,74 Z" fill="url(#hairGrad)"/>
+  
+  <!-- Suit & Shirt (Shoulders and V-neck) -->
+  <path d="M 40,165 C 55,145 75,140 100,140 C 125,140 145,145 160,165 L 168,194 L 32,194 Z" fill="url(#suitGrad)" filter="url(#shadow)"/>
+  
+  <!-- White Shirt V-neck -->
+  <path d="M 84,136 L 100,166 L 116,136 Z" fill="#ffffff"/>
+  
+  <!-- Tie -->
+  <path d="M 97,156 L 103,156 L 105,194 L 95,194 Z" fill="url(#tieGrad)"/>
+  <path d="M 95,152 L 105,152 L 102,160 L 98,160 Z" fill="#b91c1c"/> <!-- Tie Knot -->
+  
+  <!-- Suit Lapels (Left and Right) -->
+  <path d="M 40,165 C 52,154 75,145 84,152 L 80,188 L 46,194 Z" fill="#1e293b"/>
+  <path d="M 160,165 C 148,154 125,145 116,152 L 120,188 L 154,194 Z" fill="#1e293b"/>
+</svg>

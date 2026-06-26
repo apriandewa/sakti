@@ -1,0 +1,214 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Pegawai;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Pangkat;
+use App\Models\StatusPegawai;
+use App\Models\Jabatan;
+use App\Models\Page;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class PegawaiController extends Controller
+{
+    public function index() : object
+    {
+        return view($this->view.'.index');
+    }
+
+    public function create() : object
+    {
+        $users = User::select('id', 'first_name', 'last_name')->get()->pluck('name', 'id');
+        $pangkats = Pangkat::where('status', 'aktif')->pluck('nama', 'id');
+        $statuses = StatusPegawai::where('status', 'aktif')->pluck('nama', 'id');
+        $jabatanJenis = Jabatan::whereNull('parent_id')->where('status', 'aktif')->pluck('nama', 'id');
+        $bidangs = Page::where('kategori', 'bidang')->where('status', 'aktif')->pluck('nama', 'id');
+
+        return view($this->view.'.create', compact('users', 'pangkats', 'statuses', 'jabatanJenis', 'bidangs'));
+    }
+
+    public function getJabatanNama($parent_id) : object
+    {
+        $jabatans = Jabatan::where('parent_id', $parent_id)->where('status', 'aktif')->pluck('nama', 'id');
+        return response()->json($jabatans);
+    }
+
+    public function data(Request $request) : object
+    {
+        $data = $this->model::with(['user', 'statusPegawai', 'pangkat', 'jabatanJenis', 'jabatanNama', 'bidang']);
+        $user = $request->user();
+        return datatables()->of($data)
+            ->editColumn('status', function ($data) {
+                return $data->status == 'aktif' ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Tidak Aktif</span>';
+            })
+            ->addColumn('action', function ($data) use ($user) {
+                $button ='';
+                if($user->read){
+                    $button .= '<button type="button" class="btn-action btn btn-sm btn-outline" data-title="Detail" data-action="show" data-url="'.$this->url.'" data-id="'.$data->id.'" title="Tampilkan"><i class="fa fa-eye text-info"></i></button>';
+                }
+                if($user->create || $user->update){
+                    $button.='<button class="btn-action btn btn-sm btn-outline" data-title="Edit" data-action="edit" data-url="'.$this->url.'" data-id="'.$data->id.'" title="Edit"> <i class="fa fa-edit text-warning"></i> </button> ';
+                }
+                if($user->delete){
+                    $button.='<button class="btn-action btn btn-sm btn-outline" data-title="Delete" data-action="delete" data-url="'.$this->url.'" data-id="'.$data->id.'" title="Delete"> <i class="fa fa-trash text-danger"></i> </button>';
+                }
+                return "<div class='btn-group'>".$button."</div>";
+            })
+            ->addIndexColumn()
+            ->rawColumns(['action','status'])
+            ->make();
+    }
+
+    public function store(Request $request) : object
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'user_id' => 'nullable|exists:users,id',
+            'gelar_depan' => 'nullable|string|max:50',
+            'gelar_belakang' => 'nullable|string|max:50',
+            'nip' => 'nullable|string|max:50|unique:pegawais,nip',
+            'nik' => 'nullable|string|max:50|unique:pegawais,nik',
+            'status_id' => 'required|exists:statuses,id',
+            'pangkat_id' => 'required|exists:pangkats,id',
+            'jabatan_jenis_id' => 'required|exists:jabatans,id',
+            'jabatan_nama_id' => 'required|exists:jabatans,id',
+            'bidang_id' => 'required|exists:pages,id',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'agama' => 'required|string|max:50',
+            'pendidikan_terakhir' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'telpon' => 'required|string|max:50',
+            'foto_pegawai' => 'nullable|image|mimes:jpg,png|max:1024',
+            'spesimen_tte' => 'nullable|image|mimes:jpg,png|max:1024',
+            'status' => 'required|in:aktif,tidak aktif',
+            'periode' => 'required|string|max:10',
+        ]);
+
+        if ($pegawai = $this->model::create($request->all())) {
+            // handle foto_pegawai
+            if ($request->hasFile('foto_pegawai')) {
+                $pegawai->file()->create([
+                    'data' => [
+                        'name' => $request->file('foto_pegawai')->getClientOriginalName(),
+                        'disk' => config('filesystems.default'),
+                        'target' => Storage::disk(config('filesystems.default'))->putFile('pegawai/foto', $request->file('foto_pegawai')),
+                    ],
+                    'alias' => 'foto_pegawai'
+                ]);
+            }
+            // handle spesimen_tte
+            if ($request->hasFile('spesimen_tte')) {
+                $pegawai->file()->create([
+                    'data' => [
+                        'name' => $request->file('spesimen_tte')->getClientOriginalName(),
+                        'disk' => config('filesystems.default'),
+                        'target' => Storage::disk(config('filesystems.default'))->putFile('pegawai/tte', $request->file('spesimen_tte')),
+                    ],
+                    'alias' => 'spesimen_tte'
+                ]);
+            }
+            $response = ['status' => TRUE, 'message' => 'Data berhasil disimpan'];
+        }
+        return response()->json($response ?? ['status' => FALSE, 'message' => 'Data gagal disimpan']);
+    }
+
+    public function show($id) : object
+    {
+        $data = $this->model::with(['user', 'statusPegawai', 'pangkat', 'jabatanJenis', 'jabatanNama', 'bidang'])->find($id);
+        return view($this->view.'.show', compact('data'));
+    }
+
+    public function edit($id) : object
+    {
+        $data = $this->model::find($id);
+        $users = User::select('id', 'first_name', 'last_name')->get()->pluck('name', 'id');
+        $pangkats = Pangkat::where('status', 'aktif')->pluck('nama', 'id');
+        $statuses = StatusPegawai::where('status', 'aktif')->pluck('nama', 'id');
+        $jabatanJenis = Jabatan::whereNull('parent_id')->where('status', 'aktif')->pluck('nama', 'id');
+        $jabatanNama = Jabatan::where('parent_id', $data->jabatan_jenis_id)->where('status', 'aktif')->pluck('nama', 'id');
+        $bidangs = Page::where('kategori', 'bidang')->where('status', 'aktif')->pluck('nama', 'id');
+
+        return view($this->view.'.edit', compact('data', 'users', 'pangkats', 'statuses', 'jabatanJenis', 'jabatanNama', 'bidangs'));
+    }
+
+    public function update(Request $request, $id) : object
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'user_id' => 'nullable|exists:users,id',
+            'gelar_depan' => 'nullable|string|max:50',
+            'gelar_belakang' => 'nullable|string|max:50',
+            'nip' => 'nullable|string|max:50|unique:pegawais,nip,'.$id,
+            'nik' => 'nullable|string|max:50|unique:pegawais,nik,'.$id,
+            'status_id' => 'required|exists:statuses,id',
+            'pangkat_id' => 'required|exists:pangkats,id',
+            'jabatan_jenis_id' => 'required|exists:jabatans,id',
+            'jabatan_nama_id' => 'required|exists:jabatans,id',
+            'bidang_id' => 'required|exists:pages,id',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'agama' => 'required|string|max:50',
+            'pendidikan_terakhir' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'telpon' => 'required|string|max:50',
+            'foto_pegawai' => 'nullable|image|mimes:jpg,png|max:1024',
+            'spesimen_tte' => 'nullable|image|mimes:jpg,png|max:1024',
+            'status' => 'required|in:aktif,tidak aktif',
+            'periode' => 'required|string|max:10',
+        ]);
+
+        $data = $this->model::find($id);
+        if ($data->update($request->all())) {
+            // handle foto_pegawai
+            if ($request->hasFile('foto_pegawai')) {
+                foreach ($data->file()->where('alias', 'foto_pegawai')->get() as $f) {
+                    $f->delete();
+                }
+                $data->file()->create([
+                    'data' => [
+                        'name' => $request->file('foto_pegawai')->getClientOriginalName(),
+                        'disk' => config('filesystems.default'),
+                        'target' => Storage::disk(config('filesystems.default'))->putFile('pegawai/foto', $request->file('foto_pegawai')),
+                    ],
+                    'alias' => 'foto_pegawai'
+                ]);
+            }
+            // handle spesimen_tte
+            if ($request->hasFile('spesimen_tte')) {
+                foreach ($data->file()->where('alias', 'spesimen_tte')->get() as $f) {
+                    $f->delete();
+                }
+                $data->file()->create([
+                    'data' => [
+                        'name' => $request->file('spesimen_tte')->getClientOriginalName(),
+                        'disk' => config('filesystems.default'),
+                        'target' => Storage::disk(config('filesystems.default'))->putFile('pegawai/tte', $request->file('spesimen_tte')),
+                    ],
+                    'alias' => 'spesimen_tte'
+                ]);
+            }
+            $response = ['status' => TRUE, 'message' => 'Data berhasil disimpan'];
+        }
+        return response()->json($response ?? ['status' => FALSE, 'message' => 'Data gagal disimpan']);
+    }
+
+    public function delete($id) : object
+    {
+        $data = $this->model::find($id);
+        return view($this->view.'.delete', compact('data'));
+    }
+
+    public function destroy($id) : object
+    {
+        $data = $this->model::find($id);
+        // Delete related files
+        foreach ($data->file as $f) {
+            $f->delete();
+        }
+        if($data->delete()){
+            $response = ['status' => TRUE, 'message' => 'Data berhasil dihapus'];
+        }
+        return response()->json($response ?? ['status' => FALSE, 'message' => 'Data gagal dihapus']);
+    }
+}

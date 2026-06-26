@@ -45,5 +45,10 @@ return [
         'id' => env('GA_ID'),
     ],
 
+    'bsre' => [
+        'url'      => env('BSRE_API_URL', 'https://esign-api.bssn.go.id/api'),
+        'username' => env('BSRE_USERNAME'),
+        'password' => env('BSRE_PASSWORD'),
+    ],
 
 ];

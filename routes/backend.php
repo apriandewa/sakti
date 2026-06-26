@@ -75,6 +75,39 @@ Route::group([
 		Route::resource('announcement', 'Announcement\AnnouncementController');
 		//end-announcement
 
+		//pangkat
+		Route::prefix('pangkat')->as('pangkat')->group(function () {
+			Route::get('data', 'Pangkat\PangkatController@data');
+			Route::get('delete/{id}', 'Pangkat\PangkatController@delete');
+		});
+		Route::resource('pangkat', 'Pangkat\PangkatController');
+		//end-pangkat
+
+		//status-pegawai
+		Route::prefix('status-pegawai')->as('status-pegawai')->group(function () {
+			Route::get('data', 'StatusPegawai\StatusPegawaiController@data');
+			Route::get('delete/{id}', 'StatusPegawai\StatusPegawaiController@delete');
+		});
+		Route::resource('status-pegawai', 'StatusPegawai\StatusPegawaiController');
+		//end-status-pegawai
+
+		//jabatan
+		Route::prefix('jabatan')->as('jabatan')->group(function () {
+			Route::get('data', 'Jabatan\JabatanController@data');
+			Route::get('delete/{id}', 'Jabatan\JabatanController@delete');
+		});
+		Route::resource('jabatan', 'Jabatan\JabatanController');
+		//end-jabatan
+
+		//pegawai
+		Route::prefix('pegawai')->as('pegawai.')->group(function () {
+			Route::get('data', 'Pegawai\PegawaiController@data')->name('data');
+			Route::get('delete/{id}', 'Pegawai\PegawaiController@delete')->name('delete');
+			Route::get('get-jabatan-nama/{parent_id}', 'Pegawai\PegawaiController@getJabatanNama')->name('get-jabatan-nama');
+		});
+		Route::resource('pegawai', 'Pegawai\PegawaiController');
+		//end-pegawai
+
         //notification
 		Route::prefix('notification')->as('notification')->group(function () {
 			Route::get('data', 'Notification\NotificationController@data');

@@ -54,7 +54,11 @@ Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store')
 Route::get('/page', [PageController::class, 'index'])->name('page');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.detail');
 
-Route::get('/struktur', [HomeController::class, 'struktur'])->name('struktur');
+Route::get('/pegawai', [\App\Http\Controllers\Frontend\PegawaiController::class, 'index'])->name('pegawai');
+Route::get('/pegawai/{id}', [\App\Http\Controllers\Frontend\PegawaiController::class, 'show'])->name('pegawai.detail');
+Route::get('/struktur', function() {
+    return redirect()->route('pegawai');
+})->name('struktur');
 Route::get('/testimoni', [HomeController::class, 'testimoni'])->name('testimoni');
 Route::get('/penghargaan', [HomeController::class, 'penghargaan'])->name('penghargaan');
 Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang-kami');
@@ -67,15 +71,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// ===== Rapat Absensi Online =====
+Route::get('/rapat/absensi/{token}', [\App\Http\Controllers\Frontend\RapatAbsensiController::class, 'show'])->name('rapat.absensi');
+Route::post('/rapat/absensi/{token}', [\App\Http\Controllers\Frontend\RapatAbsensiController::class, 'store'])->name('rapat.absensi.store');
+
+// ===== Verifikasi Undangan TTE =====
+Route::get('/verifikasi-undangan/{token}', [\App\Http\Controllers\Frontend\HomeController::class, 'verifikasiUndangan'])->name('rapat.verifikasi-undangan');
+Route::get('/verifikasi-undangan/{token}/pdf/{jenis}', [\App\Http\Controllers\Frontend\HomeController::class, 'viewSignedPdf'])->name('rapat.view-signed-pdf');
+
 // ===== File Management =====
 Route::group(['prefix' => config('master.app.url.frontend')], function () {
     Route::prefix('file')->as('file.')->group(function () {
-        Route::get('stream/{id}/{name}', "Backend\File\FileController@publicStream");
-        // Route::get('download/{id}/{name}', "File\FileController@downloadFile");
-        // Route::get('delete/{id}/{name}', "File\FileController@deleteFile");
-        // Route::post('upload-image-editor', "File\FileController@handleEditorImageUpload");
+        Route::get('stream/{id}/{name}', "Backend\File\FileController@publicStream")->name('stream');
+        Route::get('download/{id}/{name}', "Backend\File\FileController@downloadFile")->name('download');
+        Route::get('delete/{id}/{name}', "Backend\File\FileController@deleteFile")->name('delete');
+        Route::post('upload-image-editor', "Backend\File\FileController@handleEditorImageUpload")->name('upload_image_editor');
     });
 });
+
 
 // ===== Socialite Login =====
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');

@@ -800,23 +800,29 @@
         <div class="swiper-wrapper">
           @forelse($struktur as $member)
             @php
-              $fileStruktur = $member->getfilebyalias('gambar_struktur');
-              $memberImg = $fileStruktur ? url($fileStruktur->public_stream) : 'https://via.placeholder.com/400x500?text=Staff+Photo';
+              $memberImg = $member->foto_url;
+              $dep = $member->gelar_depan ? $member->gelar_depan . ' ' : '';
+              $bel = $member->gelar_belakang ? ', ' . $member->gelar_belakang : '';
+              $fullName = $dep . $member->nama . $bel;
+              $jabatanStr = $member->jabatanNama ? $member->jabatanNama->nama : '-';
+              $pangkatStr = $member->pangkat ? $member->pangkat->nama : '';
+              $statusStr = $member->statusPegawai ? $member->statusPegawai->nama : '';
+              $subBadge = $pangkatStr ? $pangkatStr . ' (' . $statusStr . ')' : $statusStr;
             @endphp
             <div class="swiper-slide">
-              <div class="leader-image-card mx-auto">
-                <img src="{{ $memberImg }}" alt="{{ $member->nama }}" class="img-fluid w-100" style="aspect-ratio: 3/4; object-fit: cover;">
-                <div class="leader-badge">
-                  <h5>{{ $member->nama }}</h5>
-                  <span>{{ $member->jabatan }}</span>
-                  <div class="small text-muted mt-1">{{ $member->tugas }}</div>
+              <div class="leader-image-card mx-auto" style="border: 2px solid {{ $member->jabatan_styling['border'] }}; box-shadow: 0 5px 20px {{ $member->jabatan_styling['glow'] }}; background: {{ $member->jabatan_styling['gradient'] }};">
+                <img src="{{ $memberImg }}" alt="{{ $fullName }}" class="img-fluid w-100" style="aspect-ratio: 3/4; object-fit: cover; background: rgba(255, 255, 255, 0.05);">
+                <div class="leader-badge" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                  <h5>{{ $fullName }}</h5>
+                  <span style="color: {{ $member->jabatan_styling['theme_color'] }};">{{ $jabatanStr }}</span>
+                  <div class="small text-muted mt-1">{{ $subBadge }}</div>
                 </div>
               </div>
             </div>
           @empty
             <div class="swiper-slide">
               <div class="text-center text-secondary py-5">
-                <p>Data struktur belum diunggah.</p>
+                <p>Data pegawai belum diunggah.</p>
               </div>
             </div>
           @endforelse

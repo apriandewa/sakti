@@ -16,6 +16,7 @@ use App\Models\Page;
 use App\Models\Pengaturan;
 
 use App\Services\VisitorService;
+use App\Services\VerificationService;
 use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        $this->app->singleton('verification', function ($app) {
+            return new VerificationService();
+        });
     }
 
     /**

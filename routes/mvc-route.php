@@ -39,13 +39,7 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		});
 		Route::resource('slider', 'Slider\SliderController');
 		//end-slider
-		//struktur
-		Route::prefix('struktur')->as('struktur')->group(function () {
-			Route::get('data', 'Struktur\StrukturController@data');
-			Route::get('delete/{id}', 'Struktur\StrukturController@delete');
-		});
-		Route::resource('struktur', 'Struktur\StrukturController');
-		//end-struktur
+
 		//galeri
 		Route::prefix('galeri')->as('galeri')->group(function () {
 			Route::get('data', 'Galeri\GaleriController@data');
@@ -105,6 +99,43 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		});
 		Route::resource('kategori', 'Kategori\KategoriController');
 		//end-kategori
+
+		//agenda-rapat
+		Route::prefix('agenda-rapat')->as('agenda-rapat')->group(function () {
+			Route::get('data', 'AgendaRapat\AgendaRapatController@data');
+			Route::get('delete/{id}', 'AgendaRapat\AgendaRapatController@delete');
+			Route::post('{id}/kirim', 'AgendaRapat\AgendaRapatController@kirim')->name('.kirim');
+			Route::post('check-konflik', 'AgendaRapat\AgendaRapatController@checkKonflik')->name('.check-konflik');
+			Route::post('{id}/notulen', 'AgendaRapat\AgendaRapatController@storeNotulen')->name('.store-notulen');
+			Route::put('{id}/notulen', 'AgendaRapat\AgendaRapatController@updateNotulen')->name('.update-notulen');
+			Route::post('{id}/notulen/kirim', 'AgendaRapat\AgendaRapatController@kirimNotulen')->name('.kirim-notulen');
+			Route::post('{id}/notulen/setuju', 'AgendaRapat\AgendaRapatController@setujuNotulen')->name('.setuju-notulen');
+			Route::post('{id}/notulen/revisi', 'AgendaRapat\AgendaRapatController@revisiNotulen')->name('.revisi-notulen');
+			Route::post('{id}/dokumentasi', 'AgendaRapat\AgendaRapatController@storeDokumentasi')->name('.store-dokumentasi');
+			Route::post('{id}/materi', 'AgendaRapat\AgendaRapatController@storeMateri')->name('.store-materi');
+			Route::get('{id}/export-undangan', 'AgendaRapat\AgendaRapatController@exportUndangan')->name('.export-undangan');
+			Route::get('{id}/export-notulen', 'AgendaRapat\AgendaRapatController@exportNotulen')->name('.export-notulen');
+			Route::get('{id}/export-daftar-hadir', 'AgendaRapat\AgendaRapatController@exportDaftarHadir')->name('.export-daftar-hadir');
+
+			// Tanda Tangan Elektronik (BSrE)
+			Route::post('{id}/sign/{jenis}', 'AgendaRapat\AgendaRapatController@signDokumen')->name('.sign-dokumen');
+			Route::get('{id}/download-signed/{jenis}', 'AgendaRapat\AgendaRapatController@downloadSigned')->name('.download-signed');
+
+			// Peserta (daftar hadir) management
+			Route::get('peserta/{pesertaId}/edit', 'AgendaRapat\AgendaRapatController@editPeserta')->name('.peserta.edit');
+			Route::put('peserta/{pesertaId}', 'AgendaRapat\AgendaRapatController@updatePeserta')->name('.peserta.update');
+			Route::get('peserta/delete/{pesertaId}', 'AgendaRapat\AgendaRapatController@deletePeserta')->name('.peserta.delete');
+			Route::delete('peserta/{pesertaId}', 'AgendaRapat\AgendaRapatController@destroyPeserta')->name('.peserta.destroy');
+		});
+		Route::resource('agenda-rapat', 'AgendaRapat\AgendaRapatController');
+		//end-agenda-rapat
+
+		//verifikasi-rapat
+		Route::prefix('verifikasi-rapat')->as('verifikasi-rapat')->group(function () {
+			Route::get('data', 'VerifikasiRapat\VerifikasiRapatController@data');
+		});
+		Route::resource('verifikasi-rapat', 'VerifikasiRapat\VerifikasiRapatController');
+		//end-verifikasi-rapat
 
 		//{{route replacer}} DON'T REMOVE THIS LINE
     });

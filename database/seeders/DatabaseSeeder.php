@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
              UserSeeder::class,
              AccessMenuSeeder::class,
              PengaturanSeeder::class,
+             PangkatSeeder::class,
+             StatusPegawaiSeeder::class,
+             JabatanSeeder::class,
          ]);
          $this->command->info('Seeder successfully.');
          $this->command->info('Please login with email: root@mail.com and password: root');
