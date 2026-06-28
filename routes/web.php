@@ -90,9 +90,13 @@ Route::group(['prefix' => config('master.app.url.frontend')], function () {
 });
 
 
+use App\Http\Controllers\Auth\SsoController;
+
 // ===== Socialite Login =====
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('auth/sso', [SsoController::class, 'redirectToSso'])->name('sso.login');
+Route::get('auth/sso/callback', [SsoController::class, 'handleSsoCallback'])->name('sso.callback');
 
 // ===== Javascript Loader =====
 Route::prefix('js')->as('js.')->group(function () {

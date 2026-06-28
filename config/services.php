@@ -51,4 +51,18 @@ return [
         'password' => env('BSRE_PASSWORD'),
     ],
 
+    'simpegnas' => [
+        'url'         => 'https://api-absensi.simpegnas.go.id/absensi/api/get/rekap-bulanan-by-kantor',
+        'token'       => env('API_ABSENSI_TOKEN'),
+        'kantor_id'   => env('API_ID_KANTOR'),
+        'nama_kantor' => env('API_NAMA_KANTOR'),
+    ],
+
+    'kompass' => [
+        'sso_url' => env('KOMPASS_SSO_URL', 'http://localhost:8585'),
+        'client_id' => env('KOMPASS_CLIENT_ID'),
+        'client_secret' => env('KOMPASS_CLIENT_SECRET'),
+        'redirect_uri' => env('KOMPASS_REDIRECT_URI'),
+    ],
+
 ];

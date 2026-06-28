@@ -47,6 +47,10 @@
 
                 <button type="button" id="go-login" class="btn signin-btn w-100 mb-3">Sign in</button>
 
+                <a href="{{ route('sso.login') }}" class="btn w-100 mb-3" style="background-color: #6b21a8; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 12px; border-radius: 8px; border: none; text-decoration: none; transition: background-color 0.3s ease;">
+                    <i class="fas fa-compass"></i> Masuk dengan KOMPASS SSO
+                </a>
+
                 <div class="divider">Or</div>
                 <div class="social-icons text-center mb-3">
                     <a class="btn btn-social-icon btn-facebook" href="#" aria-label="Sign in with Facebook"><i

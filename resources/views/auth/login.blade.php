@@ -106,8 +106,9 @@
                 <path d="M21.35 11.1h-9.17v2.98h5.25c-.22 1.18-1.32 3.47-5.25 3.47-3.16 0-5.74-2.62-5.74-5.85s2.58-5.85 5.74-5.85c1.8 0 3.01.77 3.7 1.43l2.53-2.46C16.48 3.94 14.54 3 12.18 3 6.99 3 2.82 7.16 2.82 12.01s4.17 9.01 9.36 9.01c5.39 0 8.96-3.78 8.96-9.11 0-.61-.07-1.21-.19-1.81z"/>
             </svg>
             </a>
-            <a href=""
-            class="inline-flex items-center justify-center w-10 h-10 bg-purple-600 border border-transparent rounded-full font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400 transition ease-in-out duration-150 ml-2">
+            <a href="{{ route('sso.login') }}"
+            class="inline-flex items-center justify-center w-10 h-10 bg-purple-600 border border-transparent rounded-full font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400 transition ease-in-out duration-150 ml-2"
+            title="Masuk dengan KOMPASS SSO">
             <!-- Ikon Kompas -->
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
