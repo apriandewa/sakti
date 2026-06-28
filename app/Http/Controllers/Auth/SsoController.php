@@ -52,7 +52,7 @@ class SsoController extends Controller
         $code = $request->code;
 
         // Exchange Authorization Code for Access Token
-        $response = Http::asForm()->post(config('services.kompass.sso_url') . '/oauth/token', [
+        $response = Http::withoutVerifying()->asForm()->post(config('services.kompass.sso_url') . '/oauth/token', [
             'grant_type' => 'authorization_code',
             'client_id' => config('services.kompass.client_id'),
             'client_secret' => config('services.kompass.client_secret'),
@@ -73,7 +73,7 @@ class SsoController extends Controller
         $accessToken = $response->json('access_token');
 
         // Dapatkan data user dari API SSO
-        $userResponse = Http::withToken($accessToken)
+        $userResponse = Http::withoutVerifying()->withToken($accessToken)
             ->get(config('services.kompass.sso_url') . '/api/user');
 
         if ($userResponse->failed()) {
