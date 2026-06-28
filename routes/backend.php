@@ -108,6 +108,18 @@ Route::group([
 		Route::resource('pegawai', 'Pegawai\PegawaiController');
 		//end-pegawai
 
+		//presensi
+		Route::prefix('presensi')->as('presensi.')->group(function () {
+			Route::get('data', 'Presensi\PresensiController@data')->name('data');
+			Route::post('sync', 'Presensi\PresensiController@sync')->name('sync');
+			Route::get('show/{pegawai_id}/{month}/{year}', 'Presensi\PresensiController@showDetail')->name('show-detail');
+			Route::get('image/{nip}', 'Presensi\PresensiController@image')->name('image');
+			Route::get('riwayat/{nip}/{date}', 'Presensi\PresensiController@riwayatDetail')->name('riwayat-detail');
+			Route::get('sync-logs', 'Presensi\PresensiController@syncLogs')->name('sync-logs');
+		});
+		Route::resource('presensi', 'Presensi\PresensiController');
+		//end-presensi
+
         //notification
 		Route::prefix('notification')->as('notification')->group(function () {
 			Route::get('data', 'Notification\NotificationController@data');
@@ -115,6 +127,17 @@ Route::group([
 		});
 		Route::resource('notification', 'Notification\NotificationController');
 		//end-notification
+
+        //documentation
+        Route::prefix('documentation')->as('documentation.')->group(function () {
+            Route::get('prd-portal', 'Documentation\DocumentationController@prdPortal')->name('prd-portal');
+            Route::get('prd-presensi', 'Documentation\DocumentationController@prdPresensi')->name('prd-presensi');
+            Route::get('plan-portal', 'Documentation\DocumentationController@planPortal')->name('plan-portal');
+            Route::get('plan-presensi', 'Documentation\DocumentationController@planPresensi')->name('plan-presensi');
+            Route::get('slides', 'Documentation\DocumentationController@slides')->name('slides');
+            Route::get('manual-book', 'Documentation\DocumentationController@manualBook')->name('manual-book');
+        });
+        //end-documentation
 	});
 });
 

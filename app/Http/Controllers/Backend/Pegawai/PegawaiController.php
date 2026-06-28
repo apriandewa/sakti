@@ -46,7 +46,7 @@ class PegawaiController extends Controller
             ->addColumn('action', function ($data) use ($user) {
                 $button ='';
                 if($user->read){
-                    $button .= '<button type="button" class="btn-action btn btn-sm btn-outline" data-title="Detail" data-action="show" data-url="'.$this->url.'" data-id="'.$data->id.'" title="Tampilkan"><i class="fa fa-eye text-info"></i></button>';
+                    $button .= '<a href="'.url(config('master.app.url.backend').'/'.$this->url.'/'.$data->id).'" class="btn btn-sm btn-outline" title="Detail"><i class="fa fa-eye text-info"></i></a>';
                 }
                 if($user->create || $user->update){
                     $button.='<button class="btn-action btn btn-sm btn-outline" data-title="Edit" data-action="edit" data-url="'.$this->url.'" data-id="'.$data->id.'" title="Edit"> <i class="fa fa-edit text-warning"></i> </button> ';
@@ -116,8 +116,12 @@ class PegawaiController extends Controller
 
     public function show($id) : object
     {
-        $data = $this->model::with(['user', 'statusPegawai', 'pangkat', 'jabatanJenis', 'jabatanNama', 'bidang'])->find($id);
-        return view($this->view.'.show', compact('data'));
+        $data = $this->model::with(['user', 'statusPegawai', 'pangkat', 'jabatanJenis', 'jabatanNama', 'bidang'])->findOrFail($id);
+        $historyTte = \App\Models\DokumenTte::with('agendaRapat')
+            ->where('pegawai_id', $id)
+            ->latest()
+            ->paginate(10);
+        return view($this->view.'.show', compact('data', 'historyTte'));
     }
 
     public function edit($id) : object

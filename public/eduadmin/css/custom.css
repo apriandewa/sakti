@@ -3027,3 +3027,58 @@ Theme Primary Color
 .dark-skin .galeri-thumb-name      { color: #8899af; }
 .dark-skin .berkas-file-item       { background: #1a2638; border-color: #2d3e52; }
 .dark-skin .berkas-file-item .file-name { color: #cdd5e0; }
+
+/* Donut Chart Colors */
+.color-hn { stroke: #28a745; }
+.color-tk { stroke: #dc3545; }
+.color-dl { stroke: #0d6efd; }
+.color-ct { stroke: #0dcaf0; }
+.color-izin { stroke: #ffc107; }
+.color-tm { stroke: #ffc107; }
+.color-pc { stroke: #ffc107; }
+
+/* Donut Chart Base Styles */
+.circular-chart {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 260px;
+    animation: scaleIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.circle-bg {
+    fill: none;
+    stroke: #f8f9fa;
+    stroke-width: 2.5;
+}
+.donut-segment {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    animation: progress 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    transition: opacity 0.3s ease, stroke-width 0.3s ease;
+    cursor: pointer;
+}
+.donut-segment:hover {
+    stroke-width: 3.5;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.15));
+}
+.percentage {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-weight: 800;
+    font-size: 7px;
+    text-anchor: middle;
+    transition: fill 0.3s ease;
+}
+.subtext {
+    fill: #6c757d;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-size: 2.5px;
+    text-anchor: middle;
+}
+@keyframes progress {
+    0% { stroke-dasharray: 0, 100; }
+}
+@keyframes scaleIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}

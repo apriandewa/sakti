@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url($template.'/css/vendors_css.css') }}">
     <link rel="stylesheet" href="{{ url($template.'/css/style.css') }}">
     <link rel="stylesheet" href="{{ url($template.'/css/skin_color.css') }}">
+    <link rel="stylesheet" href="{{ url($template.'/css/custom.css') }}">
     @stack('css')
 </head>
 <body class="hold-transition light-skin sidebar-mini theme-primary">

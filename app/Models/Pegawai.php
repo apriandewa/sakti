@@ -70,6 +70,11 @@ class Pegawai extends Model
         return $this->morphMany(File::class, 'fileable');
     }
 
+    public function presensiHarian()
+    {
+        return $this->hasMany(PresensiHarian::class, 'pegawai_id');
+    }
+
     public function getfilebyalias($alias)
     {
         return $this->file()->where('alias', $alias)->first();
