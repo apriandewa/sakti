@@ -20,13 +20,14 @@
   <link rel="icon" href="{{ url($template . config('master.app.web.favicon')) }}">
   <link href="{{ url('portal/vendor/bootstrap-icons/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
-  <!-- Google Fonts (Poppins, Space Grotesk, Outfit) -->
+  <!-- Google Fonts (Poppins, Space Grotesk, Outfit) — Non-blocking async load -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"></noscript>
   
-  <!-- Icon FontAwesome -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Icon FontAwesome — CDN lebih cepat -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous">
 
   <!-- Vendor CSS Files -->
   <link href="{{ url('portal/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -60,14 +61,12 @@
     <div class="preloader-spinner"></div>
   </div>
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-  <!-- Sweet Alert -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- jQuery & Sweet Alert — defer agar tidak blocking render -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 
   <!-- Particles.js -->
-  <script src="{{ url('portal/js/particles.min.js') }}"></script>
+  <script src="{{ url('portal/js/particles.min.js') }}" defer></script>
 
   <!-- Particles Initialization (Theme-Aware & Interactive) -->
   <script>
@@ -196,11 +195,20 @@
         particlesJS('particles-js', getParticlesConfig());
       }
 
-      // Initial load
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initParticles);
+      // Initial load — tunda sampai browser idle agar tidak block render konten utama
+      function launchParticles() {
+        if (typeof particlesJS !== 'undefined') {
+          initParticles();
+        } else {
+          // Coba lagi jika script belum ready
+          setTimeout(launchParticles, 200);
+        }
+      }
+
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(launchParticles, { timeout: 2000 });
       } else {
-        initParticles();
+        setTimeout(launchParticles, 500);
       }
 
       // Re-initialize particles on theme change
@@ -215,27 +223,18 @@
     })();
   </script>
 
-  <!-- Vendor JS Files -->
-  <script src="{{ url('portal/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ url('portal/vendor/aos/aos.js') }}"></script>
-  <script src="{{ url('portal/vendor/swiper/swiper-bundle.min.js') }}"></script>
-  <script src="{{ url('portal/vendor/glightbox/js/glightbox.min.js') }}"></script>
-  <script src="{{ url('portal/vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
-  <script src="{{ url('portal/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
-  <script src="{{ url('portal/vendor/purecounter/purecounter_vanilla.js') }}"></script>
+  <!-- Vendor JS Files — defer agar tidak blocking render awal -->
+  <script src="{{ url('portal/vendor/bootstrap/js/bootstrap.bundle.min.js') }}" defer></script>
+  <script src="{{ url('portal/vendor/aos/aos.js') }}" defer></script>
+  <script src="{{ url('portal/vendor/swiper/swiper-bundle.min.js') }}" defer></script>
+  <script src="{{ url('portal/vendor/glightbox/js/glightbox.min.js') }}" defer></script>
+  <script src="{{ url('portal/vendor/imagesloaded/imagesloaded.pkgd.min.js') }}" defer></script>
+  <script src="{{ url('portal/vendor/isotope-layout/isotope.pkgd.min.js') }}" defer></script>
+  <script src="{{ url('portal/vendor/purecounter/purecounter_vanilla.js') }}" defer></script>
   
   <!-- Main JS File -->
-  <script src="{{ url('portal/js/portal.js') }}"></script>
+  <script src="{{ url('portal/js/portal.js') }}" defer></script>
 
-  <!-- Userway Accessibility Widget -->
-  <script>
-      (function(d){
-          var s = d.createElement("script");
-          s.setAttribute("data-account", "{{ config('services.userway.widget_id') }}");
-          s.setAttribute("src", "https://cdn.userway.org/widget.js");
-          (d.body || d.head).appendChild(s);
-      })(document);
-  </script>
 
 
 

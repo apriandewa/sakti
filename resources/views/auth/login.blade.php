@@ -4,7 +4,7 @@
             <x-authentication-card-logo />
         </x-slot>
 
-        <x-validation-errors class="mb-4" />
+        <!-- Removed inline validation errors, replaced with SweetAlert below -->
 
         @session('status')
             <div class="mb-4 font-medium text-sm text-green-600">
@@ -118,4 +118,21 @@
         </div>
 
     </x-authentication-card>
+
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Otentikasi Gagal',
+                text: '{!! addslashes($errors->first()) !!}',
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+    @endif
+    @endpush
 </x-guest-layout>

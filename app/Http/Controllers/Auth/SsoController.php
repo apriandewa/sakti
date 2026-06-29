@@ -88,19 +88,8 @@ class SsoController extends Controller
         $user = User::where('email', $ssoUser['email'])->first();
 
         if (!$user) {
-            // Split name into first_name and last_name
-            $parts = explode(' ', $ssoUser['name'], 2);
-            $firstName = $parts[0];
-            $lastName = $parts[1] ?? '';
-
-            // Jika user belum ada di db lokal, buat baru
-            $user = User::create([
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'email' => $ssoUser['email'],
-                'password' => bcrypt(bin2hex(random_bytes(8))),
-                'level_id' => 3, // Default level code 'user' (ID 3)
-                'access_group_id' => 3, // Default access group code 'user' (ID 3)
+            return redirect()->route('login')->withErrors([
+                'email' => 'mohon maaf anda tidak bisa masuk ke aplikasi karena belum memiliki akun, silahkan hubungi admin atau pengelola untuk memeproleh akses login. terima kasih.'
             ]);
         }
 

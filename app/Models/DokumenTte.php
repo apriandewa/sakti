@@ -35,6 +35,11 @@ class DokumenTte extends Model
         return $this->pegawai();
     }
 
+    public function file()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+
     /**
      * Badge status tanda tangan
      */

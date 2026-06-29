@@ -14,7 +14,12 @@ use App\Models\Galeri;
 use App\Models\Slider;
 use App\Models\Page;
 use App\Models\Pengaturan;
+use App\Models\Tautan;
+use App\Models\Testimoni;
+use App\Models\Penghargaan;
+use App\Models\Pegawai;
 
+use App\Observers\FrontendCacheObserver;
 use App\Services\VisitorService;
 use App\Services\VerificationService;
 use Carbon\Carbon;
@@ -48,55 +53,85 @@ class AppServiceProvider extends ServiceProvider
         // Set locale Carbon ke bahasa Indonesia
         Carbon::setLocale('id');
 
-        // Komposer untuk semua view
+        // ── Auto-clear cache saat ada perubahan data di admin ─────────────────
+        // Setiap model berikut di-create/update/delete → cache frontend langsung
+        // dihapus agar konten terbaru langsung tampil tanpa tunggu expiry.
+        $models = [
+            Berita::class,
+            Unduhan::class,
+            Galeri::class,
+            Slider::class,
+            Page::class,
+            Pengaturan::class,
+            Tautan::class,
+            Testimoni::class,
+            Penghargaan::class,
+            Pegawai::class,
+        ];
+
+        foreach ($models as $model) {
+            $model::observe(FrontendCacheObserver::class);
+        }
+
+        // Komposer untuk semua view — dengan CACHING agar tidak query DB berulang kali
         View::composer('*', function ($view) {
-            $beritaList  = Berita::select('kategori')->distinct()->pluck('kategori');
-            $unduhanList = Unduhan::select('kategori')->distinct()->pluck('kategori');
-            $galeriList  = Galeri::select('kategori')->distinct()->pluck('kategori');
-            $latestNews  = Berita::latest()->take(5)->get();
-            $popularNews = Berita::orderBy('view', 'desc')->take(5)->get();
-            $pengaturan  = Pengaturan::first();
+            // Cache semua data statis selama 5 menit (300 detik)
+            $cachedData = \Illuminate\Support\Facades\Cache::remember('view_composer_global', 300, function () {
+                $beritaList  = Berita::select('kategori')->distinct()->pluck('kategori');
+                $unduhanList = Unduhan::select('kategori')->distinct()->pluck('kategori');
+                $galeriList  = Galeri::select('kategori')->distinct()->pluck('kategori');
+                $latestNews  = Berita::latest()->take(5)->get();
+                $popularNews = Berita::orderBy('view', 'desc')->take(5)->get();
+                $pengaturan  = Pengaturan::first();
 
-            // Statistik kunjungan
-            $visitorService  = new VisitorService();
-            $visitorStats    = $visitorService->getStatistik();
-            $visitorInfo     = $visitorService->getVisitorInfo();
+                // Ticker navbar
+                $navTicker = collect();
 
-            // Ticker navbar: ambil nama dari Slider, Berita, Galeri, Unduhan
-            $navTicker = collect();
+                Slider::where('status', 'aktif')->latest()->take(3)->get()
+                    ->each(fn($item) => $navTicker->push([
+                        'label' => '🖼 ' . $item->nama,
+                        'url'   => url('/'),
+                    ]));
 
-            Slider::where('status', 'aktif')->latest()->take(3)->get()
-                ->each(fn($item) => $navTicker->push([
-                    'label' => '🖼 ' . $item->nama,
-                    'url'   => url('/'),
-                ]));
+                Berita::where('status', 'terverifikasi')->latest()->take(3)->get()
+                    ->each(fn($item) => $navTicker->push([
+                        'label' => '📰 ' . $item->nama,
+                        'url'   => route('berita.detail', $item->slug),
+                    ]));
 
-            Berita::where('status', 'terverifikasi')->latest()->take(3)->get()
-                ->each(fn($item) => $navTicker->push([
-                    'label' => '📰 ' . $item->nama,
-                    'url'   => route('berita.detail', $item->slug),
-                ]));
+                Galeri::where('status', 'terverifikasi')->latest()->take(2)->get()
+                    ->each(fn($item) => $navTicker->push([
+                        'label' => '🖼 ' . $item->nama,
+                        'url'   => route('galeri.detail', $item->slug),
+                    ]));
 
-            Galeri::where('status', 'terverifikasi')->latest()->take(2)->get()
-                ->each(fn($item) => $navTicker->push([
-                    'label' => '🖼 ' . $item->nama,
-                    'url'   => route('galeri.detail', $item->slug),
-                ]));
+                Unduhan::where('status', 'terverifikasi')->latest()->take(2)->get()
+                    ->each(fn($item) => $navTicker->push([
+                        'label' => '📥 ' . $item->nama,
+                        'url'   => route('unduhan.detail', $item->slug),
+                    ]));
 
-            Unduhan::where('status', 'terverifikasi')->latest()->take(2)->get()
-                ->each(fn($item) => $navTicker->push([
-                    'label' => '📥 ' . $item->nama,
-                    'url'   => route('unduhan.detail', $item->slug),
-                ]));
+                $pagemenu    = Page::where('status', 'aktif')->where('kategori', 'profil')->orderBy('created_at', 'asc')->get();
+                $saluranmenu = Page::where('status', 'aktif')->where('kategori', 'saluran')->orderBy('created_at', 'asc')->get();
+                $unduhanmenu = Unduhan::select('kategori')->distinct()->pluck('kategori');
 
-            $pagemenu = Page::where('status', 'aktif')->where('kategori', 'profil')->orderBy('created_at', 'asc')->get();
-            $saluranmenu = Page::where('status', 'aktif')->where('kategori', 'saluran')->orderBy('created_at', 'asc')->get();
-            $unduhanmenu = Unduhan::select('kategori')->distinct()->pluck('kategori');
+                return compact(
+                    'beritaList', 'unduhanList', 'galeriList', 'latestNews', 'popularNews', 'pengaturan',
+                    'navTicker', 'pagemenu', 'saluranmenu', 'unduhanmenu'
+                );
+            });
 
-            $view->with(compact(
-                'beritaList', 'unduhanList', 'galeriList', 'latestNews', 'popularNews', 'pengaturan',
-                'visitorStats', 'visitorInfo', 'navTicker', 'pagemenu', 'saluranmenu', 'unduhanmenu'
-            ));
+            // Statistik kunjungan: cache per-menit agar relatif real-time
+            $visitorStats = \Illuminate\Support\Facades\Cache::remember('visitor_stats', 60, function () {
+                $visitorService = new VisitorService();
+                return $visitorService->getStatistik();
+            });
+
+            // Info pengunjung (IP/browser) tidak di-cache karena per-request
+            $visitorService = new VisitorService();
+            $visitorInfo    = $visitorService->getVisitorInfo();
+
+            $view->with(array_merge($cachedData, compact('visitorStats', 'visitorInfo')));
         });
         
        // Bikin $template bisa dipakai di semua Blade

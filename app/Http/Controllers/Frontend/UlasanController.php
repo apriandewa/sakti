@@ -29,13 +29,13 @@ class UlasanController extends Controller
 
         // Jika ada file baru di-upload, simpan ke tmp
         if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-            $fotoTmp = $request->file('foto')->store('tmp', 'public');
+            $fotoTmp = $request->file('foto')->store('tmp', config('filesystems.default'));
             session([
                 'foto_tmp'      => $fotoTmp,
                 'foto_tmp_name' => $request->file('foto')->getClientOriginalName(),
                 'foto_tmp_mime' => $request->file('foto')->getMimeType(),
             ]);
-        } elseif ($request->filled('foto_tmp') && Storage::disk('public')->exists($request->foto_tmp)) {
+        } elseif ($request->filled('foto_tmp') && Storage::disk(config('filesystems.default'))->exists($request->foto_tmp)) {
             // Pakai file tmp yang sudah ada di sesi sebelumnya
             $fotoTmp = $request->foto_tmp;
             session([
@@ -88,14 +88,14 @@ class UlasanController extends Controller
 
             // Hapus tmp yang sudah disimpan sebelumnya (duplikat)
             if ($fotoTmp && $fotoTmp !== $request->foto_tmp) {
-                Storage::disk('public')->delete($fotoTmp);
+                Storage::disk(config('filesystems.default'))->delete($fotoTmp);
             }
-        } elseif ($fotoTmp && Storage::disk('public')->exists($fotoTmp)) {
+        } elseif ($fotoTmp && Storage::disk(config('filesystems.default'))->exists($fotoTmp)) {
             // Pindahkan dari tmp ke lokasi permanen
-            $fotoDisk = 'public';
+            $fotoDisk = config('filesystems.default');
             $fotoName = session('foto_tmp_name', basename($fotoTmp));
             $fotoPath = 'ulasan/foto/' . basename($fotoTmp);
-            Storage::disk('public')->move($fotoTmp, $fotoPath);
+            Storage::disk(config('filesystems.default'))->move($fotoTmp, $fotoPath);
         }
 
         if (isset($fotoPath)) {

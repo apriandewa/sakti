@@ -31,7 +31,7 @@ class LogAuthActivity
         Log::create([
             'id' => Str::uuid(),
             'loggable_type' => $user ? get_class($user) : \App\Models\User::class,
-            'loggable_id'   => $user->id ?? null,
+            'loggable_id'   => $user->id ?? '00000000-0000-0000-0000-000000000000',
             'ip' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'data' => [

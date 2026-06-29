@@ -625,10 +625,9 @@ class AgendaRapatController extends Controller
                 ->first();
 
             if ($dokumen) {
-                $filePath = storage_path('app/public/dokumen-tte/' . $dokumen->signed_file);
-                if (file_exists($filePath)) {
-                    $filename = 'Undangan_Rapat_' . Str::slug($data->nama) . '_TTE.pdf';
-                     return response()->download($filePath, $filename);
+                $file = $dokumen->file()->where('alias', 'dokumen_tte_signed')->first();
+                if ($file && $file->exists) {
+                    return redirect()->to($file->link_download);
                 }
             }
 
@@ -825,7 +824,13 @@ class AgendaRapatController extends Controller
             $existing = DokumenTte::where('agenda_rapat_id', $id)->where('jenis_dokumen', 'notulen_notulis')->where('status', 'signed')->first();
             if ($existing) {
                 $pdfPath = $tmpDir . "/temp_append_" . time() . '.pdf';
-                copy(storage_path('app/public/dokumen-tte/' . $existing->signed_file), $pdfPath);
+                $existingFile = $existing->file()->where('alias', 'dokumen_tte_signed')->first();
+                if ($existingFile && $existingFile->exists) {
+                    $existingPath = \Illuminate\Support\Facades\Storage::disk($existingFile->disk)->path($existingFile->target);
+                    copy($existingPath, $pdfPath);
+                } else {
+                    return response()->json(['status' => false, 'message' => 'Dokumen asli tidak ditemukan untuk append TTE'], 404);
+                }
             } else {
                 return response()->json(['status' => false, 'message' => 'Notulis harus menandatangani Notulen terlebih dahulu.'], 422);
             }
@@ -849,16 +854,12 @@ class AgendaRapatController extends Controller
 
         if ($result['success']) {
             // Simpan signed PDF
-            $signedDir = storage_path('app/public/dokumen-tte');
-            if (!is_dir($signedDir)) {
-                mkdir($signedDir, 0755, true);
-            }
-
             $signedFilename = "signed_{$jenis}_{$id}_" . time() . ".pdf";
-            file_put_contents($signedDir . '/' . $signedFilename, $result['signed_pdf']);
+            $targetPath = 'dokumen-tte/' . $signedFilename;
+            \Illuminate\Support\Facades\Storage::disk(config('filesystems.default'))->put($targetPath, $result['signed_pdf']);
 
             // Catat di database
-            DokumenTte::updateOrCreate(
+            $dokumen = DokumenTte::updateOrCreate(
                 ['agenda_rapat_id' => $id, 'jenis_dokumen' => $jenis],
                 [
                     'pegawai_id'  => $pegawai->id,
@@ -868,6 +869,17 @@ class AgendaRapatController extends Controller
                     'signed_at'   => now(),
                 ]
             );
+
+            // CREATE FILE RECORD
+            $dokumen->file()->where('alias', 'dokumen_tte_signed')->delete();
+            $dokumen->file()->create([
+                'alias' => 'dokumen_tte_signed',
+                'data' => [
+                    'name' => $signedFilename,
+                    'disk' => config('filesystems.default'),
+                    'target' => $targetPath,
+                ]
+            ]);
 
             // Update status Notulen jika pimpinan sudah TTE (artinya selesai)
             if ($jenis === 'notulen_pimpinan') {
@@ -906,17 +918,13 @@ class AgendaRapatController extends Controller
             ->where('status', 'signed')
             ->firstOrFail();
 
-        $filePath = storage_path('app/public/dokumen-tte/' . $dokumen->signed_file);
+        $file = $dokumen->file()->where('alias', 'dokumen_tte_signed')->first();
 
-        if (!file_exists($filePath)) {
+        if (!$file || !$file->exists) {
             return response()->json(['status' => false, 'message' => 'File tidak ditemukan.'], 404);
         }
 
-        $jenisLabel = str_replace('_', ' ', ucfirst($jenis));
-        $agenda = AgendaRapat::find($id);
-        $filename = "TTE_{$jenisLabel}_" . Str::slug($agenda->nama ?? 'dokumen') . '.pdf';
-
-        return response()->download($filePath, $filename);
+        return redirect()->to($file->link_download);
     }
 
     /**

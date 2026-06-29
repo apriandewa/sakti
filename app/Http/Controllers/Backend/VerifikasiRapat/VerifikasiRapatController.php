@@ -167,16 +167,12 @@ class VerifikasiRapatController extends Controller
 
                     if ($result['success']) {
                         // Simpan signed PDF
-                        $signedDir = storage_path('app/public/dokumen-tte');
-                        if (!is_dir($signedDir)) {
-                            mkdir($signedDir, 0755, true);
-                        }
-
                         $signedFilename = "signed_undangan_{$id}_" . time() . ".pdf";
-                        file_put_contents($signedDir . '/' . $signedFilename, $result['signed_pdf']);
+                        $targetPath = 'dokumen-tte/' . $signedFilename;
+                        \Illuminate\Support\Facades\Storage::disk(config('filesystems.default'))->put($targetPath, $result['signed_pdf']);
 
                         // Catat di database
-                        DokumenTte::updateOrCreate(
+                        $dokumen = DokumenTte::updateOrCreate(
                             ['agenda_rapat_id' => $id, 'jenis_dokumen' => 'undangan'],
                             [
                                 'pegawai_id'  => $pegawai->id,
@@ -186,6 +182,17 @@ class VerifikasiRapatController extends Controller
                                 'signed_at'   => now(),
                             ]
                         );
+
+                        // CREATE FILE RECORD
+                        $dokumen->file()->where('alias', 'dokumen_tte_signed')->delete();
+                        $dokumen->file()->create([
+                            'alias' => 'dokumen_tte_signed',
+                            'data' => [
+                                'name' => $signedFilename,
+                                'disk' => config('filesystems.default'),
+                                'target' => $targetPath,
+                            ]
+                        ]);
 
                         $tteResult = 'success';
                     } else {

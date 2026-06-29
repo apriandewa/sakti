@@ -58,13 +58,13 @@ class KunjunganController extends Controller
 
         // Jika ada file baru di-upload, simpan ke tmp
         if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-            $fotoTmp = $request->file('foto')->store('tmp', 'public');
+            $fotoTmp = $request->file('foto')->store('tmp', config('filesystems.default'));
             session([
                 'foto_tmp'      => $fotoTmp,
                 'foto_tmp_name' => $request->file('foto')->getClientOriginalName(),
                 'foto_tmp_mime' => $request->file('foto')->getMimeType(),
             ]);
-        } elseif ($request->filled('foto_tmp') && Storage::disk('public')->exists($request->foto_tmp)) {
+        } elseif ($request->filled('foto_tmp') && Storage::disk(config('filesystems.default'))->exists($request->foto_tmp)) {
             // Pakai file tmp yang sudah ada di sesi sebelumnya
             $fotoTmp = $request->foto_tmp;
             session([
@@ -75,12 +75,12 @@ class KunjunganController extends Controller
         }
 
         if ($request->hasFile('dokumen') && $request->file('dokumen')->isValid()) {
-            $dokumenTmp = $request->file('dokumen')->store('tmp', 'public');
+            $dokumenTmp = $request->file('dokumen')->store('tmp', config('filesystems.default'));
             session([
                 'dokumen_tmp'      => $dokumenTmp,
                 'dokumen_tmp_name' => $request->file('dokumen')->getClientOriginalName(),
             ]);
-        } elseif ($request->filled('dokumen_tmp') && Storage::disk('public')->exists($request->dokumen_tmp)) {
+        } elseif ($request->filled('dokumen_tmp') && Storage::disk(config('filesystems.default'))->exists($request->dokumen_tmp)) {
             $dokumenTmp = $request->dokumen_tmp;
             session([
                 'dokumen_tmp'      => $dokumenTmp,
@@ -145,14 +145,14 @@ class KunjunganController extends Controller
 
             // Hapus tmp yang sudah disimpan sebelumnya (duplikat)
             if ($fotoTmp && $fotoTmp !== $request->foto_tmp) {
-                Storage::disk('public')->delete($fotoTmp);
+                Storage::disk(config('filesystems.default'))->delete($fotoTmp);
             }
-        } elseif ($fotoTmp && Storage::disk('public')->exists($fotoTmp)) {
+        } elseif ($fotoTmp && Storage::disk(config('filesystems.default'))->exists($fotoTmp)) {
             // Pindahkan dari tmp ke lokasi permanen
-            $fotoDisk = 'public';
+            $fotoDisk = config('filesystems.default');
             $fotoName = session('foto_tmp_name', basename($fotoTmp));
             $fotoPath = 'tamu/foto/' . basename($fotoTmp);
-            Storage::disk('public')->move($fotoTmp, $fotoPath);
+            Storage::disk(config('filesystems.default'))->move($fotoTmp, $fotoPath);
         }
 
         if (isset($fotoPath)) {
@@ -174,13 +174,13 @@ class KunjunganController extends Controller
             $dokumenName = $dokumen->getClientOriginalName();
 
             if ($dokumenTmp && $dokumenTmp !== $request->dokumen_tmp) {
-                Storage::disk('public')->delete($dokumenTmp);
+                Storage::disk(config('filesystems.default'))->delete($dokumenTmp);
             }
-        } elseif ($dokumenTmp && Storage::disk('public')->exists($dokumenTmp)) {
-            $dokumenDisk = 'public';
+        } elseif ($dokumenTmp && Storage::disk(config('filesystems.default'))->exists($dokumenTmp)) {
+            $dokumenDisk = config('filesystems.default');
             $dokumenName = session('dokumen_tmp_name', basename($dokumenTmp));
             $dokumenPath = 'tamu/dokumen/' . basename($dokumenTmp);
-            Storage::disk('public')->move($dokumenTmp, $dokumenPath);
+            Storage::disk(config('filesystems.default'))->move($dokumenTmp, $dokumenPath);
         }
 
         if (isset($dokumenPath)) {

@@ -21,30 +21,35 @@ class HomeController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
-        | RETURN VIEW
+        | RETURN VIEW — dengan CACHE untuk semua data agar load pertama cepat
         |--------------------------------------------------------------------------
         */
-        $pengaturan = \App\Models\Pengaturan::first();
-        return view('frontend.home', [
+        $homeData = Cache::remember('home_page_data', 300, function () {
+            $pengaturan = \App\Models\Pengaturan::first();
 
-            "title"    => $pengaturan->judul,
-            "judul"    => $pengaturan->subjudul,
-            "subjudul" => $pengaturan->deskripsi,
+            return [
+                "title"    => $pengaturan->judul,
+                "judul"    => $pengaturan->subjudul,
+                "subjudul" => $pengaturan->deskripsi,
 
-            'berita'      => Berita::where('status', 'TERVERIFIKASI')->latest()->limit(12)->get(),
-            'unduhan'     => Unduhan::where('status', 'TERVERIFIKASI')->latest()->limit(12)->get(),
-            'galeri'      => Galeri::where('status', 'TERVERIFIKASI')->latest()->limit(12)->get(),
+                'berita'      => Berita::where('status', 'TERVERIFIKASI')->latest()->limit(12)->get(),
+                'unduhan'     => Unduhan::where('status', 'TERVERIFIKASI')->latest()->limit(12)->get(),
+                'galeri'      => Galeri::where('status', 'TERVERIFIKASI')->latest()->limit(12)->get(),
 
-            'client'      => Tautan::where('status', 'aktif')->oldest()->limit(20)->get(),
-            'slider'      => Slider::where('status', 'aktif')->latest()->limit(6)->get(),
-            'struktur'    => \App\Models\Pegawai::with(['pangkat', 'statusPegawai', 'jabatanNama', 'bidang'])->where('status', 'aktif')->oldest()->limit(15)->get(),
-            'testimoni'   => Testimoni::where('status', 'DISETUJUI')->oldest()->limit(10)->get(),
-            'penghargaan' => Penghargaan::where('status', 'aktif')->oldest()->limit(10)->get(),
+                'client'      => Tautan::where('status', 'aktif')->oldest()->limit(20)->get(),
+                'slider'      => Slider::where('status', 'aktif')->latest()->limit(6)->get(),
+                'struktur'    => \App\Models\Pegawai::with(['pangkat', 'statusPegawai', 'jabatanNama', 'bidang'])
+                                    ->where('status', 'aktif')->oldest()->limit(15)->get(),
+                'testimoni'   => Testimoni::where('status', 'DISETUJUI')->oldest()->limit(10)->get(),
+                'penghargaan' => Penghargaan::where('status', 'aktif')->oldest()->limit(10)->get(),
 
-            'welcome' => Page::where('status', 'aktif')->where('kategori', 'welcome')->first(),
-            'bidang'  => Page::where('status', 'aktif')->where('kategori', 'bidang')->get(),
-            'program' => Page::where('status', 'aktif')->where('kategori', 'program')->get(),
-        ]);
+                'welcome' => Page::where('status', 'aktif')->where('kategori', 'welcome')->first(),
+                'bidang'  => Page::where('status', 'aktif')->where('kategori', 'bidang')->get(),
+                'program' => Page::where('status', 'aktif')->where('kategori', 'program')->get(),
+            ];
+        });
+
+        return view('frontend.home', $homeData);
     }
 
     public function verifikasiUndangan($token)

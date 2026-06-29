@@ -36,7 +36,7 @@ return [
             'icon'=>'',
             'logo_light'=>'/images/logodiskominfotik.png',
             'logo_dark'=>'/images/logodiskominfotik.png',
-            'favicon'=>'/images/logoppidinhu.jpg',
+            'favicon'=>'/images/logodiskominfotik.jpg',
             'background'=>'/images/auth-bg/bg-1.jpg',
         ],
         'level'=>[

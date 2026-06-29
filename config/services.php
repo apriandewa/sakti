@@ -37,10 +37,6 @@ return [
     'redirect'      => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    'userway' => [
-    'widget_id' => env('USERWAY_WIDGET_ID'),
-    ],
-
     'google_analytics' => [
         'id' => env('GA_ID'),
     ],
