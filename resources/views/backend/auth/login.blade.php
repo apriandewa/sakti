@@ -67,5 +67,5 @@
     </div>
 @endsection
 @push('css')
-    <link rel="stylesheet" href="{{ url(config('master.app.web.template').'/css/auth.css') }}">
+    <link rel="stylesheet" href="{{ asset(config('master.app.web.template').'/css/auth.css') }}">
 @endpush

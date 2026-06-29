@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{!! csrf_token() !!}">
     <title>@stack('title',config('master.app.profile.name'))</title>
     <link rel="icon" href="{{ url(config('master.app.profile.template').config('master.app.profile.favicon'))}}">
-    <link rel="stylesheet" href="{{ url(config('master.app.web.template').'/assets/vendor_components/bootstrap/dist/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset(config('master.app.web.template').'/assets/vendor_components/bootstrap/dist/css/bootstrap.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     @stack('css')
@@ -17,8 +17,8 @@
 <body class="hold-transition theme-primary bg-img">
 <div id="particles-js"></div>
 @yield('content')
-<script src="{{ url(config('master.app.web.template').'/js/vendors.min.js') }}"></script>
-<script src="{{ url('js/auth.js?time='.time()) }}" type="application/javascript"></script>
+<script src="{{ asset(config('master.app.web.template').'/js/vendors.min.js') }}"></script>
+<script src="{{ asset('js/auth.js?time='.time()) }}" type="application/javascript"></script>
 @stack('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
