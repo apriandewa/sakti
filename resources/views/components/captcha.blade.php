@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fungsi load captcha dari endpoint stateless
     async function loadCaptcha() {
         try {
-            const res = await fetch('/captcha/api');
+            const res = await fetch('{{ url("/captcha/api") }}');
             if (!res.ok) throw new Error('Gagal load captcha');
             const data = await res.json();
 
