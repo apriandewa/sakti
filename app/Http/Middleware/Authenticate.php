@@ -15,7 +15,8 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         if (! $request->expectsJson()) {
-            return route('login');
+            // Semua akses yang membutuhkan autentikasi diarahkan langsung ke Kompas SSO
+            return route('sso.login');
         }
     }
 }

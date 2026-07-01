@@ -97,6 +97,8 @@ Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 Route::get('auth/sso', [SsoController::class, 'redirectToSso'])->name('sso.login');
 Route::get('auth/sso/callback', [SsoController::class, 'handleSsoCallback'])->name('sso.callback');
+Route::get('login', [SsoController::class, 'redirectToSso'])->name('login');
+Route::get('register', function() { return redirect(config('services.kompass.sso_url') . '/register'); })->name('register');
 
 // ===== Javascript Loader =====
 Route::prefix('js')->as('js.')->group(function () {

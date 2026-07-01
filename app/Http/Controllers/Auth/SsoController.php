@@ -34,25 +34,38 @@ class SsoController extends Controller
     public function handleSsoCallback(Request $request)
     {
         $state = $request->session()->pull('sso_state');
+        $ssoUrl = rtrim(config('services.kompass.sso_url'), '/');
+        $ssoErrorUrl = $ssoUrl . '/sso/error';
+        $appName = config('app.name');
 
-        // Jika state ada di session (SP-initiated), wajib sama dengan state di request.
-        // Jika tidak ada di session (IdP-initiated), abaikan pengecekan state.
-        if ($state && $state !== $request->state) {
-            return redirect()->route('login')->withErrors([
-                'email' => 'Validasi state CSRF gagal. Silakan coba lagi.'
-            ]);
+        // Validasi state CSRF hanya jika request memiliki parameter state
+        if ($request->has('state') && $state !== $request->state) {
+            return redirect($ssoErrorUrl . '?' . http_build_query([
+                'app' => $appName,
+                'error' => 'Validasi CSRF Gagal (CSRF Validation Failed)',
+                'message' => 'State CSRF dari request tidak cocok dengan session.',
+                'solution' => 'Silakan bersihkan cookie browser Anda atau coba login kembali.'
+            ]));
         }
 
         if ($request->has('error')) {
-            return redirect()->route('login')->withErrors([
-                'email' => 'Otorisasi ditolak oleh server SSO: ' . $request->error_description
-            ]);
+            return redirect($ssoErrorUrl . '?' . http_build_query([
+                'app' => $appName,
+                'error' => 'Otorisasi Ditolak (Authorization Denied)',
+                'message' => 'Otorisasi ditolak oleh server SSO: ' . ($request->error_description ?? $request->error),
+                'solution' => 'Pastikan Anda telah menyetujui izin aplikasi pada portal SSO.'
+            ]));
         }
 
         $code = $request->code;
 
         // Exchange Authorization Code for Access Token
-        $response = Http::withoutVerifying()->asForm()->post(config('services.kompass.sso_url') . '/oauth/token', [
+        $http = Http::asForm();
+        if (config('app.env') === 'local') {
+            $http = $http->withoutVerifying();
+        }
+
+        $response = $http->post(config('services.kompass.sso_url') . '/oauth/token', [
             'grant_type' => 'authorization_code',
             'client_id' => config('services.kompass.client_id'),
             'client_secret' => config('services.kompass.client_secret'),
@@ -81,8 +94,12 @@ class SsoController extends Controller
         $accessToken = $response->json('access_token');
 
         // Dapatkan data user dari API SSO
-        $userResponse = Http::withoutVerifying()->withToken($accessToken)
-            ->get(config('services.kompass.sso_url') . '/api/user');
+        $httpUser = Http::withToken($accessToken);
+        if (config('app.env') === 'local') {
+            $httpUser = $httpUser->withoutVerifying();
+        }
+
+        $userResponse = $httpUser->get(config('services.kompass.sso_url') . '/api/user');
 
         if ($userResponse->failed()) {
             $ssoErrorUrl = rtrim(config('services.kompass.sso_url'), '/') . '/sso/error';
