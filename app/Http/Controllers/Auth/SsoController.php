@@ -59,7 +59,7 @@ class SsoController extends Controller
 
         $code = $request->code;
 
-        $verifySsl = filter_var(env('KOMPASS_SSO_VERIFY_SSL', true), FILTER_VALIDATE_BOOLEAN);
+        $verifySsl = config('services.kompass.verify_ssl', true);
 
         // Exchange Authorization Code for Access Token
         $http = Http::asForm();

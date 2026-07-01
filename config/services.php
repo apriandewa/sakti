@@ -59,6 +59,7 @@ return [
         'client_id' => env('KOMPASS_CLIENT_ID'),
         'client_secret' => env('KOMPASS_CLIENT_SECRET'),
         'redirect_uri' => env('KOMPASS_REDIRECT_URI'),
+        'verify_ssl' => filter_var(env('KOMPASS_SSO_VERIFY_SSL', true), FILTER_VALIDATE_BOOLEAN),
     ],
 
 ];
