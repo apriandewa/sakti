@@ -6,7 +6,7 @@
   <!-- Theme Initialization (prevents flash of dark/light theme) -->
   <script>
     (function() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
+      const savedTheme = localStorage.getItem('theme_frontend') || 'dark';
       document.documentElement.setAttribute('data-theme', savedTheme);
     })();
   </script>

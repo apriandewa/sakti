@@ -60,8 +60,6 @@
                     <a class="btn btn-social-icon btn-google" href="#" aria-label="Sign in with Google"><i
                             class="fab fa-google"></i></a>
                 </div>
-
-                <p class="signup-text">Don't have an account? <a href="{{ route('register') }}">Sign Up</a></p>
             </form>
         </section>
     </div>

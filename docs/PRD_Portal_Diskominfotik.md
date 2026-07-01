@@ -102,10 +102,11 @@ Untuk menjamin keamanan tingkat tinggi pada gerbang admin, sistem menggunakan ar
 ---
 
 ### 5.1 Alur Autentikasi SSO KOMPASS
-Berikut adalah diagram urutan alur login SSO dari server ke klien:
+Berikut adalah diagram urutan alur login SSO dari server ke klien (termasuk penanganan kesalahan konfigurasi dan registrasi user):
 
 ```mermaid
 sequenceDiagram
+    autonumber
     actor User as Pengguna
     participant KP as KOMPASS Server (Pusat)
     participant CL as Aplikasi Klien (Diskominfotik)
@@ -117,20 +118,38 @@ sequenceDiagram
     KP-->>User: Redirect ke Consent/Authorize Page
     User->>KP: Klik "Setujui" (Authorize)
     KP-->>CL: Redirect ke Callback URL dengan Authorization Code (?code=...)
-    CL->>KP: POST /oauth/token (Menukarkan code dengan Access Token secara background)
-    KP-->>CL: Mengembalikan Access Token
-    CL->>KP: GET /api/user dengan Bearer Token
-    KP->>KP: Identifikasi Client ID & Ambil Role Pengguna untuk Client tersebut
-    KP-->>CL: Mengembalikan Profil + Role (contoh: "verifikator")
-    CL->>CL: Sinkronisasi User Lokal (Email) & Update Role (Level/AccessGroup)
-    CL-->>User: Login Berhasil & Redirect ke Dashboard Klien sesuai Hak Akses
+    
+    alt Kasus 1: Kredensial Klien salah (Client ID / Secret di .env salah)
+        CL->>KP: POST /oauth/token (Tukar Code dengan Access Token)
+        KP-->>CL: Gagal Autentikasi (401 Unauthorized)
+        CL-->>User: Redirect ke KP `/sso/error` (Tampilkan informasi kredensial salah & solusi .env)
+    else Kasus 2: Koneksi Berhasil
+        CL->>KP: POST /oauth/token
+        KP-->>CL: Mengembalikan Access Token
+        CL->>KP: GET /api/user dengan Bearer Token
+        KP-->>CL: Mengembalikan Profil + Role (contoh: "verifikator")
+        
+        alt Kasus 2a: Akun user belum terdaftar secara lokal di aplikasi klien
+            CL->>CL: Cari user berdasarkan Email di database lokal (Tidak ditemukan)
+            CL-->>User: Redirect ke KP `/sso/error` (Tampilkan informasi akun belum terdaftar & saran solusi)
+        else Kasus 2b: Akun terdaftar secara lokal
+            CL->>CL: Sinkronisasi User Lokal (Email) & Update Role (Level/AccessGroup)
+            CL-->>User: Login Berhasil & Redirect ke Dashboard Klien sesuai Hak Akses
+        end
+    end
 ```
 
-### 5.2 Pemetaan Hak Akses SSO
+### 5.2 Pemetaan Hak Akses SSO & Penanganan Error Terpusat
 Data peran pengguna dari server KOMPASS dipetakan secara dinamis ke tingkat akses lokal `Level` dan `AccessGroup` pada database portal Diskominfotik:
 * `'admin'` -> Dipetakan ke Level & Access Group: **Administrator (Level 2)**
 * `'verifikator'` -> Dipetakan ke Level & Access Group: **Verifikator (Level 4)**
 * `'user'` -> Dipetakan ke Level & Access Group: **Operator / User (Level 3)**
+
+Jika terjadi kegagalan autentikasi di sisi klien (kredensial `.env` salah, error integrasi, atau akun lokal tidak ditemukan), browser akan dialihkan ke route pusat `/sso/error` dengan membawa parameter:
+* `app`: Nama aplikasi yang memicu kegagalan (misalnya: *Diskominfotik*).
+* `error`: Judul/tipe kesalahan yang terjadi.
+* `message`: Detail deskripsi teknis kesalahan.
+* `solution`: Rekomendasi tindakan perbaikan bagi admin/pengembang.
 
 ---
 

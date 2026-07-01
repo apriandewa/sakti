@@ -293,9 +293,9 @@ Sistem diintegrasikan secara dinamis dengan portal SSO KOMPASS menggunakan `SsoC
    - Melakukan redirect ke `/oauth/authorize` pada server KOMPASS dengan query parameter `client_id`, `redirect_uri`, `response_type=code`, dan `state`.
 2. **Penanganan Callback (`handleSsoCallback`)**:
    - Mengambil dan menghapus state CSRF dari sesi untuk divalidasi dengan request.
-   - Menukarkan Authorization Code yang diterima dengan Access Token via POST request ke `/oauth/token`.
-   - Mengambil data profil pengguna via GET request ke `/api/user` menggunakan token tersebut.
-   - Mencari data pengguna lokal berdasarkan `email`. Jika belum ada, sistem secara otomatis mendaftarkan pengguna baru dengan password acak.
-   - Melakukan sinkronisasi peran (`role`): Mencari model `Level` dan `AccessGroup` lokal berdasarkan kode peran yang dikirim oleh server SSO (`admin`, `verifikator`, `user`), lalu memperbarui peran pengguna lokal tersebut.
+   - Menukarkan Authorization Code yang diterima dengan Access Token via POST request ke `/oauth/token`. Jika gagal (misal: kredensial salah), browser dialihkan ke halaman error terpusat di server KOMPASS (`/sso/error`) dengan info error dan solusi.
+   - Mengambil data profil pengguna via GET request ke `/api/user` menggunakan token tersebut. Jika gagal, dialihkan ke `/sso/error`.
+   - Mencari data pengguna lokal berdasarkan `email`. Jika tidak ditemukan (belum terdaftar secara lokal), browser dialihkan ke halaman error terpusat di server KOMPASS (`/sso/error`) dengan jenis error "Akun Belum Terdaftar" agar admin setempat mendaftarkannya terlebih dahulu.
+   - Jika ditemukan, lakukan sinkronisasi peran (`role`): Mencari model `Level` dan `AccessGroup` lokal berdasarkan kode peran yang dikirim oleh server SSO (`admin`, `verifikator`, `user`), lalu memperbarui peran pengguna lokal tersebut.
    - Melakukan otentikasi sesi (`Auth::login`) dan mengarahkan pengguna ke halaman dashboard admin.
 

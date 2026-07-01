@@ -39,8 +39,14 @@ class AuthController extends Controller
             $this->response['message'] = 'Bad Request, please check your input';
             $this->response['data'] = $validation->errors();
         } else {
-            $request->merge(['password' => $request->password,'level_id' => 3, 'access_group_id' => 3]);
-            $this->response['data'] = User::create($request->all());
+            $this->response['data'] = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => $request->password,
+                'level_id' => 3, // Default level (user)
+                'access_group_id' => 3, // Default access group
+            ]);
             $this->response['message'] = 'User created successfully';
         }
         return response()->json($this->response, $this->response['status']);

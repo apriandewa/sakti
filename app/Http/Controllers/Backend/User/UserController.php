@@ -47,14 +47,17 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $allowedLevels = Level::filterLevel()->pluck('id')->toArray();
+        $allowedGroups = AccessGroup::filterLevel()->pluck('id')->toArray();
+
         $request->validate([
             'first_name' => 'required|min:2',
             'last_name' => 'nullable|min:3',
             'email' => 'required|email|unique:users,email,NULL,id,deleted_at,NULL',
             'password' => 'required|min:8',
             'password_confirmation' => 'required|min:8|same:password',
-            'level_id' => 'required|exists:levels,id',
-            'access_group_id' => 'required|exists:access_groups,id',
+            'level_id' => 'required|in:' . implode(',', $allowedLevels),
+            'access_group_id' => 'required|in:' . implode(',', $allowedGroups),
         ]);
         if ($this->model::create($request->all())) {
             $response = ['status' => TRUE, 'message' => 'Data berhasil disimpan'];
@@ -77,12 +80,15 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+        $allowedLevels = Level::filterLevel()->pluck('id')->toArray();
+        $allowedGroups = AccessGroup::filterLevel()->pluck('id')->toArray();
+
         $is_required = $request->password ? 'required' : 'nullable';
         $request->validate([
             'first_name' => 'required|min:2',
             'last_name' => 'nullable|min:3',
-            'level_id' => 'nullable|exists:levels,id',
-            'access_group_id' => 'nullable|exists:access_groups,id',
+            'level_id' => 'nullable|in:' . implode(',', $allowedLevels),
+            'access_group_id' => 'nullable|in:' . implode(',', $allowedGroups),
             'email' => 'required|email|unique:users,email,'.$id.',id,deleted_at,NULL',
             'password' => $is_required.'|min:8|confirmed',
             'password_confirmation' => $is_required.'|min:8|same:password',

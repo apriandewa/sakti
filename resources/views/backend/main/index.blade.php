@@ -16,6 +16,18 @@
     @stack('css')
 </head>
 <body class="hold-transition light-skin sidebar-mini theme-primary">
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('theme_backend') || 'light';
+        if (savedTheme === 'dark') {
+            document.body.classList.remove('light-skin');
+            document.body.classList.add('dark-skin');
+        } else {
+            document.body.classList.remove('dark-skin');
+            document.body.classList.add('light-skin');
+        }
+    })();
+</script>
 <div class="wrapper">
     <div id="loader"></div>
     @include('backend.main.menu.header')

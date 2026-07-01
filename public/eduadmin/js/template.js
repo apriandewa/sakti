@@ -1593,7 +1593,7 @@ const body = document.body;
 const themeSwitch = document.getElementById('themeSwitch');
 const themeSwitchToggle = document.getElementById('themeSwitchToggle'); // Jika menggunakan <a>
 
-const currentTheme = localStorage.getItem('theme') || 'light';
+const currentTheme = localStorage.getItem('theme_backend') || 'light';
 applyTheme(currentTheme);
 
 if (themeSwitch) {
@@ -1612,7 +1612,7 @@ if (themeSwitchToggle) {
 function toggleTheme() {
     const newTheme = themeSwitch.checked ? 'dark' : 'light';
     applyTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    localStorage.setItem('theme_backend', newTheme);
 
     if(newTheme === 'dark') {
         document.querySelector('.main-sidebar .sidebar-footer').style.backgroundColor = '#112038';

@@ -2367,3 +2367,50 @@ html:not([data-theme="light"]) .theme-icon-light {
     transform: scale(0.44);
   }
 }
+
+/* Swiper Pagination Adjustment to avoid overlapping with content */
+.beritaSwiper,
+.teamSwiper,
+.unduhanSwiper,
+.testimonialsSwiper,
+.tautanSwiper {
+  padding-bottom: 55px !important;
+}
+
+.beritaSwiper .swiper-pagination,
+.teamSwiper .swiper-pagination,
+.unduhanSwiper .swiper-pagination,
+.testimonialsSwiper .swiper-pagination,
+.tautanSwiper .swiper-pagination {
+  bottom: 15px !important;
+}
+
+.beritaSwiper .swiper-pagination-bullet,
+.teamSwiper .swiper-pagination-bullet,
+.unduhanSwiper .swiper-pagination-bullet,
+.testimonialsSwiper .swiper-pagination-bullet,
+.tautanSwiper .swiper-pagination-bullet {
+  background: var(--brand-green, #059669) !important;
+  opacity: 0.4;
+  width: 8px;
+  height: 8px;
+  transition: all 0.3s ease;
+}
+
+.beritaSwiper .swiper-pagination-bullet-active,
+.teamSwiper .swiper-pagination-bullet-active,
+.unduhanSwiper .swiper-pagination-bullet-active,
+.testimonialsSwiper .swiper-pagination-bullet-active,
+.tautanSwiper .swiper-pagination-bullet-active {
+  background: var(--accent-color, #00f2fe) !important;
+  opacity: 1;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Move Scroll Top button higher on mobile to prevent blocking bottom navigation */
+@media (max-width: 991px) {
+  .scroll-top {
+    bottom: 80px !important;
+  }
+}

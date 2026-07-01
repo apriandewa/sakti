@@ -61,13 +61,21 @@ class SsoController extends Controller
         ]);
 
         if ($response->failed()) {
-            $errorMessage = $response->json('message') ?? 'Internal Server Error';
-            if ($response->header('Content-Type') && !str_contains($response->header('Content-Type'), 'application/json')) {
+            $errorMessage = $response->json('message') ?? $response->json('error_description') ?? '';
+            
+            if ($response->status() === 401) {
+                $errorMessage = 'Client ID atau Client Secret salah / tidak terdaftar di server SSO.';
+            } elseif (empty($errorMessage)) {
                 $errorMessage = 'Server SSO mengembalikan status ' . $response->status() . ' (' . $response->reason() . ')';
             }
-            return redirect()->route('login')->withErrors([
-                'email' => 'Gagal mendapatkan access token dari server SSO: ' . $errorMessage
-            ]);
+
+            $ssoErrorUrl = rtrim(config('services.kompass.sso_url'), '/') . '/sso/error';
+            return redirect($ssoErrorUrl . '?' . http_build_query([
+                'app' => config('app.name'),
+                'error' => 'Gagal Pertukaran Token (Token Exchange Failed)',
+                'message' => $errorMessage,
+                'solution' => 'Periksa kembali variabel KOMPASS_CLIENT_ID dan KOMPASS_CLIENT_SECRET di file .env aplikasi client Anda, lalu pastikan nilainya sesuai dengan yang terdaftar di admin portal Kompas SSO.'
+            ]));
         }
 
         $accessToken = $response->json('access_token');
@@ -77,9 +85,13 @@ class SsoController extends Controller
             ->get(config('services.kompass.sso_url') . '/api/user');
 
         if ($userResponse->failed()) {
-            return redirect()->route('login')->withErrors([
-                'email' => 'Gagal mengambil data profil dari server SSO.'
-            ]);
+            $ssoErrorUrl = rtrim(config('services.kompass.sso_url'), '/') . '/sso/error';
+            return redirect($ssoErrorUrl . '?' . http_build_query([
+                'app' => config('app.name'),
+                'error' => 'Gagal Mengambil Data User (User Profile Failed)',
+                'message' => 'Token berhasil didapatkan, tetapi gagal mengambil data profil dari server SSO.',
+                'solution' => 'Pastikan token tidak kedaluwarsa dan server SSO Kompas dalam kondisi berjalan normal.'
+            ]));
         }
 
         $ssoUser = $userResponse->json();
@@ -88,9 +100,13 @@ class SsoController extends Controller
         $user = User::where('email', $ssoUser['email'])->first();
 
         if (!$user) {
-            return redirect()->route('login')->withErrors([
-                'email' => 'mohon maaf anda tidak bisa masuk ke aplikasi karena belum memiliki akun, silahkan hubungi admin atau pengelola untuk memeproleh akses login. terima kasih.'
-            ]);
+            $ssoErrorUrl = rtrim(config('services.kompass.sso_url'), '/') . '/sso/error';
+            return redirect($ssoErrorUrl . '?' . http_build_query([
+                'app' => config('app.name'),
+                'error' => 'Akun Belum Terdaftar (User Not Registered)',
+                'message' => 'Akun Anda (' . $ssoUser['email'] . ') terdaftar di Kompas SSO, tetapi tidak ditemukan di database pengguna lokal aplikasi ' . config('app.name') . '.',
+                'solution' => 'Silakan hubungi administrator aplikasi ' . config('app.name') . ' untuk mendaftarkan email Anda (' . $ssoUser['email'] . ') ke database setempat agar mendapatkan hak akses masuk.'
+            ]));
         }
 
         // Sinkronisasi/Update role dari SSO ke Level & Access Group lokal
