@@ -59,9 +59,11 @@ class SsoController extends Controller
 
         $code = $request->code;
 
+        $verifySsl = filter_var(env('KOMPASS_SSO_VERIFY_SSL', true), FILTER_VALIDATE_BOOLEAN);
+
         // Exchange Authorization Code for Access Token
         $http = Http::asForm();
-        if (config('app.env') === 'local') {
+        if (config('app.env') === 'local' || !$verifySsl) {
             $http = $http->withoutVerifying();
         }
 
@@ -95,7 +97,7 @@ class SsoController extends Controller
 
         // Dapatkan data user dari API SSO
         $httpUser = Http::withToken($accessToken);
-        if (config('app.env') === 'local') {
+        if (config('app.env') === 'local' || !$verifySsl) {
             $httpUser = $httpUser->withoutVerifying();
         }
 
