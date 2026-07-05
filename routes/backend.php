@@ -12,7 +12,6 @@ Route::group([
     Route::get('sidebar-notification', 'Notification\NotificationController@getSideBarNotification');
     Route::get('get-notification', 'Notification\NotificationController@getNotification');
     Route::get('clear-notification', 'Notification\NotificationController@markAsRead');
-    Route::post('logout','Auth\AuthController@logout')->name('logout');
     //end public route
 
     Route::prefix('file')->as('file')->group(function () {

@@ -85,13 +85,29 @@ class AuthController extends Controller
         return response()->json($this->response, $this->response['status']);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        auth()->user()->tokens()->delete();
-        auth()->logout();
-        Session()->flush();
-        $this->response['message'] = 'User logged out successfully';
-        return response()->json($this->response, $this->response['status']);
+        if (Auth::check()) {
+            $user = Auth::user();
+            // Delete personal access tokens if they exist
+            if (method_exists($user, 'tokens') && $user->tokens()) {
+                $user->tokens()->delete();
+            }
+            Auth::logout();
+        }
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        $ssoLogoutUrl = rtrim(config('services.kompass.sso_url'), '/') . '/sso/logout';
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $this->response['message'] = 'User logged out successfully';
+            $this->response['redirect_url'] = $ssoLogoutUrl;
+            return response()->json($this->response, 200);
+        }
+
+        return redirect($ssoLogoutUrl);
     }
 
     public function user()

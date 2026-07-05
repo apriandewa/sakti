@@ -148,7 +148,8 @@
             
             </div>
 
-                    @include('backend.main.menu.announcement')
+              <!-- Pegawai Charts -->
+                  @include('backend.main.menu.announcement')
                 </div>
             </section>
         </div>

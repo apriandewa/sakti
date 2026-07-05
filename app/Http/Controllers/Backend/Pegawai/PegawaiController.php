@@ -8,14 +8,86 @@ use App\Models\Pangkat;
 use App\Models\StatusPegawai;
 use App\Models\Jabatan;
 use App\Models\Page;
+use App\Models\Pegawai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PegawaiController extends Controller
 {
     public function index() : object
     {
-        return view($this->view.'.index');
+        $gender = Pegawai::select('jenis_kelamin', DB::raw('count(*) as total'))
+            ->groupBy('jenis_kelamin')
+            ->get();
+
+        $agama = Pegawai::select('agama', DB::raw('count(*) as total'))
+            ->groupBy('agama')
+            ->get();
+
+        $status = Pegawai::join('statuses', 'pegawais.status_id', '=', 'statuses.id')
+            ->select('statuses.nama as label', DB::raw('count(*) as total'))
+            ->groupBy('statuses.nama')
+            ->get();
+
+        $totalPegawai = Pegawai::count();
+        $totalPegawaiLaki = Pegawai::where('jenis_kelamin', 'Laki-laki')->count();
+        $totalPegawaiPerempuan = Pegawai::where('jenis_kelamin', 'Perempuan')->count();
+        $statusCounts = $status->pluck('total', 'label');
+        $totalPNS = $statusCounts->get('PNS', 0);
+        $totalCPNS = $statusCounts->get('CPNS', 0);
+        $totalPPPK = $statusCounts->get('PPPK', 0);
+        $totalPPPKPW = $statusCounts->get('PPPK-PW', 0);
+
+        $pangkat = Pegawai::join('pangkats', 'pegawais.pangkat_id', '=', 'pangkats.id')
+            ->select('pangkats.nama as label', DB::raw('count(*) as total'))
+            ->groupBy('pangkats.nama')
+            ->get();
+
+        $jabatanJenis = Pegawai::join('jabatans as jj', 'pegawais.jabatan_jenis_id', '=', 'jj.id')
+            ->select('jj.nama as label', DB::raw('count(*) as total'))
+            ->groupBy('jj.nama')
+            ->get();
+
+        $jabatanNama = Pegawai::join('jabatans as jn', 'pegawais.jabatan_nama_id', '=', 'jn.id')
+            ->select('jn.nama as label', DB::raw('count(*) as total'))
+            ->groupBy('jn.nama')
+            ->get();
+
+        $bidang = Pegawai::join('pages', 'pegawais.bidang_id', '=', 'pages.id')
+            ->select('pages.nama as label', DB::raw('count(*) as total'))
+            ->groupBy('pages.nama')
+            ->get();
+
+        $pendidikan = Pegawai::select('pendidikan_terakhir', DB::raw('count(*) as total'))
+            ->groupBy('pendidikan_terakhir')
+            ->get();
+
+        return view($this->view.'.index', [
+            'totalPegawai' => $totalPegawai,
+            'totalPegawaiLaki' => $totalPegawaiLaki,
+            'totalPegawaiPerempuan' => $totalPegawaiPerempuan,
+            'totalPNS' => $totalPNS,
+            'totalCPNS' => $totalCPNS,
+            'totalPPPK' => $totalPPPK,
+            'totalPPPKPW' => $totalPPPKPW,
+            'pegawaiGenderLabels' => $gender->pluck('jenis_kelamin')->toArray(),
+            'pegawaiGenderData' => $gender->pluck('total')->toArray(),
+            'pegawaiAgamaLabels' => $agama->pluck('agama')->toArray(),
+            'pegawaiAgamaData' => $agama->pluck('total')->toArray(),
+            'pegawaiStatusLabels' => $status->pluck('label')->toArray(),
+            'pegawaiStatusData' => $status->pluck('total')->toArray(),
+            'pegawaiPangkatLabels' => $pangkat->pluck('label')->toArray(),
+            'pegawaiPangkatData' => $pangkat->pluck('total')->toArray(),
+            'pegawaiJabatanJenisLabels' => $jabatanJenis->pluck('label')->toArray(),
+            'pegawaiJabatanJenisData' => $jabatanJenis->pluck('total')->toArray(),
+            'pegawaiJabatanNamaLabels' => $jabatanNama->pluck('label')->toArray(),
+            'pegawaiJabatanNamaData' => $jabatanNama->pluck('total')->toArray(),
+            'pegawaiBidangLabels' => $bidang->pluck('label')->toArray(),
+            'pegawaiBidangData' => $bidang->pluck('total')->toArray(),
+            'pegawaiPendidikanLabels' => $pendidikan->pluck('pendidikan_terakhir')->toArray(),
+            'pegawaiPendidikanData' => $pendidikan->pluck('total')->toArray(),
+        ]);
     }
 
     public function create() : object

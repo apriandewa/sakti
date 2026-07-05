@@ -66,20 +66,7 @@
                 dangerMode: true,
             }, function (willLogout) {
                 if (willLogout) {
-                    $.ajax({
-                        url: '{!! url(config('master.app.url.backend').'/logout') !!}',
-                        type: 'POST',
-                        data: {
-                            _token: '{!! csrf_token() !!}',
-                            device: `web`
-                        },
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.status === 200) {
-                                window.location.href = "{!! url('login') !!}";
-                            }
-                        }
-                    });
+                    window.location.href = '{!! url(config('master.app.url.backend').'/logout') !!}';
                 }
             });
         });

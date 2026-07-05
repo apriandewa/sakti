@@ -110,6 +110,8 @@ Route::post('/admin/berita/kirim/{id}', [BackendBeritaController::class, 'kirim'
 Route::post('/admin/galeri/kirim/{id}', [BackendGaleriController::class, 'kirim'])->name('galeri.kirim');
 Route::post('/admin/unduhan/kirim/{id}', [BackendUnduhanController::class, 'kirim'])->name('unduhan.kirim');
 
+// ===== Backend Logout Route (SSO compatible, no auth middleware to avoid redirect loops on expired sessions) =====
+Route::match(['get', 'post'], config('master.app.url.backend') . '/logout', [\App\Http\Controllers\Backend\Auth\AuthController::class, 'logout'])->name('admin.logout');
 
 // ===== Auth Routes (Jetstream/Fortify) =====
 require __DIR__ . '/auth.php';

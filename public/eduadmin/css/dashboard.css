@@ -1,0 +1,197 @@
+/* ============================================================
+   Dashboard Custom Styles
+   /public/eduadmin/css/dashboard.css
+   ============================================================ */
+
+/* ── CSS Variables ────────────────────────────────────────── */
+:root {
+    --dash-primary:    #4f46e5;
+    --dash-success:    #10b981;
+    --dash-warning:    #f59e0b;
+    --dash-danger:     #ef4444;
+    --dash-info:       #06b6d4;
+    --dash-purple:     #8b5cf6;
+    --dash-pink:       #ec4899;
+    --dash-card-bg:    #ffffff;
+    --dash-muted:      #6b7280;
+    --dash-border:     #e5e7eb;
+    --dash-section-bg: #f8fafc;
+}
+
+/* ── Hero Banner ──────────────────────────────────────────── */
+.dash-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 32px 40px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.dash-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    background: rgba(255,255,255,.08);
+    border-radius: 50%;
+}
+.dash-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: 80px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,.06);
+    border-radius: 50%;
+}
+.dash-hero h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 6px; }
+.dash-hero p  { opacity: .85; font-size: .95rem; margin: 0; }
+
+/* ── Section Header ───────────────────────────────────────── */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.section-header .section-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.section-header h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+.section-header span.badge-tag {
+    font-size: .7rem;
+    background: #e0e7ff;
+    color: #4f46e5;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ── Stat Card ────────────────────────────────────────────── */
+.stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px 22px 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+    border: 1px solid var(--dash-border);
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+    height: 100%;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0,0,0,.1);
+}
+.stat-card .stat-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+}
+.stat-card .stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+.stat-card .stat-label {
+    font-size: .8rem;
+    color: var(--dash-muted);
+    font-weight: 500;
+}
+.stat-card .stat-accent {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 80px; height: 80px;
+    border-radius: 50% 0 0 0;
+    opacity: .08;
+}
+
+/* Gradient "my-card" variant */
+.stat-card.my-card {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: #fff;
+}
+.stat-card.my-card .stat-value,
+.stat-card.my-card .stat-label { color: #fff; }
+.stat-card.my-card .stat-label { opacity: .85; }
+
+/* ── Chart Card ───────────────────────────────────────────── */
+.chart-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+    border: 1px solid var(--dash-border);
+    height: 100%;
+}
+.chart-card .chart-title {
+    font-size: .9rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+.chart-card .chart-subtitle {
+    font-size: .75rem;
+    color: var(--dash-muted);
+    margin-bottom: 16px;
+}
+.chart-card canvas { max-width: 100%; }
+
+/* ── Permohonan Status Pills ──────────────────────────────── */
+.status-pill-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+.status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+.status-pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+.dash-divider {
+    border: none;
+    border-top: 1px solid var(--dash-border);
+    margin: 24px 0;
+}
+
+/* ── Empty state placeholder ─────────────────────────────── */
+.chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 160px;
+    color: var(--dash-muted);
+    font-size: .85rem;
+    flex-direction: column;
+    gap: 6px;
+}
+.chart-empty i { font-size: 1.8rem; opacity: .4; }

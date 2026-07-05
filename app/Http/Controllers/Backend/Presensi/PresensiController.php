@@ -55,6 +55,13 @@ class PresensiController extends Controller
         $year = $request->input('year', Carbon::now()->year);
         $source = $request->input('source', 'local');
 
+        // Hitung batas hari jika bulan adalah bulan sekarang
+        $today = Carbon::today();
+        $currentMonth = $today->month;
+        $currentYear = $today->year;
+        $isCurrentMonth = ($month == $currentMonth && $year == $currentYear);
+        $dayLimit = $isCurrentMonth ? $today->day : null;
+
         if ($source === 'live') {
             // Mode 1: Real-time Live dari BKN API (tanpa membebani db lokal)
             $pegawais = Pegawai::where('status', 'aktif')
@@ -97,8 +104,13 @@ class PresensiController extends Controller
                     $totalPotongan = 0.00;
 
                     foreach ($presensi as $dayData) {
+                        $day = $dayData['day'];
+                        
+                        // Lewati data jika sudah melampaui hari ini (untuk bulan sekarang)
+                        if ($dayLimit && $day > $dayLimit) continue;
+                        
                         try {
-                            if (Carbon::createFromDate($year, $month, $dayData['day'])->isWeekend()) continue;
+                            if (Carbon::createFromDate($year, $month, $day)->isWeekend()) continue;
                         } catch (\Exception $e) {
                             continue;
                         }
@@ -171,58 +183,81 @@ class PresensiController extends Controller
             $query = collect($mappedData);
         } else {
             // Mode 2: Dari Database Lokal
+            // Helper function untuk tambahkan kondisi day limit jika diperlukan
+            $addDayLimitCondition = function($q) use ($dayLimit) {
+                if ($dayLimit) {
+                    $q->whereDay('tanggal', '<=', $dayLimit);
+                }
+            };
+            
             $query = Pegawai::query()
                 ->where('status', 'aktif')
                 ->select('id', 'nama', 'nip', 'gelar_depan', 'gelar_belakang')
                 ->withCount([
-                    'presensiHarian as count_hn' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_hn' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereIn('status_kehadiran', ['HN', 'WFO']);
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_tk' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_tk' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->where('status_kehadiran', 'TK');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_ct' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_ct' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereIn('status_kehadiran', ['CT', 'CB', 'CM', 'CS', 'CKAP']);
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_dl' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_dl' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereIn('status_kehadiran', ['DL', 'TB']);
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_izin' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_izin' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereIn('status_kehadiran', ['IZIN', 'IDL', 'IDLI', 'IDLO', 'ITM', 'IPC', 'ITMPC']);
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as total_hari_kerja' => function ($q) use ($month, $year) {
+                    'presensiHarian as total_hari_kerja' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')
                           ->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF']);
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_tm1' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_tm1' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_terlambat', 'TM1');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_tm2' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_tm2' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_terlambat', 'TM2');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_tm3' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_tm3' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_terlambat', 'TM3');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_tm4' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_tm4' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_terlambat', 'TM4');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_tmm' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_tmm' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_terlambat', 'TMM');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_pc1' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_pc1' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_pulang_cepat', 'PC1');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_pc2' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_pc2' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_pulang_cepat', 'PC2');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_pc3' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_pc3' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_pulang_cepat', 'PC3');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_pc4' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_pc4' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_pulang_cepat', 'PC4');
+                        $addDayLimitCondition($q);
                     },
-                    'presensiHarian as count_pc5' => function ($q) use ($month, $year) {
+                    'presensiHarian as count_pc5' => function ($q) use ($month, $year, $addDayLimitCondition) {
                         $q->whereMonth('tanggal', $month)->whereYear('tanggal', $year)->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')->whereNotIn('status_kehadiran', ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF', 'DL', 'TK', 'IDLI', 'ITM'])->where('kategori_pulang_cepat', 'PC5');
+                        $addDayLimitCondition($q);
                     }
                 ])
                 ->selectRaw("(
@@ -232,7 +267,8 @@ class PresensiController extends Controller
                     AND MONTH(tanggal) = ? 
                     AND YEAR(tanggal) = ?
                     AND DAYOFWEEK(tanggal) NOT IN (1, 7)
-                ) as total_potongan", [$month, $year]);
+                    " . ($dayLimit ? "AND DAY(tanggal) <= ?" : "") . "
+                ) as total_potongan", ($dayLimit ? [$month, $year, $dayLimit] : [$month, $year]));
         }
 
         return datatables()->of($query)
@@ -287,6 +323,13 @@ class PresensiController extends Controller
         $pegawai = Pegawai::findOrFail($pegawaiId);
         $source = request()->query('source', 'local');
 
+        // Hitung batas hari jika bulan adalah bulan sekarang
+        $today = Carbon::today();
+        $currentMonth = $today->month;
+        $currentYear = $today->year;
+        $isCurrentMonth = ($month == $currentMonth && $year == $currentYear);
+        $dayLimit = $isCurrentMonth ? $today->day : null;
+
         if ($source === 'live') {
             $liveOfficeData = $this->simpegnasService->getLiveRekap((int)$month, (int)$year);
             $liveOfficeDataByNip = collect($liveOfficeData)->keyBy('nip');
@@ -296,6 +339,10 @@ class PresensiController extends Controller
             if ($bknData && !empty($bknData['presensi'])) {
                 foreach ($bknData['presensi'] as $dayData) {
                     $day = $dayData['day'];
+                    
+                    // Lewati data jika sudah melampaui hari ini (untuk bulan sekarang)
+                    if ($dayLimit && $day > $dayLimit) continue;
+                    
                     $statusHarian = $dayData['status'] ?? 'HN';
                     $isHoliday = in_array($statusHarian, ['LN', 'LJ', 'LS', 'LM', 'L', 'OFF']);
                     
@@ -350,12 +397,17 @@ class PresensiController extends Controller
                 }
             }
         } else {
-            $logs = PresensiHarian::where('pegawai_id', $pegawaiId)
+            $query = PresensiHarian::where('pegawai_id', $pegawaiId)
                 ->whereMonth('tanggal', $month)
                 ->whereYear('tanggal', $year)
-                ->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)')
-                ->orderBy('tanggal', 'asc')
-                ->get();
+                ->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)');
+            
+            // Tambahkan kondisi day limit jika bulan adalah bulan sekarang
+            if ($dayLimit) {
+                $query->whereDay('tanggal', '<=', $dayLimit);
+            }
+            
+            $logs = $query->orderBy('tanggal', 'asc')->get();
         }
 
         $monthName = Carbon::createFromDate($year, $month, 1)->translatedFormat('F');

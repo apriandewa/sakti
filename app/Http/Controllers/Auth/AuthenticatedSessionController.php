@@ -42,6 +42,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        $ssoLogoutUrl = rtrim(config('services.kompass.sso_url'), '/') . '/sso/logout';
+        return redirect($ssoLogoutUrl);
     }
 }
