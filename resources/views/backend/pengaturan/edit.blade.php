@@ -85,6 +85,9 @@
 		<div class='form-group'>
 			{!! html()->label()->class('control-label')->for('peta')->text('Peta') !!}
 			{!! html()->textarea('peta',$data->peta)->class('form-control')->id('peta') !!}
+			<small class="text-muted d-block mt-1">
+				<i class="fa fa-info-circle"></i> URL embed Google Maps ini juga digunakan untuk verifikasi lokasi buku tamu (radius {{ config('kunjungan.radius_meters', 200) }} meter).
+			</small>
 		</div>
 		<div class="row">
 			<div class="col-6">

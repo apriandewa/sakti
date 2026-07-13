@@ -35,16 +35,6 @@ class AgendaRapat extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function pegawai()
-    {
-        return $this->belongsTo(Pegawai::class, 'pegawai_id');
-    }
-
-    public function penandaTangan()
-    {
-        return $this->pegawai();
-    }
-
     public function file()
     {
         return $this->morphMany(File::class, 'fileable');

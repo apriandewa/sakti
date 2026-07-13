@@ -27,7 +27,7 @@
 				</div>
 				<div class="form-group">
 					{!! html()->span()->text("Penulis")->class("control-label") !!}
-					{!! html()->p($data->user->name)->class("form-control") !!}
+					{!! html()->p($data->user->name ?? '-')->class("form-control") !!}
 				</div>
 				<div class="form-group">
 					{!! html()->span()->text("Verifikator")->class("control-label") !!}

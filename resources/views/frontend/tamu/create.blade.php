@@ -46,8 +46,45 @@
             </div>
           @endif
 
+          <!-- Verifikasi Lokasi -->
+          <div class="glass-card p-0 overflow-hidden mb-4" id="locationGate" @if($lokasiVerified) style="display:none;" @endif>
+            <div class="d-flex align-items-center gap-3 py-3 px-4 border-bottom border-secondary" style="background: rgba(0, 242, 254, 0.1);">
+              <div class="rounded-circle d-flex align-items-center justify-content-center bg-info text-white" style="width: 44px; height: 44px; box-shadow: 0 0 10px var(--brand-blue-glow);">
+                <i class="bi bi-geo-alt-fill fs-5"></i>
+              </div>
+              <div>
+                <h5 class="mb-0 text-white fw-bold">Verifikasi Lokasi</h5>
+                <small class="text-secondary">Pastikan Anda berada di area kantor</small>
+              </div>
+            </div>
+
+            <div class="p-4 text-center">
+              <div class="mb-4">
+                <i class="bi bi-building text-info" style="font-size: 3.5rem; opacity: 0.85;"></i>
+              </div>
+              <p class="text-white mb-2">Untuk mengisi buku tamu, Anda harus berada di area kantor.</p>
+              <p class="text-secondary small mb-4">
+                <i class="bi bi-pin-map me-1"></i>{!! nl2br(e($officeName)) !!}<br>
+                <span class="text-muted">Radius diizinkan: {{ $officeRadius }} meter</span>
+              </p>
+              @if($lokasiTersedia)
+                <button type="button" class="btn-cyber px-4 py-2" id="btnIzinkanLokasi">
+                  <i class="bi bi-crosshair me-2"></i>Izinkan Lokasi
+                </button>
+                <p class="text-muted small mt-3 mb-0">
+                  <i class="bi bi-info-circle me-1"></i>Browser akan meminta izin akses lokasi perangkat Anda.
+                </p>
+              @else
+                <div class="alert alert-warning rounded-3 mb-0 text-start">
+                  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                  Koordinat kantor belum dikonfigurasi. Admin dapat mengatur kolom <strong>Alamat</strong> dan <strong>Peta</strong> di menu Pengaturan.
+                </div>
+              @endif
+            </div>
+          </div>
+
           <!-- Glass Form Card -->
-          <div class="glass-card p-0 overflow-hidden">
+          <div class="glass-card p-0 overflow-hidden" id="formSection" @if(!$lokasiVerified) style="display:none;" @endif>
             
             <!-- Card Header -->
             <div class="d-flex align-items-center gap-3 py-3 px-4 border-bottom border-secondary" style="background: rgba(0, 242, 254, 0.1);">
@@ -64,6 +101,8 @@
             <div class="p-4">
               <form action="{{ route('kunjungan.store') }}" method="POST" enctype="multipart/form-data" id="formTamu" novalidate autocomplete="off" class="form-cyber">
                 @csrf
+                <input type="hidden" name="user_latitude" id="userLatitude" value="{{ session('buku_tamu_user_lat') }}">
+                <input type="hidden" name="user_longitude" id="userLongitude" value="{{ session('buku_tamu_user_lng') }}">
 
                 <!-- Section: Data Diri -->
                 <div class="d-flex align-items-center gap-2 mb-3 mt-1">
@@ -315,6 +354,121 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  const locationGate = document.getElementById('locationGate');
+  const formSection  = document.getElementById('formSection');
+  const btnLokasi    = document.getElementById('btnIzinkanLokasi');
+  const latInput     = document.getElementById('userLatitude');
+  const lngInput     = document.getElementById('userLongitude');
+  const swalTheme    = {
+    confirmButtonColor: '#059669',
+    cancelButtonColor: '#475569',
+    background: '#0b1528',
+    color: '#fff'
+  };
+
+  function showForm() {
+    if (locationGate) locationGate.style.display = 'none';
+    if (formSection)  formSection.style.display = '';
+  }
+
+  function geolocationErrorMessage(error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        return 'Akses lokasi ditolak. Aktifkan izin lokasi di browser Anda lalu coba lagi.';
+      case error.POSITION_UNAVAILABLE:
+        return 'Informasi lokasi tidak tersedia. Pastikan GPS perangkat Anda aktif.';
+      case error.TIMEOUT:
+        return 'Waktu permintaan lokasi habis. Silakan coba lagi.';
+      default:
+        return 'Gagal mendapatkan lokasi. Silakan coba lagi.';
+    }
+  }
+
+  if (btnLokasi) {
+    btnLokasi.addEventListener('click', function () {
+      if (!navigator.geolocation) {
+        Swal.fire({
+          title: 'Pemberitahuan',
+          text: 'Browser Anda tidak mendukung fitur geolokasi.',
+          icon: 'warning',
+          ...swalTheme
+        });
+        return;
+      }
+
+      const originalHtml = btnLokasi.innerHTML;
+      btnLokasi.disabled = true;
+      btnLokasi.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memeriksa lokasi...';
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const latitude  = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          fetch('{{ route('kunjungan.verify-location') }}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ latitude, longitude })
+          })
+          .then(function (response) {
+            return response.json().then(function (data) {
+              if (!response.ok) {
+                throw new Error(data.message || 'Verifikasi lokasi gagal.');
+              }
+              return data;
+            });
+          })
+          .then(function (data) {
+            if (data.allowed) {
+              if (latInput) latInput.value = latitude;
+              if (lngInput) lngInput.value = longitude;
+              showForm();
+              return;
+            }
+
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: 'Anda berada di luar area kantor (' + data.distance + 'm). Silakan datang ke kantor untuk mengisi buku tamu.',
+              icon: 'warning',
+              ...swalTheme
+            });
+          })
+          .catch(function (error) {
+            Swal.fire({
+              title: 'Pemberitahuan',
+              text: error.message || 'Terjadi kesalahan saat memverifikasi lokasi. Silakan coba lagi.',
+              icon: 'error',
+              ...swalTheme
+            });
+          })
+          .finally(function () {
+            btnLokasi.disabled = false;
+            btnLokasi.innerHTML = originalHtml;
+          });
+        },
+        function (error) {
+          btnLokasi.disabled = false;
+          btnLokasi.innerHTML = originalHtml;
+          Swal.fire({
+            title: 'Pemberitahuan',
+            text: geolocationErrorMessage(error),
+            icon: 'warning',
+            ...swalTheme
+          });
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    });
+  }
+
   const pesan = document.getElementById('pesanInput');
   const count = document.getElementById('pesanCount');
   if (pesan && count) {

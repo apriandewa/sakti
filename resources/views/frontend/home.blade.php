@@ -5,97 +5,126 @@
 <main class="main">
 
   <!-- ==========================================
-       HERO SECTION WITH SWIPER
+       HERO SECTION — SAKTI branded, sailing ship animation
        ========================================== -->
-  <section id="hero" class="hero">
-    <div class="swiper hero-swiper">
-      <div class="swiper-wrapper">
-        @forelse($slider as $slide)
-          @php
-            $file = $slide->getfilebyalias('gambar_slider');
-            $imgUrl = $file ? url($file->public_stream) : 'https://via.placeholder.com/1920x1080?text=Slider+Image';
-          @endphp
-          <div class="swiper-slide" style="background-image: url('{{ $imgUrl }}');">
-            <div class="hero-overlay"></div>
-            <div class="hero-content container">
-              <span class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">Teknologi & Digitalisasi</span>
-              <h2 class="hero-title" data-aos="fade-up" data-aos-delay="400">
-                <span>{{ $slide->nama ?? 'Portal Resmi' }}</span>
-              </h2>
-              <p class="hero-desc" data-aos="fade-up" data-aos-delay="600">
-                {{ $slide->keterangan ?? 'Menuju tata kelola pemerintahan yang transparan dan akuntabel di Kabupaten Indragiri Hulu.' }}
-              </p>
-              <div class="hero-actions" data-aos="fade-up" data-aos-delay="800">
-                <a href="#services" class="btn-cyber"><i class="bi bi-cpu"></i> Layanan Kami</a>
-                <a href="#about" class="btn-cyber-outline"><i class="bi bi-info-circle"></i> Tentang Kami</a>
-              </div>
-            </div>
-          </div>
-        @empty
-          <!-- Default Fallback Slide -->
-          <div class="swiper-slide" style="background-image: url('https://via.placeholder.com/1920x1080?text=Portal+Diskominfotik');">
-            <div class="hero-overlay"></div>
-            <div class="hero-content container">
-              <span class="hero-subtitle">Teknologi & Digitalisasi</span>
-              <h2 class="hero-title"><span>{{ $title ?? 'Diskominfotik Kabupaten Indragiri Hulu' }}</span></h2>
-              <p class="hero-desc">Layanan keterbukaan informasi publik secara digital, cepat, mudah, dan transparan.</p>
-              <div class="hero-actions">
-                <a href="#services" class="btn-cyber"><i class="bi bi-cpu"></i> Layanan Kami</a>
-                <a href="#about" class="btn-cyber-outline"><i class="bi bi-info-circle"></i> Tentang Kami</a>
-              </div>
-            </div>
-          </div>
-        @endforelse
-      </div>
+  @php
+    $totalBidang = isset($bidang) ? count($bidang) : 0;
+    $totalProgram = isset($program) ? count($program) : 0;
+    $totalBerita = isset($berita) ? count($berita) : 0;
+    $totalUnduhan = isset($unduhan) ? count($unduhan) : 0;
+  @endphp
+  <section id="hero" class="hero hero-sakti">
 
-      <!-- Navigation Arrows -->
-      <div class="swiper-button-prev hero-swiper-button-prev d-none d-md-flex"></div>
-      <div class="swiper-button-next hero-swiper-button-next d-none d-md-flex"></div>
-      <!-- Pagination Dots -->
-      <div class="swiper-pagination hero-swiper-pagination"></div>
+    <!-- Night sky layer: stars (particles.js), shooting stars, constellations -->
+    <div class="hero-sky-night" aria-hidden="true">
+      <div id="hero-particles-night" class="hero-particles"></div>
+      <span class="shooting-star ss1"></span>
+      <span class="shooting-star ss2"></span>
+      <span class="shooting-star ss3"></span>
+      <svg class="constellation const-1" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(255,255,255,0.35)" stroke-width="1">
+          <line x1="10" y1="20" x2="50" y2="10"></line>
+          <line x1="50" y1="10" x2="92" y2="36"></line>
+          <line x1="92" y1="36" x2="140" y2="16"></line>
+          <line x1="140" y1="16" x2="180" y2="46"></line>
+        </g>
+        <g fill="#fff">
+          <circle cx="10" cy="20" r="1.6"></circle>
+          <circle cx="50" cy="10" r="2"></circle>
+          <circle cx="92" cy="36" r="1.4"></circle>
+          <circle cx="140" cy="16" r="1.8"></circle>
+          <circle cx="180" cy="46" r="1.4"></circle>
+        </g>
+      </svg>
+      <svg class="constellation const-2" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(255,255,255,0.3)" stroke-width="1">
+          <line x1="20" y1="60" x2="60" y2="82"></line>
+          <line x1="60" y1="82" x2="112" y2="56"></line>
+          <line x1="112" y1="56" x2="152" y2="72"></line>
+        </g>
+        <g fill="#fff">
+          <circle cx="20" cy="60" r="1.5"></circle>
+          <circle cx="60" cy="82" r="1.8"></circle>
+          <circle cx="112" cy="56" r="1.3"></circle>
+          <circle cx="152" cy="72" r="1.6"></circle>
+        </g>
+      </svg>
+      <svg class="constellation const-3" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="rgba(255,255,255,0.28)" stroke-width="1">
+          <line x1="30" y1="30" x2="70" y2="18"></line>
+          <line x1="70" y1="18" x2="100" y2="40"></line>
+        </g>
+        <g fill="#fff">
+          <circle cx="30" cy="30" r="1.4"></circle>
+          <circle cx="70" cy="18" r="1.7"></circle>
+          <circle cx="100" cy="40" r="1.3"></circle>
+        </g>
+      </svg>
     </div>
 
-    <!-- Persistent Static Layer for Laptop & Floating Folders -->
-    <div class="hero-static-layer">
-      <div class="container h-100">
-        <div class="row h-100 g-0">
-          <div class="col-12 hero-laptop-col">
-            <div class="laptop-wrapper">
-              <div class="laptop-container">
-                <!-- Screen Lid -->
-                <div class="laptop-screen-container">
-                  <div class="laptop-screen">
-                    <div class="screen-content">
-                      <div class="terminal-header">
-                        <span class="terminal-dot red"></span>
-                        <span class="terminal-dot yellow"></span>
-                        <span class="terminal-dot green"></span>
-                        <span class="terminal-title">diskominfotik@inhukab:~</span>
-                      </div>
-                      <div class="terminal-body">
-                        <span class="terminal-prompt">&gt;</span>
-                        <span class="typing-text"></span>
-                        <span class="terminal-cursor"></span>
-                      </div>
-                    </div>
-                    <div class="screen-glow"></div>
-                  </div>
-                </div>
-                <!-- Base -->
-                <div class="laptop-base-container">
-                  <div class="laptop-keyboard-deck">
-                    <div class="keyboard-keys"></div>
-                    <div class="keyboard-trackpad"></div>
-                  </div>
-                  <div class="laptop-base-lip"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Day sky layer: sun + drifting clouds -->
+    <div class="hero-sky-day" aria-hidden="true">
+      <div class="hero-sun">
+        <span class="sun-rays"></span>
+        <span class="sun-core"></span>
+        <span class="sun-shine"></span>
       </div>
-      <!-- Floating Folders Outer Container -->
-      <div class="folders-outer-container"></div>
+      <span class="hero-cloud cloud-1"></span>
+      <span class="hero-cloud cloud-2"></span>
+      <span class="hero-cloud cloud-3"></span>
+      <span class="hero-cloud cloud-4"></span>
+    </div>
+
+    <div class="hero-glossy-sheen"></div>
+
+    <!-- Ocean layer: waves + sailboat -->
+    <div class="hero-ocean" aria-hidden="true">
+
+      <svg class="wave-layer wave-far" viewBox="0 0 1600 220" preserveAspectRatio="none">
+        <path d="M0,150 C200,190 400,120 600,150 C800,180 1000,120 1200,145 C1400,170 1500,140 1600,150 L1600,220 L0,220 Z"></path>
+        <path d="M1600,150 C1800,190 2000,120 2200,150 C2400,180 2600,120 2800,145 C3000,170 3100,140 3200,150 L3200,220 L1600,220 Z"></path>
+      </svg>
+
+      <svg class="wave-layer wave-back" viewBox="0 0 1600 220" preserveAspectRatio="none">
+        <path d="M0,120 C200,180 400,60 600,110 C800,160 1000,60 1200,100 C1400,140 1500,90 1600,110 L1600,220 L0,220 Z"></path>
+        <path d="M1600,120 C1800,180 2000,60 2200,110 C2400,160 2600,60 2800,100 C3000,140 3100,90 3200,110 L3200,220 L1600,220 Z"></path>
+      </svg>
+
+      <div class="hero-sailboat" id="heroSailboat">
+        <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+          <path d="M60 8 L60 90 L20 90 Z" fill="#f5a623"/>
+          <path d="M64 2 L64 90 L104 90 Z" fill="#1b2450"/>
+          <rect x="58" y="8" width="4" height="90" fill="#0f1533"/>
+          <path d="M10 96 C35 108 85 108 110 96 L118 108 C90 122 30 122 2 108 Z" fill="#1b2450"/>
+          <path d="M2 108 C30 120 90 120 118 108" fill="none" stroke="#f5a623" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <svg class="wave-layer wave-mid" viewBox="0 0 1600 220" preserveAspectRatio="none">
+        <path d="M0,130 C220,80 420,170 620,130 C820,90 1020,180 1220,135 C1380,105 1500,145 1600,130 L1600,220 L0,220 Z"></path>
+        <path d="M1600,130 C1820,80 2020,170 2220,130 C2420,90 2620,180 2820,135 C2980,105 3100,145 3200,130 L3200,220 L1600,220 Z"></path>
+      </svg>
+
+      <svg class="wave-layer wave-front" viewBox="0 0 1600 220" preserveAspectRatio="none">
+        <path d="M0,140 C220,90 420,190 620,140 C820,90 1020,190 1220,140 C1380,105 1500,150 1600,140 L1600,220 L0,220 Z"></path>
+        <path d="M1600,140 C1820,90 2020,190 2220,140 C2420,90 2620,190 2820,140 C2980,105 3100,150 3200,140 L3200,220 L1600,220 Z"></path>
+      </svg>
+
+    </div>
+
+    <div class="container hero-sakti-content text-center">
+      <button type="button" id="saktiLogoBtn" class="sakti-logo-btn" data-aos="zoom-in" aria-label="Jalankan animasi kapal layar SAKTI">
+        <span class="sakti-logo-ring"></span>
+        <span class="sakti-logo-ring-glow"></span>
+        <img src="{{ asset('eduadmin/images/sakti.png') }}" alt="Logo SAKTI" class="sakti-logo-img">
+        <span class="sakti-logo-shine"></span>
+      </button>
+
+      <h1 class="sakti-title" data-aos="fade-up" data-aos-delay="150">SAKTI</h1>
+      <p class="sakti-subtitle" data-aos="fade-up" data-aos-delay="250">Sistem Aplikasi Kepegawaian Terintegrasi</p>
+      <span class="sakti-location" data-aos="fade-up" data-aos-delay="350">
+        <i class="bi bi-geo-alt-fill"></i> Kabupaten Indragiri Hulu
+      </span>
     </div>
   </section>
 
@@ -104,10 +133,10 @@
        ========================================== -->
   <section id="about" class="section-dark">
     <div class="container">
-      
+
       <!-- Sub-section 1: Deskripsi Portal & Foto Pimpinan -->
-      <div class="row align-items-center mb-5 pb-5 border-bottom border-secondary">
-        <div class="col-lg-5 mb-4 mb-lg-0" data-aos="fade-right" data-aos-duration="1000">
+      <div class="row align-items-center mb-5 pb-5 border-bottom" style="border-color: var(--glass-border) !important;">
+        <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-right" data-aos-duration="1000">
           <div class="leader-image-card mx-auto">
             <img src="{{ asset('eduadmin/images/pimpinaninhu.png') }}" alt="Pimpinan Indragiri Hulu" class="img-fluid">
             <div class="leader-badge">
@@ -116,17 +145,17 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-7" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+        <div class="col-lg-8" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
           <div class="sambutan-content">
-            <span class="text-success font-subtitle fw-bold uppercase letter-spacing-1 text-cyan d-block mb-2">Portal Diskominfotik Inhu</span>
-            <h3>Pelayanan Informasi Terpadu</h3>
-            <p class="lead text-white font-subtitle mb-4">
-              Selamat datang di {{ $title ?? 'Dinas Komunikasi, Informatika, Statistik dan Persandian Kabupaten Indragiri Hulu' }}.
+            <span class="eyebrow">Sistem Aplikasi Kepegawaian Terintegrasi</span>
+            <h3>S A K T I  &nbsp; I N H U</h3>
+            <p class="text-secondary mb-4">
+              SAKTI (Sistem Aplikasi Kepegawaian Terintegrasi) merupakan platform digital yang dikembangkan untuk mengintegrasikan berbagai layanan dan proses administrasi kepegawaian dalam satu sistem yang terpadu, modern, dan mudah digunakan.
             </p>
             <p class="text-secondary mb-4">
-              Berdasarkan amanah Undang-Undang Nomor 14 Tahun 2008 tentang Keterbukaan Informasi Publik, kami berkomitmen untuk menyediakan layanan data dan dokumentasi yang handal, cepat, serta mudah diakses bagi masyarakat luas guna mewujudkan transparansi dan integrasi data yang andal.
+              Melalui SAKTI, seluruh pengelolaan data Aparatur Sipil Negara (ASN) dapat dilakukan secara lebih efektif, efisien, transparan, dan akuntabel. SAKTI hadir sebagai wujud transformasi digital dalam tata kelola kepegawaian Pemerintah Kabupaten Indragiri Hulu menuju pelayanan yang profesional, responsif, dan berorientasi pada peningkatan kualitas pelayanan publik.
             </p>
-            <a href="#services" class="btn-cyber-outline"><i class="bi bi-arrow-down-short fs-5"></i> Eksplor Layanan</a>
+            
           </div>
         </div>
       </div>
@@ -140,11 +169,8 @@
         <div class="row align-items-center">
           <div class="col-lg-7 order-2 order-lg-1" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="100">
             <div class="sambutan-content">
-              <span class="text-success font-subtitle fw-bold uppercase text-cyan d-block mb-2">Sambutan Kepala Dinas</span>
+              <span class="eyebrow">Sambutan Kepala Dinas</span>
               <h3>{{ $welcome->nama }}</h3>
-              <div class="quote-text text-secondary mb-4">
-                "{!! strip_tags(Str::limit($welcome->desc, 300)) !!}"
-              </div>
               <div class="text-secondary mb-4">
                 {!! $welcome->desc !!}
               </div>
@@ -166,35 +192,78 @@
   </section>
 
   <!-- ==========================================
-       SERVICE SECTION (BIDANG DI DINAS)
+       STATISTIK SECTION (inspired by JDIH "Statistik" block)
        ========================================== -->
-  <section id="services" class="section-light-dark">
+  <section id="statistik" class="section-light-dark">
     <div class="container">
-      
-      <div class="container section-title text-center" data-aos="fade-up">
-        <h2>Bidang Diskominfotik</h2>
-        <p>Bidang-bidang pelayanan dan tugas pokok pada Dinas Komunikasi, Informatika, Statistik, dan Persandian</p>
-      </div>
-
-      <div class="row g-4 justify-content-center">
-        @forelse($bidang as $index => $prof)
-          <div class="col-md-6 col-lg-3" data-aos="flip-left" data-aos-delay="{{ $index * 150 }}">
-            <div class="glass-card service-card h-100 d-flex flex-column align-items-start">
-              <div class="service-icon-box">
-                <i class="fa {{ $prof->icon ?? 'fa-laptop' }}"></i>
-              </div>
-              <h4>{{ $prof->nama }}</h4>
-              <p class="text-secondary small mb-4 flex-grow-1">
-                {{ $prof->keterangan }}
-              </p>
-              <a href="{{ route('page.detail', $prof->slug) }}" class="btn-cyber-outline py-2 px-3 text-center w-100">Detail Bidang</a>
+      <div class="row g-4 align-items-stretch">
+        <div class="col-lg-4" data-aos="fade-up">
+          <div class="stat-counter-box h-100 d-flex flex-column justify-content-center">
+            <i class="bi bi-bar-chart-line stat-icon"></i>
+            <div class="stat-number" data-target="{{ $totalBidang + $totalProgram + $totalBerita + $totalUnduhan }}">0</div>
+            <div class="stat-label">Total Konten Terpublikasi</div>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <span class="unduhan-badge"><i class="bi bi-diagram-3 me-1"></i>{{ $totalBidang }} Bidang</span>
+              <span class="unduhan-badge"><i class="bi bi-rocket-takeoff me-1"></i>{{ $totalProgram }} Program</span>
             </div>
           </div>
-        @empty
-          <div class="col-12 text-center text-secondary">
-            <p>Data profil bidang belum tersedia.</p>
+        </div>
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="150">
+          <div class="stat-counter-box h-100 d-flex flex-column justify-content-center">
+            <i class="bi bi-newspaper stat-icon"></i>
+            <div class="stat-number" data-target="{{ $totalBerita }}">0</div>
+            <div class="stat-label">Berita & Artikel</div>
+            <p class="text-secondary small mt-3 mb-0">Rilis terbaru seputar kegiatan dan kebijakan Pemkab Indragiri Hulu.</p>
           </div>
-        @endforelse
+        </div>
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="stat-counter-box h-100 d-flex flex-column justify-content-center">
+            <i class="bi bi-cloud-arrow-down stat-icon"></i>
+            <div class="stat-number" data-target="{{ $totalUnduhan }}">0</div>
+            <div class="stat-label">Dokumen Unduhan</div>
+            <p class="text-secondary small mt-3 mb-0">Formulir, regulasi, dan laporan resmi yang siap diakses publik.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SERVICE SECTION (BIDANG DI DINAS) — 3D Coverflow Carousel
+       ========================================== -->
+  <section id="services" class="section-dark">
+    <div class="container">
+
+      <div class="container section-title text-center" data-aos="fade-up">
+        <span class="eyebrow">Struktur Layanan</span>
+        <h2>Bidang Diskominfotik</h2>
+        <p class="mx-auto">Bidang-bidang pelayanan dan tugas pokok pada Dinas Komunikasi, Informatika, Statistik, dan Persandian</p>
+      </div>
+
+      <div class="swiper bidangSwiper" data-aos="fade-up" data-aos-delay="200">
+        <div class="swiper-wrapper">
+          @forelse($bidang as $index => $prof)
+            <div class="swiper-slide">
+              <div class="glass-card service-card h-100 d-flex flex-column align-items-start">
+                <div class="service-icon-box">
+                  <i class="fa {{ $prof->icon ?? 'fa-laptop' }}"></i>
+                </div>
+                <h4>{{ $prof->nama }}</h4>
+                <p class="text-secondary small mb-4 flex-grow-1">
+                  {{ $prof->keterangan }}
+                </p>
+                <a href="{{ route('page.detail', $prof->slug) }}" class="btn-cyber-outline py-2 px-3 text-center w-100">Selengkapnya</a>
+              </div>
+            </div>
+          @empty
+            <div class="swiper-slide">
+              <div class="text-center text-secondary">
+                <p>Data profil bidang belum tersedia.</p>
+              </div>
+            </div>
+          @endforelse
+        </div>
+        <div class="swiper-pagination bidang-swiper-pagination mt-4"></div>
       </div>
 
     </div>
@@ -203,12 +272,13 @@
   <!-- ==========================================
        FEATURE SECTION (PROGRAM & KEGIATAN)
        ========================================== -->
-  <section id="features" class="section-dark">
+  <section id="features" class="section-light-dark">
     <div class="container">
-      
+
       <div class="container section-title text-center" data-aos="fade-up">
+        <span class="eyebrow">Digitalisasi Daerah</span>
         <h2>Program & Kegiatan</h2>
-        <p>pemenuhan hak atas informasi publik dan program digitalisasi unggulan daerah</p>
+        <p class="mx-auto">Pemenuhan hak atas informasi publik dan program digitalisasi unggulan daerah</p>
       </div>
 
       <div class="row g-4">
@@ -217,7 +287,7 @@
             <div class="feature-card">
                 @php $filePage = $sal->getfilebyalias('gambar_page'); @endphp
                 @if($filePage)
-                  <div style="position: absolute; top: 15px; right: 15px; width: 99px;">
+                  <div style="position: absolute; top: 15px; right: 15px; width: 64px;">
                     <img src="{{ url($filePage->public_stream) }}" alt="{{ $sal->nama }}" style="width: 100%; height: 100%; object-fit: contain;">
                   </div>
                 @else
@@ -225,11 +295,11 @@
                     <i class="fa {{ $sal->icon ?? 'fa-info-circle' }}"></i>
                   </div>
                 @endif
-              <h4 class="text-white mt-3">{{ $sal->nama }}</h4>
+              <h4 class="mt-3">{{ $sal->nama }}</h4>
               <p class="text-secondary small mb-3">
                 {{ $sal->keterangan }}
               </p>
-              <a href="{{ route('page.detail', $sal->slug) }}" class="text-cyan font-subtitle fw-bold">Detail Program <i class="bi bi-chevron-right small"></i></a>
+              <a href="{{ route('page.detail', $sal->slug) }}" class="fw-bold" style="color: var(--navy-700);">Detail Program <i class="bi bi-chevron-right small"></i></a>
             </div>
           </div>
         @empty
@@ -243,17 +313,17 @@
   </section>
 
   <!-- ==========================================
-       SECTION BERITA (CAROUSEL WITH SWIPER)
+       SECTION BERITA — 3D Coverflow Carousel (Swiper)
        ========================================== -->
-  <section id="blog-posts" class="section-light-dark">
+  <section id="blog-posts" class="section-dark">
     <div class="container">
 
       <div class="container section-title text-center" data-aos="fade-up">
+        <span class="eyebrow">Informasi Terkini</span>
         <h2>Berita & Artikel</h2>
-        <p>Berita, artikel, dan rilis pers seputar kegiatan Pemkab Indragiri Hulu</p>
+        <p class="mx-auto">Berita, artikel, dan rilis pers seputar kegiatan Pemkab Indragiri Hulu</p>
       </div>
 
-      <!-- Swiper Container -->
       <div class="swiper beritaSwiper" data-aos="fade-up" data-aos-delay="200">
         <div class="swiper-wrapper">
           @forelse($berita as $news)
@@ -292,7 +362,6 @@
             </div>
           @endforelse
         </div>
-        <!-- Pagination -->
         <div class="swiper-pagination berita-swiper-pagination mt-4"></div>
       </div>
 
@@ -304,212 +373,15 @@
   </section>
 
   <!-- ==========================================
-       SECTION ORGANISASI / TEAM
-       ========================================== -->
-  <section id="team" class="section-dark">
-    <div class="container">
-      
-      <div class="container section-title text-center" data-aos="fade-up">
-        <h2>Struktur Organisasi</h2>
-        <p>Susunan pimpinan dan aparatur dinas di lingkungan Pemerintah Kabupaten Indragiri Hulu</p>
-      </div>
-
-      <div class="swiper teamSwiper" data-aos="fade-up" data-aos-delay="200">
-        <div class="swiper-wrapper">
-          @forelse($struktur as $member)
-            @php
-              $memberImg = $member->foto_url;
-              $dep = $member->gelar_depan ? $member->gelar_depan . ' ' : '';
-              $bel = $member->gelar_belakang ? ', ' . $member->gelar_belakang : '';
-              $fullName = $dep . $member->nama . $bel;
-              $jabatanStr = $member->jabatanNama ? $member->jabatanNama->nama : '-';
-              $pangkatStr = $member->pangkat ? $member->pangkat->nama : '';
-              $statusStr = $member->statusPegawai ? $member->statusPegawai->nama : '';
-              $subBadge = $pangkatStr ? $pangkatStr . ' (' . $statusStr . ')' : $statusStr;
-            @endphp
-            <div class="swiper-slide">
-              <div class="leader-image-card mx-auto" style="border: 2px solid {{ $member->jabatan_styling['border'] }}; box-shadow: 0 5px 20px {{ $member->jabatan_styling['glow'] }}; background: {{ $member->jabatan_styling['gradient'] }};">
-                <img src="{{ $memberImg }}" alt="{{ $fullName }}" class="img-fluid w-100" style="aspect-ratio: 3/4; object-fit: cover; background: rgba(255, 255, 255, 0.05);">
-                <div class="leader-badge" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                  <h5>{{ $fullName }}</h5>
-                  <span style="color: {{ $member->jabatan_styling['theme_color'] }};">{{ $jabatanStr }}</span>
-                  <div class="small text-muted mt-1">{{ $subBadge }}</div>
-                </div>
-              </div>
-            </div>
-          @empty
-            <div class="swiper-slide">
-              <div class="text-center text-secondary py-5">
-                <p>Data pegawai belum diunggah.</p>
-              </div>
-            </div>
-          @endforelse
-        </div>
-        <!-- Add arrows and pagination -->
-        <div class="swiper-pagination team-swiper-pagination mt-4"></div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==========================================
-       SECTION PENGHARGAAN / FAQ
-       ========================================== -->
-  <section id="faq" class="section-light-dark">
-    <div class="container">
-      
-      <div class="container section-title text-center" data-aos="fade-up">
-        <h2>Penghargaan & Prestasi</h2>
-        <p>Apresiasi atas komitmen digitalisasi, pelayanan publik terpadu, dan transparansi data</p>
-      </div>
-
-      <div class="row align-items-center">
-        <!-- FAQ/Penghargaan Accordion -->
-        <div class="col-lg-7 order-2 order-lg-1" data-aos="fade-right">
-          <div class="faq-container">
-            @forelse($penghargaan as $faqIndex => $faq)
-              @php
-                $faqImg = $faq->getfilebyalias('gambar_penghargaan') ? url($faq->getfilebyalias('gambar_penghargaan')->public_stream) : '';
-              @endphp
-              <div class="faq-item glass-card mb-3 {{ $faqIndex === 0 ? 'faq-active' : '' }}" data-img-src="{{ $faqImg }}">
-                <h3>
-                  <i class="bi bi-trophy text-gold me-2"></i>
-                  {{ $faq->nama }}
-                </h3>
-                <div class="faq-content">
-                  <p class="text-secondary mb-0">{{ $faq->desc }}</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div>
-            @empty
-              <div class="text-secondary">
-                <p>Belum ada penghargaan terdaftar.</p>
-              </div>
-            @endforelse
-          </div>
-        </div>
-
-        <!-- Awards Visual Display -->
-        <div class="col-lg-5 order-1 order-lg-2 mb-4 mb-lg-0 text-center" data-aos="fade-left" data-aos-delay="200">
-          @php
-            $firstAward = $penghargaan->first();
-            $defaultAwardImg = $firstAward && $firstAward->getfilebyalias('gambar_penghargaan') 
-              ? url($firstAward->getfilebyalias('gambar_penghargaan')->public_stream) 
-              : 'https://via.placeholder.com/500x350?text=Penghargaan+Diskominfotik';
-          @endphp
-          <div class="leader-image-card mx-auto shadow-lg">
-            <img id="faq-image" src="{{ $defaultAwardImg }}" class="img-fluid" alt="Award Display">
-            <div class="leader-badge">
-              <h5>Apresiasi & Komitmen</h5>
-              <span>Kabupaten Indragiri Hulu</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==========================================
-       SECTION GALERI (PORTFOLIO WITH FILTER TABS)
-       ========================================== -->
-  <section id="portfolio" class="section-dark">
-    <div class="container">
-      
-      <div class="container section-title text-center" data-aos="fade-up">
-        <h2>Galeri Foto Kegiatan</h2>
-        <p>Dokumentasi visual kegiatan dan pembangunan di Kabupaten Indragiri Hulu</p>
-      </div>
-
-      <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
-        
-        <!-- Filter Tabs -->
-        @php
-          $allCategories = collect();
-          foreach($galeri as $item) {
-            $categories = explode(',', $item->kategori);
-            foreach ($categories as $cat) {
-              if(trim($cat) !== '') {
-                $allCategories->push(trim($cat));
-              }
-            }
-          }
-          $uniqueCategories = $allCategories->unique()->sort()->values();
-        @endphp
-
-        <ul class="portfolio-filters" data-aos="fade-up" data-aos-delay="100">
-          <li data-filter="*" class="filter-active">Semua</li>
-          @foreach($uniqueCategories as $category)
-            @php
-              $filterClass = 'filter-' . strtolower(str_replace(' ', '-', trim($category)));
-            @endphp
-            <li data-filter=".{{ $filterClass }}">{{ $category }}</li>
-          @endforeach
-        </ul>
-
-        <!-- Portfolio Items -->
-        <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
-          @forelse($galeri as $foto)
-            @php
-              $imgSrc = $foto->getfilebyalias('logo') ? url($foto->getfilebyalias('logo')->public_stream) : '';
-              $categories = explode(',', $foto->kategori);
-              $filterClasses = collect($categories)
-                ->filter(fn($cat) => trim($cat) !== '')
-                ->map(fn($cat) => 'filter-' . strtolower(str_replace(' ', '-', trim($cat))))
-                ->implode(' ');
-              
-              // GLightbox group name based on first category
-              $firstCat = $categories[0] ?? 'default';
-              $galleryGroup = 'gallery-' . strtolower(str_replace(' ', '-', trim($firstCat)));
-            @endphp
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item {{ $filterClasses }}">
-              <div class="portfolio-card">
-                @if($imgSrc)
-                  <img src="{{ $imgSrc }}" alt="{{ $foto->nama }}">
-                @else
-                  <div class="d-flex align-items-center justify-content-center bg-secondary" style="height: 100%; min-height: 250px;">
-                    <span class="text-muted">Tidak Ada Gambar</span>
-                  </div>
-                @endif
-                <div class="portfolio-overlay">
-                  <h4>{{ $foto->nama }}</h4>
-                  <p>{!! strip_tags(Str::limit($foto->desc, 100)) !!}</p>
-                  <div class="portfolio-links">
-                    @if($imgSrc)
-                      <a href="{{ $imgSrc }}" data-gallery="{{ $galleryGroup }}" class="glightbox" title="{{ $foto->nama }}"><i class="bi bi-zoom-in"></i></a>
-                    @endif
-                    <a href="{{ route('galeri.detail', $foto->slug) }}"><i class="bi bi-link-45deg"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          @empty
-            <div class="col-12 text-center text-secondary">
-              <p>Belum ada foto galeri terdaftar.</p>
-            </div>
-          @forelse($galeri as $foto) @empty @endforelse
-          @endforelse
-        </div>
-
-      </div>
-
-      <div class="text-center mt-5" data-aos="fade-up">
-        <a href="{{ url('galeri') }}" class="btn-cyber-outline"><i class="bi bi-images"></i> Galeri Selengkapnya</a>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==========================================
        SECTION UNDUHAN (SWIPER CAROUSEL)
        ========================================== -->
   <section id="unduhan" class="section-light-dark">
     <div class="container">
-      
+
       <div class="container section-title text-center" data-aos="fade-up">
+        <span class="eyebrow">Pusat Dokumen</span>
         <h2>Unduhan Dokumen</h2>
-        <p>Pusat berkas, formulir, regulasi, dan laporan resmi Diskominfotik Kabupaten Indragiri Hulu</p>
+        <p class="mx-auto">Pusat berkas, formulir, regulasi, dan laporan resmi Diskominfotik Kabupaten Indragiri Hulu</p>
       </div>
 
       <div class="swiper unduhanSwiper" data-aos="fade-up" data-aos-delay="200">
@@ -560,14 +432,15 @@
   </section>
 
   <!-- ==========================================
-       TAUTAN / LINKS SECTION (GRAY SCALE HOVER)
+       TAUTAN / LINKS SECTION — "Aplikasi & Instansi Terkait"
        ========================================== -->
   <section id="clients" class="section-dark">
     <div class="container">
-      
+
       <div class="container section-title text-center" data-aos="fade-up">
+        <span class="eyebrow">Ekosistem Digital</span>
         <h2>Tautan Terkait</h2>
-        <p>Konektivitas portal dengan kementerian, lembaga, dan instansi daerah</p>
+        <p class="mx-auto">Konektivitas portal dengan kementerian, lembaga, dan instansi daerah</p>
       </div>
 
       <div class="swiper tautanSwiper" data-aos="fade-up" data-aos-delay="200">
@@ -601,10 +474,11 @@
        ========================================== -->
   <section id="testimonials" class="section-light-dark">
     <div class="container">
-      
+
       <div class="container section-title text-center" data-aos="fade-up">
+        <span class="eyebrow">Suara Masyarakat</span>
         <h2>Ulasan Pengguna</h2>
-        <p>Apresiasi dan saran yang dikirimkan oleh pengguna layanan informasi kami</p>
+        <p class="mx-auto">Apresiasi dan saran yang dikirimkan oleh pengguna layanan informasi kami</p>
       </div>
 
       <div class="swiper testimonialsSwiper" data-aos="fade-up" data-aos-delay="200">
@@ -613,8 +487,7 @@
             @php
               $fileTesti = $testi->getfilebyalias('gambar_testimoni');
               $testiImg = $fileTesti ? url($fileTesti->public_stream) : 'https://via.placeholder.com/150?text=User';
-              
-              // Map testionial label to rating
+
               $ket = strtolower(trim($testi->keterangan));
               $ratingVal = 5;
               if ($ket == 'buruk') $ratingVal = 1;
@@ -626,19 +499,19 @@
             <div class="swiper-slide">
               <div class="testi-card h-100 d-flex flex-column align-items-center">
                 <img src="{{ $testiImg }}" alt="{{ $testi->nama }}" class="testi-img">
-                <h5 class="text-white mb-1">{{ $testi->nama }}</h5>
+                <h5 class="mb-1">{{ $testi->nama }}</h5>
                 <span class="text-muted small mb-2 text-capitalize">{{ $testi->keterangan }}</span>
-                
+
                 <div class="testi-rating mb-3">
                   @for($i = 1; $i <= 5; $i++)
                     <i class="bi {{ $i <= $ratingVal ? 'bi-star-fill' : 'bi-star' }} fs-6"></i>
                   @endfor
                 </div>
-                
+
                 <p class="text-secondary small mb-0 flex-grow-1">
-                  <i class="bi bi-quote quote-icon-left text-success me-1"></i>
+                  <i class="bi bi-quote quote-icon-left me-1" style="color: var(--gold-500);"></i>
                   {{ $testi->desc }}
-                  <i class="bi bi-quote quote-icon-right text-success ms-1"></i>
+                  <i class="bi bi-quote quote-icon-right ms-1" style="color: var(--gold-500);"></i>
                 </p>
               </div>
             </div>
@@ -661,304 +534,4 @@
   </section>
 
 </main>
-
-<!-- FAQ Interactive Image Changing Script -->
-@push('scripts')
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const faqItems = document.querySelectorAll(".faq-item");
-    const faqImage = document.getElementById("faq-image");
-
-    faqItems.forEach(item => {
-      item.addEventListener("click", function () {
-        const newImg = this.getAttribute("data-img-src");
-        if (newImg && faqImage) {
-          // Add transition effect
-          faqImage.style.opacity = 0;
-          setTimeout(() => {
-            faqImage.src = newImg;
-            faqImage.style.opacity = 1;
-          }, 300);
-        }
-        
-        // Remove active class from others and add to current
-        faqItems.forEach(i => i.classList.remove("faq-active"));
-        this.classList.add("faq-active");
-      });
-    });
-  });
-</script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const laptop = document.querySelector(".laptop-container");
-    const typingEl = document.querySelector(".typing-text");
-    
-    // Dynamic data from database
-    const folderData = [
-      @foreach($program as $prog)
-      @php 
-        $progImg = $prog->getfilebyalias('gambar_page'); 
-        $progImgUrl = $progImg ? url($progImg->public_stream) : '';
-      @endphp
-      { 
-        name: '{!! addslashes($prog->nama) !!}', 
-        icon: '{!! addslashes($prog->icon ?? "bi bi-folder-fill") !!}',
-        image: '{{ $progImgUrl }}'
-      },
-      @endforeach
-    ];
-
-    if (!laptop || !typingEl) return;
-
-    // Start the animation loop
-    runAnimationLoop();
-
-    function runAnimationLoop() {
-      // Clear folders and screen content from previous runs
-      const container = document.querySelector(".folders-outer-container");
-      if (container) container.innerHTML = '';
-      typingEl.innerHTML = '';
-      laptop.classList.remove("open");
-
-      // 1. Open laptop lid after 1 second
-      setTimeout(() => {
-        laptop.classList.add("open");
-        
-        // 2. Start typing effect after lid opens (1.2s delay)
-        setTimeout(() => {
-          const fullText = "Selamat Datang di Website Resmi<br>Dinas Komunikasi Informatika dan Statistik<br>Kabupaten Indragiri Hulu";
-          typeWriter(typingEl, fullText, 30, () => {
-            
-            // 3. Trigger folder flight when typing finishes
-            triggerFolderFlight((activeFolders) => {
-              
-              // 4. Hold folders floating for 40 seconds
-              setTimeout(() => {
-                
-                // 5. Start fading out folders AND close laptop simultaneously
-                fadeFoldersOutTogether(activeFolders);
-                
-                // Fade out screen text faster and trigger lid close
-                typingEl.style.transition = "opacity 0.6s ease";
-                typingEl.style.opacity = 0;
-                laptop.classList.remove("open");
-                
-                // 6. Wait for closing animation to finish (1.5s), then clean up and schedule restart
-                setTimeout(() => {
-                  typingEl.style.opacity = 1;
-                  typingEl.innerHTML = '';
-                  
-                  // 7. Wait 4 seconds and restart loop
-                  setTimeout(runAnimationLoop, 4000);
-                }, 1500);
-                
-              }, 40000); // Float duration
-              
-            });
-          });
-        }, 1200);
-      }, 1000);
-    }
-
-    function typeWriter(element, text, speed, callback) {
-      let i = 0;
-      element.innerHTML = '';
-      
-      // Ensure cursor is visible
-      const cursor = document.querySelector(".terminal-cursor");
-      if (cursor) cursor.style.display = "inline-block";
-
-      function type() {
-        if (i < text.length) {
-          // If we encounter an HTML tag, append it entirely at once
-          if (text.charAt(i) === '<') {
-            let tag = '';
-            while (i < text.length && text.charAt(i) !== '>') {
-              tag += text.charAt(i);
-              i++;
-            }
-            tag += '>';
-            i++; // skip the '>'
-            element.innerHTML += tag;
-          } else {
-            element.innerHTML += text.charAt(i);
-            i++;
-          }
-          setTimeout(type, speed);
-        } else {
-          if (callback) callback();
-        }
-      }
-      type();
-    }
-
-    function triggerFolderFlight(callback) {
-      const container = document.querySelector(".folders-outer-container");
-      const laptopScreen = document.querySelector(".laptop-screen");
-      if (!container || !laptopScreen) return;
-
-      const isMobile = window.innerWidth < 992;
-      const containerRect = container.getBoundingClientRect();
-      const screenRect = laptopScreen.getBoundingClientRect();
-
-      // Calculate center of laptop screen relative to the outer folder container
-      const startX = ((screenRect.left + screenRect.width / 2) - containerRect.left) / containerRect.width * 100;
-      const startY = ((screenRect.top + screenRect.height / 2) - containerRect.top) / containerRect.height * 100;
-
-      const activeFolders = [];
-      let spawnedCount = 0;
-
-      folderData.forEach((data, index) => {
-        setTimeout(() => {
-          // If the loop was reset mid-run, check if laptop is still open
-          if (!laptop.classList.contains("open")) return;
-
-          const folder = document.createElement("div");
-          const colorIndex = index % 10;
-          folder.className = `floating-folder color-${colorIndex}`;
-          
-          // Icon handling
-          const iconClass = data.icon.includes('fa-') ? `fa ${data.icon}` : data.icon;
-          
-          folder.innerHTML = `
-            <div class="folder-tab"></div>
-            <div class="folder-body">
-              ${data.image ? `<img src="${data.image}" class="folder-img" alt="${data.name}">` : `<i class="${iconClass} folder-icon"></i>`}
-              <span class="folder-text">${data.name}</span>
-            </div>
-          `;
-
-          // Position coordinates
-          const targetPos = getFolderCoordinates(index, isMobile);
-          
-          // Randomizations for bobbing effect
-          const randomRot = (Math.random() * 20 - 10).toFixed(1); // -10deg to 10deg
-          const bobDuration = (Math.random() * 2.5 + 3.5).toFixed(1) + 's'; // 3.5s to 6s
-          const bobAmp = (Math.random() * 8 + 6).toFixed(0) + 'px'; // 6px to 14px
-          const bobRot = (Math.random() * 6 - 3).toFixed(1) + 'deg'; // -3deg to 3deg
-
-          // Set inline variables
-          folder.style.setProperty("--start-x", `${startX}%`);
-          folder.style.setProperty("--start-y", `${startY}%`);
-          folder.style.setProperty("--target-x", `${targetPos.x}%`);
-          folder.style.setProperty("--target-y", `${targetPos.y}%`);
-          folder.style.setProperty("--random-rotate", `${randomRot}deg`);
-          folder.style.setProperty("--bob-duration", bobDuration);
-          folder.style.setProperty("--bob-amplitude", bobAmp);
-          folder.style.setProperty("--bob-rotate", bobRot);
-
-          container.appendChild(folder);
-          activeFolders.push(folder);
-          
-          // Add flying class to trigger flight
-          folder.classList.add("flying");
-
-          // Switch to bobbing/floating once flight completes
-          folder.addEventListener("animationend", function handler(e) {
-            if (e.animationName === "flyOutFolder") {
-              folder.classList.remove("flying");
-              folder.classList.add("bobbing");
-              // Set static coordinates
-              folder.style.left = `${targetPos.x}%`;
-              folder.style.top = `${targetPos.y}%`;
-              folder.removeEventListener("animationend", handler);
-            }
-          });
-
-          spawnedCount++;
-          if (spawnedCount === folderData.length && callback) {
-            // Callback when all folders have spawned and finished flying (2.5s flight time)
-            setTimeout(() => {
-              callback(activeFolders);
-            }, 2500);
-          }
-        }, index * 400); // staggered entrance
-      });
-    }
-
-    function fadeFoldersOutTogether(folders, callback) {
-      let count = folders.length;
-      if (count === 0) {
-        if (callback) callback();
-        return;
-      }
-
-      folders.forEach((folder) => {
-        // Verify folder is still in DOM
-        if (folder.parentNode) {
-          folder.style.transition = "all 1.5s cubic-bezier(0.25, 1, 0.5, 1)";
-          folder.style.opacity = "0";
-          folder.style.transform = "scale(0) translateY(-30px)";
-          
-          setTimeout(() => {
-            folder.remove();
-            count--;
-            if (count === 0 && callback) {
-              callback();
-            }
-          }, 1500);
-        } else {
-          count--;
-          if (count === 0 && callback) {
-            callback();
-          }
-        }
-      });
-    }
-
-    function getFolderCoordinates(index, isMobile) {
-      const desktopCoords = [
-        { x: 4, y: 15 },   // ppid
-        { x: 14, y: 20 },  // bakohumas
-        { x: 5, y: 36 },   // swaifm
-        { x: 15, y: 48 },  // livestreaming
-        { x: 24, y: 30 },  // aplikasi
-        { x: 6, y: 65 },   // sandiman
-        { x: 16, y: 60 },  // csirt
-        { x: 25, y: 45 },  // website
-        { x: 75, y: 45 },  // pemdi
-        { x: 84, y: 60 },  // statisti
-        { x: 94, y: 65 },  // pasti
-        { x: 76, y: 30 },  // media
-        { x: 85, y: 48 },  // pers
-        { x: 95, y: 36 },  // blankspot
-        { x: 86, y: 20 },  // infra
-        { x: 96, y: 15 },  // server
-        { x: 32, y: 80 },  // lapor
-        { x: 68, y: 80 },  // sosmed
-        { x: 50, y: 86 }   // inhukab
-      ];
-
-      if (!isMobile) {
-        return desktopCoords[index] || { x: Math.floor(Math.random() * 90) + 5, y: Math.floor(Math.random() * 80) + 10 };
-      }
-
-      const mobileCoords = [
-        { x: 6, y: 15 },   // ppid
-        { x: 84, y: 15 },  // bakohumas
-        { x: 8, y: 28 },   // swaifm
-        { x: 82, y: 28 },  // livestreaming
-        { x: 10, y: 42 },  // aplikasi
-        { x: 80, y: 42 },  // sandiman
-        { x: 8, y: 56 },   // csirt
-        { x: 82, y: 56 },  // website
-        { x: 12, y: 70 },  // pemdi
-        { x: 78, y: 70 },  // statisti
-        { x: 45, y: 12 },  // pasti
-        { x: 28, y: 16 },  // media
-        { x: 62, y: 16 },  // pers
-        { x: 25, y: 90 },  // blankspot
-        { x: 65, y: 90 },  // infra
-        { x: 45, y: 92 },  // server
-        { x: 4, y: 82 },   // lapor
-        { x: 86, y: 82 },  // sosmed
-        { x: 45, y: 50 }   // inhukab
-      ];
-      
-      return mobileCoords[index] || { x: Math.floor(Math.random() * 80) + 10, y: Math.floor(Math.random() * 80) + 10 };
-    }
-  });
-</script>
-@endpush
 @endsection

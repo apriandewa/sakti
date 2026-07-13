@@ -100,6 +100,7 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		Route::resource('kategori', 'Kategori\KategoriController');
 		//end-kategori
 
+		/* DISABLED: AgendaRapat and VerifikasiRapat features depend on Pegawai model which has been removed
 		//agenda-rapat
 		Route::prefix('agenda-rapat')->as('agenda-rapat')->group(function () {
 			Route::get('data', 'AgendaRapat\AgendaRapatController@data');
@@ -136,6 +137,20 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		});
 		Route::resource('verifikasi-rapat', 'VerifikasiRapat\VerifikasiRapatController');
 		//end-verifikasi-rapat
+		*/
+
+		//presensi
+		Route::prefix('presensi')->as('presensi.')->group(function () {
+			Route::get('data', 'Presensi\PresensiController@data')->name('data');
+			Route::get('kantor', 'Presensi\PresensiController@kantor')->name('kantor');
+			Route::get('{id}/show', 'Presensi\PresensiController@show')->name('show');
+			Route::post('sync', 'Presensi\PresensiController@sync')->name('sync');
+			Route::post('sync-pegawai', 'Presensi\PresensiController@syncPegawai')->name('sync-pegawai');
+			Route::get('foto', 'Presensi\PresensiController@fotoPresensi')->name('foto');
+			Route::post('import-csv', 'Presensi\PresensiController@importCsv')->name('import-csv');
+		});
+		Route::resource('presensi', 'Presensi\PresensiController')->only(['index']);
+		//end-presensi
 
 		//{{route replacer}} DON'T REMOVE THIS LINE
     });

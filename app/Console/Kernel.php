@@ -15,20 +15,29 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Sinkronisasi otomatis rekap presensi Simpegnas BKN setiap Sabtu jam 10:00 pagi
+        // Sinkronisasi otomatis rekap presensi Simpegnas BKN setiap hari jam 14:00 WIB
         $schedule->call(function () {
             $service = app(\App\Services\SimpegnasService::class);
             $now = now();
-            
-            // Tarik data bulan berjalan
-            $service->syncAttendance($now->month, $now->year, null, 'Sistem (Otomatis)');
-            
+
+            // Tarik data bulan berjalan - loop semua kantor yang punya pegawai lokal,
+            // TIDAK auto-insert pegawai baru (autoCreatePegawai: false, default).
+            $service->syncAttendance(
+                month: $now->month,
+                year: $now->year,
+                triggeredBy: 'Sistem (Otomatis)',
+            );
+
             // Tarik data bulan lalu jika berada pada minggu pertama bulan baru untuk memastikan kelengkapan data
             if ($now->day <= 7) {
                 $lastMonth = $now->copy()->subMonth();
-                $service->syncAttendance($lastMonth->month, $lastMonth->year, null, 'Sistem (Otomatis)');
+                $service->syncAttendance(
+                    month: $lastMonth->month,
+                    year: $lastMonth->year,
+                    triggeredBy: 'Sistem (Otomatis)',
+                );
             }
-        })->weeklyOn(6, '10:00');
+        })->dailyAt('15:13');
     }
 
     /**

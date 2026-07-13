@@ -34,9 +34,9 @@ return [
         'web'=>[
             'template'=>'eduadmin', // template for frontend view (default: eduadmin)
             'icon'=>'',
-            'logo_light'=>'/images/logodiskominfotik.png',
-            'logo_dark'=>'/images/logodiskominfotik.png',
-            'favicon'=>'/images/logodiskominfotik.jpg',
+            'logo_light'=>'/images/logosakti.png',
+            'logo_dark'=>'/images/logosakti.png',
+            'favicon'=>'/images/sakti.png',
             'background'=>'/images/auth-bg/bg-1.jpg',
         ],
         'level'=>[

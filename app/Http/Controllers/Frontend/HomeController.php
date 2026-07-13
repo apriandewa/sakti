@@ -38,8 +38,6 @@ class HomeController extends Controller
 
                 'client'      => Tautan::where('status', 'aktif')->oldest()->limit(20)->get(),
                 'slider'      => Slider::where('status', 'aktif')->latest()->limit(6)->get(),
-                'struktur'    => \App\Models\Pegawai::with(['pangkat', 'statusPegawai', 'jabatanNama', 'bidang'])
-                                    ->where('status', 'aktif')->oldest()->limit(15)->get(),
                 'testimoni'   => Testimoni::where('status', 'DISETUJUI')->oldest()->limit(10)->get(),
                 'penghargaan' => Penghargaan::where('status', 'aktif')->oldest()->limit(10)->get(),
 
@@ -54,7 +52,7 @@ class HomeController extends Controller
 
     public function verifikasiUndangan($token)
     {
-        $data = \App\Models\AgendaRapat::with(['pegawai', 'notulen', 'peserta', 'dokumenTte'])->where('barcode_token', $token)->firstOrFail();
+        $data = \App\Models\AgendaRapat::with(['notulen', 'peserta', 'dokumenTte'])->where('barcode_token', $token)->firstOrFail();
         
         $title = "Verifikasi Dokumen Rapat";
         $subjudul = "Cek Keaslian dan Status Tanda Tangan Elektronik (TTE)";
@@ -65,10 +63,6 @@ class HomeController extends Controller
         $tteDaftarHadir = $data->getDokumenTteByJenis('daftar_hadir');
         $tteNotulenNotulis = $data->getDokumenTteByJenis('notulen_notulis');
         $tteNotulenPimpinan = $data->getDokumenTteByJenis('notulen_pimpinan');
-        
-        // Load pimpinan dan notulis dari rapat notulen
-        $pimpinan = $data->notulen ? \App\Models\Pegawai::with('jabatanNama')->find($data->notulen->pimpinan_rapat_id) : null;
-        $notulis = $data->notulen ? \App\Models\Pegawai::with('jabatanNama')->find($data->notulen->notulis_id) : null;
 
         return view('frontend.rapat.verifikasi', compact(
             'data',
@@ -78,8 +72,6 @@ class HomeController extends Controller
             'tteDaftarHadir',
             'tteNotulenNotulis',
             'tteNotulenPimpinan',
-            'pimpinan',
-            'notulis',
             'jenis'
         ));
     }
@@ -118,10 +110,8 @@ class HomeController extends Controller
             if (!$agenda->notulen) {
                 abort(404, 'Notulen belum dibuat');
             }
-            $pimpinan = \App\Models\Pegawai::find($agenda->notulen->pimpinan_rapat_id ?? null);
-            $notulis = \App\Models\Pegawai::find($agenda->notulen->notulis_id ?? null);
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::setOptions(['isRemoteEnabled' => true])
-                ->loadView('backend.agenda-rapat.pdf.notulen', compact('data', 'pimpinan', 'notulis'));
+                ->loadView('backend.agenda-rapat.pdf.notulen', compact('data'));
         }
 
         $pdf->setPaper('A4', 'portrait');

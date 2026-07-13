@@ -17,7 +17,6 @@ use App\Models\Pengaturan;
 use App\Models\Tautan;
 use App\Models\Testimoni;
 use App\Models\Penghargaan;
-use App\Models\Pegawai;
 
 use App\Observers\FrontendCacheObserver;
 use App\Services\VisitorService;
@@ -66,7 +65,6 @@ class AppServiceProvider extends ServiceProvider
             Tautan::class,
             Testimoni::class,
             Penghargaan::class,
-            Pegawai::class,
         ];
 
         foreach ($models as $model) {

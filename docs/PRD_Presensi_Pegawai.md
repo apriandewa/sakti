@@ -2,12 +2,14 @@
 ## Modul Presensi Pegawai Terintegrasi API Simpegnas BKN
 
 > [!NOTE]
-> Dokumen ini mendefinisikan spesifikasi kebutuhan produk, alur integrasi API, struktur database, diagram pendukung, logika perhitungan potongan (TPP/Tunjangan Kinerja), dan standar visual untuk modul **Presensi Pegawai** yang terhubung langsung dengan **API Simpegnas BKN** pada Portal Diskominfotik.
+> Dokumen ini mendefinisikan spesifikasi kebutuhan produk, alur integrasi API, struktur database, diagram pendukung, logika perhitungan potongan (TPP/Tunjangan Kinerja), dan standar visual untuk modul **Presensi Pegawai** yang terhubung langsung dengan **API Simpegnas BKN** pada Portal SAKTI **Pemerintah Kabupaten Indragiri Hulu**.
 
 ---
 
 ## 1. Deskripsi Umum Modul
-Modul Presensi Pegawai dikembangkan untuk mengelola, menyinkronkan, menghitung, dan menampilkan rekapitulasi kehadiran harian pegawai Dinas Komunikasi, Informatika, dan Statistik (Diskominfotik) secara bulanan. 
+Modul Presensi Pegawai dikembangkan untuk mengelola, menyinkronkan, menghitung, dan menampilkan rekapitulasi kehadiran harian **seluruh pegawai ASN Pemerintah Kabupaten Indragiri Hulu** secara bulanan — mencakup seluruh Organisasi Perangkat Daerah (OPD), unit kerja, dan kantor di lingkungan Pemkab Indragiri Hulu.
+
+Administrator dapat memilih **kantor/unit kerja** yang ingin direkapitulasikan melalui dropdown dinamis. Data presensi yang ditampilkan, disinkronkan, dan dihitung selalu mengacu pada **kantor yang dipilih** pada filter halaman.
 
 Modul ini terintegrasi secara asinkron dengan **API Simpegnas BKN** untuk menarik data kehadiran ASN harian (termasuk jam masuk, jam pulang, jenis kehadiran seperti Cuti, Dinas Luar, Izin, serta status keterlambatan dan pulang cepat). Berdasarkan data mentah dari API tersebut, sistem secara otomatis akan mengelompokkan kategori pelanggaran waktu kerja (Terlambat & Pulang Cepat), menghitung persentase/poin pemotongan tunjangan secara real-time, dan menyajikannya dalam bentuk tabel rekapitulasi interaktif (DataTable) yang responsive dan informatif.
 
@@ -19,19 +21,25 @@ Sistem memiliki alur utama yang diakses oleh **Administrator (Level 2)** atau **
 
 ### 2.1 Filter & Pencarian
 1. **Input Pilihan**:
+   - Dropdown **Pilih Kantor** dengan **Select2 Autocomplete**:
+     - Sumber data: API `https://api-absensi.simpegnas.go.id/absensi/api/get/kantor`.
+     - Daftar kantor mencakup seluruh unit kerja/OPD di lingkungan **Pemerintah Kabupaten Indragiri Hulu**.
+     - Setiap `<option>` menggunakan **`value` = `kantor_id` (UUID)** dan **teks tampilan = `nama_kantor`**.
+     - Pengguna mengetik nama kantor/OPD pada kolom pencarian; Select2 memfilter opsi secara real-time (autocomplete) agar pemilihan kantor cepat meskipun daftar panjang.
+     - Kantor yang dipilih menjadi parameter wajib untuk seluruh aksi berikutnya: tampil DataTable, sinkronisasi BKN, dan detail log harian pegawai.
+     - Tidak ada kantor default yang terkunci di `.env`; pemilihan kantor sepenuhnya dilakukan oleh pengguna di antarmuka.
    - Dropdown **Pilih Bulan** (Januari s.d. Desember, default ke bulan berjalan).
    - Dropdown **Pilih Tahun** (Daftar tahun dinamis, default ke tahun berjalan).
-   - **Tampilan Dropdown**: Menggunakan antarmuka default Select2 bawaan tema agar tata letak tetap proporsional dan responsif.
-2. **Tombol Aksi**: Tombol **Cari** (Memicu render ulang DataTable via AJAX).
-3. **Tombol Sinkronisasi (Sync)**: Tombol **Tarik Data BKN** untuk menyinkronkan data kehadiran dari server API Simpegnas BKN untuk bulan dan tahun terpilih ke dalam database lokal.
-4. **Impor Pegawai (CSV)**: Tombol/Fungsi untuk mengimpor data nama dan NIP pegawai secara batch menggunakan file CSV guna mempermudah inisialisasi basis data.
+3. **Tampilan Dropdown**: Menggunakan komponen **Select2** bawaan tema EduAdmin agar tata letak tetap proporsional dan responsif.
+2. **Tombol Aksi**: Tombol **Cari** (Memicu render ulang DataTable via AJAX berdasarkan `kantor_id`, bulan, dan tahun terpilih).
+3. **Impor Pegawai (CSV)**: Tombol/Fungsi untuk mengimpor data nama dan NIP pegawai secara batch menggunakan file CSV guna mempermudah inisialisasi basis data per kantor.
 
 ### 2.2 Tampilan Datatable (Tabel Rekapitulasi)
 Setelah formulir pencarian disubmit, sistem akan menampilkan data rekapitulasi pegawai dalam format **DataTable** dengan struktur kolom sebagai berikut:
 
 | No | Nama Pegawai + NIP | Hadir (HN) | Tanpa Ket (TK) | Cuti (CT) | Dinas Luar (DL) | Izin | Hari Kerja | Terlambat (TM) | Pulang Cepat (PC) | Total Potongan | Aksi |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 | **Nama + Gelar** <br><small class="text-muted">NIP. xxxxxxxxxxxxxx</small> | [HN] | [TK] | [CT] | [DL] | [Izin] | [Total] | **5 Kolom**: <br>TM1, TM2, TM3, TM4, TMM | **5 Kolom**: <br>PC1, PC2, PC3, PC4, PC5 | [Total %] | [Detail] [Sync] |
+| 1 | **Nama + Gelar** <br><small class="text-muted">NIP. xxxxxxxxxxxxxx</small> | [HN] | [TK] | [CT] | [DL] | [Izin] | [Total] | **5 Kolom**: <br>TM1, TM2, TM3, TM4, TMM | **5 Kolom**: <br>PC1, PC2, PC3, PC4, PC5M | [Total %] | [Detail] [Sync] |
 
 #### Detail Rincian Kolom DataTable:
 1. **No**: Angka urut baris (DT_RowIndex).
@@ -55,7 +63,7 @@ Setelah formulir pencarian disubmit, sistem akan menampilkan data rekapitulasi p
     - **PC2**: Kategori 2.
     - **PC3**: Kategori 3.
     - **PC4**: Kategori 4.
-    - **PC5**: Kategori 5 (atau Pulang Cepat tanpa keterangan tertentu).
+    - **PCM**: Kategori 5 (atau Pulang Cepat tanpa keterangan tertentu).
 11. **Total Potongan**: Persentase atau poin akumulasi pemotongan berdasarkan rumus bobot pelanggaran TM & PC.
 12. **Aksi**:
     - Tombol **Detail** (Ikon mata / `show`) untuk membuka modal log harian kehadiran pegawai yang bersangkutan pada bulan tersebut.
@@ -64,6 +72,25 @@ Setelah formulir pencarian disubmit, sistem akan menampilkan data rekapitulasi p
 ### 2.3 Modal Log Harian & Geolokasi
 * Saat melihat rincian harian pegawai, sistem akan menampilkan data **Jam Masuk** dan **Jam Pulang** yang secara akurat ditarik menggunakan variabel `time_with_timezone` (bukan hanya `time`) untuk memastikan ketepatan zona waktu lokal (Asia/Jakarta).
 * Modal juga menyediakan fungsionalitas **Detail Geolocation & Jam Presensi** yang memuat secara dinamis foto swafoto/geolokasi pegawai saat melakukan check-in dan check-out. Foto ditarik sebagai data base64 via API eksternal (route `image-riwayat`) dan memiliki penanganan error adaptif yang menyembunyikan elemen gambar jika foto gagal dimuat.
+
+### 2.4 Tab Log dan Monitoring Sinkronisasi BKN
+Modul Presensi Pegawai dibagi menjadi dua *Tab* utama:
+- **Tab 1: Data Presensi**: Berisi form filter (Pilih Kantor, Bulan, Tahun) dan tombol Cari, yang menampilkan DataTable Rekapitulasi Presensi.
+- **Tab 2: Log dan Monitoring Sinkronisasi BKN**: Halaman khusus untuk memantau riwayat penarikan data dari API BKN.
+  - **Tombol "Tarik Data BKN"** dipindahkan secara eksklusif ke tab ini. 
+  - Pada tab ini, Admin dapat melihat tabel histori log sinkronisasi (`presensi_sync_logs`) yang mencakup status, waktu, eksekutor, pesan error, dll.
+
+### 2.5 Automasi Sinkronisasi Data (Cron Job) & Penanganan Perubahan Data
+Selain penarikan data secara manual melalui Tab Monitoring, sistem dilengkapi dengan fitur automasi sinkronisasi (Scheduler/Cron Job) dengan spesifikasi berikut:
+1. **Jadwal Eksekusi**: Sinkronisasi otomatis dijalankan setiap hari pada pukul **18.00 WIB**. Sistem akan iterasi memanggil API Simpegnas BKN untuk menarik data presensi bagi seluruh OPD/Kantor.
+2. **Pencatatan Log (`presensi_sync_logs`)**: Setiap proses sinkronisasi akan dicatat secara mendetail. Jika dilakukan manual, kolom eksekutor mencatat nama/ID admin yang login. Jika berjalan melalui *cron job*, kolom eksekutor akan tercatat sebagai "System". Tabel ini menyimpan status eksekusi, jumlah baris data, parameter bulan/tahun, serta catatan error.
+3. **Penanganan Presensi Terlewat & Pembaruan Data (Retroactive Changes)**: 
+   - **Masalah**: Ada kemungkinan pegawai melakukan presensi setelah jadwal cron 18.00 WIB, atau ada perubahan status kehadiran di hari/minggu sebelumnya (misal: Awalnya "TK" (Alpa) namun diubah menjadi "Izin" atau "Cuti" setelah pengajuan disetujui atasan di BKN).
+   - **Resolusi**: API BKN yang digunakan (`/get/rekap-bulanan-by-kantor`) secara inheren mengembalikan data **satu bulan penuh**. Oleh karena itu, setiap kali sinkronisasi harian (jam 18.00) berjalan, sistem tidak hanya menarik H-1, melainkan **menarik dan menimpa ulang seluruh data bulan berjalan (Upsert Full Month)** dari tanggal 1 hingga hari ini. 
+   - Dengan pendekatan ini, seluruh pembaruan status (Cuti/Izin yang di-approve retroaktif minggu lalu) maupun *check-out* yang telat masuk pada hari kemarin akan selalu **terkoreksi dan disinkronkan** secara akurat.
+4. **Optimasi Performa (Laravel Queue & Batch Upsert)**:
+   - Untuk mencegah *server overload* atau *timeout* saat menarik data puluhan instansi sekaligus pada pukul 18.00, penarikan otomatis diproses melalui **Background Jobs (Laravel Queue)** secara bertahap (memecah antrean *dispatch job* per-kantor).
+   - Pembaruan ke *database* dilakukan menggunakan metode **Batch Upsert** (Insert-Update massal) alih-alih mengecek data satu per satu, sehingga sistem sanggup memproses ribuan data presensi dalam sepersekian detik dan UI admin tetap responsif.
 
 ---
 
@@ -78,11 +105,10 @@ Potongan tunjangan kinerja/perilaku kerja didapat dari akumulasi jumlah pelangga
 * **TM4 / TMM** (Terlambat Masuk Kerja Tingkat 4: > 90 Menit atau Tanpa Keterangan Masuk) = **1.5%** atau **1.5 Poin**
 
 ### 3.2 Klasifikasi Pulang Cepat (PC) & Bobot Potongan:
-* **PC1** (Pulang Cepat Tingkat 1: Meninggalkan Kantor > 90 Menit Sebelum Waktu Pulang) = **1.5%** atau **1.5 Poin**
-* **PC2** (Pulang Cepat Tingkat 2: Meninggalkan Kantor 61 s.d. 90 Menit Sebelum Waktu Pulang) = **1.25%** atau **1.25 Poin**
-* **PC3** (Pulang Cepat Tingkat 3: Meninggalkan Kantor 31 s.d. 60 Menit Sebelum Waktu Pulang) = **1.0%** atau **1.0 Poin**
-* **PC4 / PCM** (Pulang Cepat Tingkat 4: Meninggalkan Kantor 1 s.d. 30 Menit Sebelum Waktu Pulang) = **0.5%** atau **0.5 Poin**
-* **PC5** (Pulang Cepat Tingkat 5 / Kategori Khusus Pulang Cepat Tanpa Keterangan) = **0.5%** atau **0.5 Poin** (atau disesuaikan dengan peraturan instansi daerah).
+* **PC1** (Pulang Cepat Tingkat 1: Meninggalkan Kantor 1 s.d. 30 Menit Sebelum Waktu Pulang) = **0.5%** atau **0.5 Poin**
+* **PC2** (Pulang Cepat Tingkat 2: Meninggalkan Kantor 31 s.d. 60 Menit Sebelum Waktu Pulang) = **1.0%** atau **1.0 Poin**
+* **PC3** (Pulang Cepat Tingkat 3: Meninggalkan Kantor 61 s.d. 90 Menit Sebelum Waktu Pulang) = **1.25%** atau **1.25 Poin**
+* **PC4 / PCM** (Pulang Cepat Tingkat 4: Meninggalkan Kantor > 90 Menit atau Tanpa Keterangan Waktu Pulang) = **1.5%** atau **1.5 Poin**
 
 ### 3.3 Klasifikasi Tanpa Keterangan (TK) & Bobot Potongan:
 * **TK** (Tanpa Keterangan / Alpa) = **3.0%** atau **3.0 Poin**.
@@ -95,14 +121,14 @@ $$\text{Total Potongan Pegawai (\%)} = \sum (\text{TM} \times \text{Bobot TM}) +
 Pegawai bernama Ahmad dalam 1 bulan memiliki riwayat:
 * TM1 (Terlambat 10 menit) sebanyak 3 kali.
 * TM3 (Terlambat 70 menit) sebanyak 1 kali.
-* PC4 (Pulang cepat 15 menit) sebanyak 2 kali.
+* PC4 (Pulang cepat 95 menit) sebanyak 2 kali.
 
 Perhitungan:
 * TM1 = $3 \times 0.5 = 1.5$
 * TM3 = $1 \times 1.25 = 1.25$
-* PC4 = $2 \times 0.5 = 1.0$
+* PC4 = $2 \times 1.5 = 3$
 * TK (Misal 1 hari) = $1 \times 3.0 = 3.0$
-* **Total Potongan Ahmad** = $1.5 + 1.25 + 1.0 + 3.0 = 6.75\%$
+* **Total Potongan Ahmad** = $1.5 + 1.25 + 3.0 + 3.0 = 8.75\%$
 
 ---
 
@@ -133,20 +159,37 @@ Untuk menjamin ketersediaan data yang valid, aplikasi berinteraksi dengan API Si
 
 ### 6.1 Kredensial API (Konfigurasi `.env`)
 ```env
-# Token Akses API Absensi Simpegnas BKN (JWT)
+# Token Akses API Absensi Simpegnas BKN (JWT) — cakupan instansi Pemkab Indragiri Hulu
 API_ABSENSI_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnN0YW5zaV9pZCI6IkE1RUIwM0UyM0IxQUY2QTBFMDQwNjQwQTA0MDI1MkFEIiwiYWxsIjpmYWxzZSwiaWF0IjoxNzgwNDczMTE2fQ.G029Pj7hIgHPBx1mtg4Y6fyxGUlautZUjlh4ZkyL-Tw
-
-# Detail Instansi / Kantor
-API_ID_KANTOR="fbc6ca94-d421-48f0-a6d7-d2bcf392c6f2"
-API_NAMA_KANTOR="Dinas Komunikasi, Informatika, dan Statistik"
 ```
 
+> [!NOTE]
+> Variabel `API_ID_KANTOR` dan `API_NAMA_KANTOR` **tidak lagi digunakan** sebagai kantor tetap. Pemilihan kantor dilakukan dinamis melalui dropdown Select2 di antarmuka, dengan `kantor_id` yang dikirim sebagai parameter query setiap kali data ditarik.
+
 ### 6.2 Endpoint API yang Diintegrasikan
+* **Pengambilan Daftar Kantor (Dropdown Select2)**:
+  * **Metode**: `GET`
+  * **URL**: `https://api-absensi.simpegnas.go.id/absensi/api/get/kantor`
+  * **Header**:
+    * `Authorization: Bearer {API_ABSENSI_TOKEN}`
+    * `Accept: application/json`
+  * **Pemetaan ke Select2**:
+    * `id` / `value` option → `kantor_id` (UUID)
+    * `text` / label tampilan → `nama_kantor`
+  * **Contoh struktur item kantor**:
+    ```json
+    {
+      "kantor_id": "fbc6ca94-d421-48f0-a6d7-d2bcf392c6f2",
+      "nama_kantor": "Dinas Komunikasi, Informatika, dan Statistik"
+    }
+    ```
+  * **Perilaku Autocomplete**: Select2 diinisialisasi dengan `minimumResultsForSearch: 0` dan pencarian berdasarkan `nama_kantor`, sehingga pengguna dapat mengetik sebagian nama OPD/kantor untuk menemukan opsi yang sesuai.
+
 * **Pengambilan Data Presensi Bulanan Kantor**:
   * **Metode**: `GET`
   * **URL**: `https://api-absensi.simpegnas.go.id/absensi/api/get/rekap-bulanan-by-kantor`
   * **Parameter Query**:
-    * `kantor_id` : ID Kantor target (e.g. `fbc6ca94-d421-48f0-a6d7-d2bcf392c6f2`)
+    * `kantor_id` : ID Kantor target yang dipilih pengguna dari dropdown Select2 (e.g. `fbc6ca94-d421-48f0-a6d7-d2bcf392c6f2` untuk Diskominfotik, atau UUID kantor OPD lain di Pemkab Indragiri Hulu)
     * `tahun` : Tahun rekapitulasi (e.g. `2026`)
     * `bulan` : Bulan rekapitulasi (e.g. `6` - tanpa lead zero)
   * **Header**:
@@ -254,11 +297,15 @@ sequenceDiagram
     participant DB as Database Lokal
     participant BKN as API Simpegnas BKN
 
-    Admin->>App: Akses Halaman Presensi & Filter (Bulan/Tahun)
-    App->>DB: Cek Cache / Data Presensi Lokal
+    Admin->>App: Akses Halaman Presensi
+    App->>BKN: Fetch Daftar Kantor (GET /get/kantor)
+    BKN-->>App: Return Daftar OPD/Kantor Pemkab Indragiri Hulu
+    App->>Admin: Tampilkan Dropdown Pilih Kantor (Select2 Autocomplete)
+    Admin->>App: Pilih Kantor, Bulan & Tahun lalu Klik Cari
+    App->>DB: Cek Cache / Data Presensi Lokal (berdasarkan kantor_id)
     alt Data Belum Ada / Admin Klik "Tarik Data BKN"
         Admin->>App: Klik Sinkronisasi (Sync Data BKN)
-        App->>BKN: Request Token & Fetch Data Presensi (Bulan, Tahun)
+        App->>BKN: Request Token & Fetch Data Presensi (kantor_id, Bulan, Tahun)
         BKN-->>App: Return Respon JSON Data Kehadiran Pegawai
         App->>App: Parsing Data & Hitung Kategori TM/PC, TK & Potongan
         App->>DB: Simpan/Update Data ke 'presensi_harians'
@@ -304,6 +351,19 @@ erDiagram
         timestamp synced_at
     }
 
+    PRESENSI_SYNC_LOGS {
+        uuid id PK
+        uuid kantor_id FK "Target OPD (Opsional, jika sync per-kantor)"
+        string bulan
+        string tahun
+        string sync_by "Admin ID / 'System'"
+        string status "sukses, gagal, berjalan"
+        timestamp waktu_mulai
+        timestamp waktu_selesai
+        integer jumlah_data_ditarik
+        text catatan_pesan
+    }
+
     PEGAWAIS ||--o{ PRESENSI_HARIANS : "memiliki"
 ```
 
@@ -312,16 +372,17 @@ erDiagram
 ## 8. Desain Antarmuka (Wireframe & Visual Mockup)
 
 ### 8.1 Elemen Halaman Utama (Index Presensi)
-* **Header**: Judul modul "Presensi Pegawai" dengan ikon Jam/Kalender, dilengkapi subjudul instruksi filter.
-* **Filter Card**: Panel filter minimalis menggunakan sistem grid:
-  - Kolom 1: Dropdown "Pilih Bulan" (list lengkap bulan).
-  - Kolom 2: Dropdown "Pilih Tahun" (tahun aktif & historis).
-  - Kolom 3: Tombol "Cari" (warna biru - `btn-primary`) & Tombol "Tarik Data Simpegnas" (warna hijau - `btn-success` dengan ikon cloud sync).
-* **DataTable Card**:
-  - Judul panel: "Rekapitulasi Presensi & Potongan Pegawai - [Nama Bulan] [Tahun]"
-  - Fitur ekspor bawaan (CSV, Excel, PDF, Print) yang diposisikan di atas kanan tabel.
-  - Skema responsif pada baris tabel: hover effect, sorting, dan filter pencarian cepat.
-  - Total baris rekapitulasi (footer) untuk menghitung rata-rata potongan OPD.
+* **Header**: Judul modul "Presensi Pegawai" dengan ikon Jam/Kalender, dan Navigasi Tab (Tabs Bootstrap).
+* **Tab 1: Data Presensi**:
+  - **Filter Card**: Panel filter minimalis menggunakan sistem grid:
+    - Kolom 1: Dropdown **"Pilih Kantor"** (Select2 autocomplete).
+    - Kolom 2: Dropdown "Pilih Bulan".
+    - Kolom 3: Dropdown "Pilih Tahun".
+    - Kolom 4: Tombol "Cari" (warna biru - `btn-primary`).
+  - **DataTable Card**: Rekapitulasi Presensi & Potongan Pegawai.
+* **Tab 2: Log & Monitoring Sinkronisasi BKN**:
+  - **Panel Aksi**: Tombol **"Tarik Data Simpegnas"** (warna hijau - `btn-success` dengan ikon cloud sync) beserta form pilih bulan, tahun, dan kantor yang akan ditarik.
+  - **Tabel Histori Log**: DataTable yang menampilkan rekaman dari tabel `presensi_sync_logs` dengan kolom Waktu, Eksekutor (Sistem/Admin), Target Kantor, Status, dan Pesan.
 
 ### 8.2 Elemen Detail Log Harian (Modal Show Detail)
 Ketika tombol **Detail** di baris pegawai diklik, sebuah modal (glassmorphism/sleek Bootstrap) akan muncul menampilkan rincian harian pegawai tersebut:

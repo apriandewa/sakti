@@ -5,12 +5,19 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use App\Models\Tamu;
+use App\Services\KunjunganLocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class KunjunganController extends Controller
 {
+    private const LOKASI_SESSION_KEY = 'buku_tamu_lokasi_verified';
+
+    public function __construct(
+        private KunjunganLocationService $locationService
+    ) {}
+
     // ── Halaman utama (daftar tamu yang disetujui) ────────────────────────────
     public function index()
     {
@@ -39,19 +46,105 @@ class KunjunganController extends Controller
                         ->orderBy('nama')
                         ->get();
 
-        $pengaturan = \App\Models\Pengaturan::first();
+        $pengaturan    = \App\Models\Pengaturan::first();
+        $hasFormErrors = session()->has('errors') && session('errors')->any();
+        $office        = $this->locationService->getOfficeLocation($pengaturan);
+
         return view('frontend.tamu.create', [
-            'title'     => $pengaturan->judul ?? 'Diskominfotik Indragiri Hulu',
-            'judul'     => $pengaturan->subjudul ?? 'Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu',
-            'subjudul'  => $pengaturan->deskripsi ?? 'Form Pengisian Buku Tamu Diskominfotik Kabupaten Indragiri Hulu',
-            'pekerjaan' => $pekerjaan,
-            'keperluan' => $keperluan,
+            'title'          => $pengaturan->judul ?? 'Diskominfotik Indragiri Hulu',
+            'judul'          => $pengaturan->subjudul ?? 'Website Resmi Pejabat Pengelola Informasi dan Dokumentasi Kabupaten Indragiri Hulu',
+            'subjudul'       => $pengaturan->deskripsi ?? 'Form Pengisian Buku Tamu Diskominfotik Kabupaten Indragiri Hulu',
+            'pekerjaan'      => $pekerjaan,
+            'keperluan'      => $keperluan,
+            'lokasiVerified' => session(self::LOKASI_SESSION_KEY, false) || $hasFormErrors,
+            'lokasiTersedia' => $office !== null,
+            'officeName'     => $office['name'] ?? ($pengaturan->alamat ?? 'Kantor'),
+            'officeRadius'   => $office['radius_meters'] ?? config('kunjungan.radius_meters', 200),
+        ]);
+    }
+
+    // ── Verifikasi lokasi pengguna sebelum mengisi buku tamu ──────────────────
+    public function verifyLocation(Request $request)
+    {
+        $validated = $request->validate([
+            'latitude'  => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        $office = $this->locationService->getOfficeLocation();
+
+        if (! $office) {
+            return response()->json([
+                'allowed'  => false,
+                'distance' => 0,
+                'radius'   => (int) config('kunjungan.radius_meters', 200),
+                'message'  => 'Koordinat kantor belum dikonfigurasi. Hubungi administrator.',
+            ], 422);
+        }
+
+        $distance = (int) round($this->locationService->distanceInMeters(
+            (float) $validated['latitude'],
+            (float) $validated['longitude'],
+            (float) $office['latitude'],
+            (float) $office['longitude']
+        ));
+
+        $allowed = $distance <= (int) $office['radius_meters'];
+
+        if ($allowed) {
+            session([
+                self::LOKASI_SESSION_KEY => true,
+                'buku_tamu_user_lat'     => $validated['latitude'],
+                'buku_tamu_user_lng'     => $validated['longitude'],
+            ]);
+        }
+
+        return response()->json([
+            'allowed'  => $allowed,
+            'distance' => $distance,
+            'radius'   => (int) $office['radius_meters'],
         ]);
     }
 
     // ── Simpan data tamu baru ─────────────────────────────────────────────────
     public function store(Request $request)
     {
+        if (! session(self::LOKASI_SESSION_KEY)) {
+            return redirect()->route('kunjungan.create')
+                ->withErrors(['lokasi' => 'Verifikasi lokasi diperlukan sebelum mengisi buku tamu.']);
+        }
+
+        $office = $this->locationService->getOfficeLocation();
+
+        if (! $office) {
+            session()->forget(self::LOKASI_SESSION_KEY);
+
+            return redirect()->route('kunjungan.create')
+                ->withErrors(['lokasi' => 'Koordinat kantor belum dikonfigurasi di pengaturan. Hubungi administrator.']);
+        }
+
+        if ($request->filled(['user_latitude', 'user_longitude'])) {
+            $distance = (int) round($this->locationService->distanceInMeters(
+                (float) $request->user_latitude,
+                (float) $request->user_longitude,
+                (float) $office['latitude'],
+                (float) $office['longitude']
+            ));
+
+            if ($distance > (int) $office['radius_meters']) {
+                session()->forget([
+                    self::LOKASI_SESSION_KEY,
+                    'buku_tamu_user_lat',
+                    'buku_tamu_user_lng',
+                ]);
+
+                return redirect()->route('kunjungan.create')
+                    ->withErrors([
+                        'lokasi' => "Anda berada di luar area kantor ({$distance}m). Silakan datang ke kantor untuk mengisi buku tamu.",
+                    ]);
+            }
+        }
+
         // ── Simpan file sementara SEBELUM validasi agar tidak hilang ──────────
         $fotoTmp    = null;
         $dokumenTmp = null;

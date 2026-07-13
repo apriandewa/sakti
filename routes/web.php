@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\UnduhanController;
 use App\Http\Controllers\Frontend\GaleriController;
+use App\Http\Controllers\Frontend\EkinerjaController;
 
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\KunjunganController;
@@ -40,6 +41,7 @@ Route::get('/galeri/{slug}', [GaleriController::class, 'show'])->name('galeri.de
 
 
 Route::get('/tamu', [KunjunganController::class, 'create'])->name('kunjungan.create');
+Route::post('/tamu/verify-location', [KunjunganController::class, 'verifyLocation'])->name('kunjungan.verify-location');
 Route::post('/tamu', [KunjunganController::class, 'store'])->name('kunjungan.store');
 Route::get('/tamu/{slug}', [KunjunganController::class, 'show'])->name('kunjungan.detail');
 
@@ -54,11 +56,6 @@ Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store')
 Route::get('/page', [PageController::class, 'index'])->name('page');
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.detail');
 
-Route::get('/pegawai', [\App\Http\Controllers\Frontend\PegawaiController::class, 'index'])->name('pegawai');
-Route::get('/pegawai/{id}', [\App\Http\Controllers\Frontend\PegawaiController::class, 'show'])->name('pegawai.detail');
-Route::get('/struktur', function() {
-    return redirect()->route('pegawai');
-})->name('struktur');
 Route::get('/testimoni', [HomeController::class, 'testimoni'])->name('testimoni');
 Route::get('/penghargaan', [HomeController::class, 'penghargaan'])->name('penghargaan');
 Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang-kami');
@@ -87,6 +84,23 @@ Route::group(['prefix' => config('master.app.url.frontend')], function () {
         Route::get('delete/{id}/{name}', "Backend\File\FileController@deleteFile")->name('delete');
         Route::post('upload-image-editor', "Backend\File\FileController@handleEditorImageUpload")->name('upload_image_editor');
     });
+});
+
+Route::prefix('kinerja')->name('ekinerja.')->group(function () {
+    Route::get('/', [EkinerjaController::class, 'index'])->name('index');
+    Route::get('/periode', [EkinerjaController::class, 'periode'])->name('periode');
+
+    Route::post('/cari', [EkinerjaController::class, 'cari'])
+        ->middleware('throttle:10,1') // 10 request / menit / IP, lihat config('ekinerja.search.rate_limit_per_minute')
+        ->name('cari');
+});
+
+// ===== Cek Kehadiran Pegawai (Frontend Publik) =====
+Route::prefix('cekkehadiran')->name('cekkehadiran.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Frontend\CekKehadiranController::class, 'index'])->name('index');
+    Route::post('/cari', [\App\Http\Controllers\Frontend\CekKehadiranController::class, 'cari'])
+        ->middleware('throttle:10,1')
+        ->name('cari');
 });
 
 

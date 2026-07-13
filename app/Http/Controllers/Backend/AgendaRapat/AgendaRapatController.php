@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AgendaRapat;
 use App\Models\RapatVerifikasi;
 use App\Models\RapatNotulen;
-use App\Models\Pegawai;
 use App\Models\DokumenTte;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;

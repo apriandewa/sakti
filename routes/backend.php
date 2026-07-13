@@ -74,51 +74,6 @@ Route::group([
 		Route::resource('announcement', 'Announcement\AnnouncementController');
 		//end-announcement
 
-		//pangkat
-		Route::prefix('pangkat')->as('pangkat')->group(function () {
-			Route::get('data', 'Pangkat\PangkatController@data');
-			Route::get('delete/{id}', 'Pangkat\PangkatController@delete');
-		});
-		Route::resource('pangkat', 'Pangkat\PangkatController');
-		//end-pangkat
-
-		//status-pegawai
-		Route::prefix('status-pegawai')->as('status-pegawai')->group(function () {
-			Route::get('data', 'StatusPegawai\StatusPegawaiController@data');
-			Route::get('delete/{id}', 'StatusPegawai\StatusPegawaiController@delete');
-		});
-		Route::resource('status-pegawai', 'StatusPegawai\StatusPegawaiController');
-		//end-status-pegawai
-
-		//jabatan
-		Route::prefix('jabatan')->as('jabatan')->group(function () {
-			Route::get('data', 'Jabatan\JabatanController@data');
-			Route::get('delete/{id}', 'Jabatan\JabatanController@delete');
-		});
-		Route::resource('jabatan', 'Jabatan\JabatanController');
-		//end-jabatan
-
-		//pegawai
-		Route::prefix('pegawai')->as('pegawai.')->group(function () {
-			Route::get('data', 'Pegawai\PegawaiController@data')->name('data');
-			Route::get('delete/{id}', 'Pegawai\PegawaiController@delete')->name('delete');
-			Route::get('get-jabatan-nama/{parent_id}', 'Pegawai\PegawaiController@getJabatanNama')->name('get-jabatan-nama');
-		});
-		Route::resource('pegawai', 'Pegawai\PegawaiController');
-		//end-pegawai
-
-		//presensi
-		Route::prefix('presensi')->as('presensi.')->group(function () {
-			Route::get('data', 'Presensi\PresensiController@data')->name('data');
-			Route::post('sync', 'Presensi\PresensiController@sync')->name('sync');
-			Route::get('show/{pegawai_id}/{month}/{year}', 'Presensi\PresensiController@showDetail')->name('show-detail');
-			Route::get('image/{nip}', 'Presensi\PresensiController@image')->name('image');
-			Route::get('riwayat/{nip}/{date}', 'Presensi\PresensiController@riwayatDetail')->name('riwayat-detail');
-			Route::get('sync-logs', 'Presensi\PresensiController@syncLogs')->name('sync-logs');
-		});
-		Route::resource('presensi', 'Presensi\PresensiController');
-		//end-presensi
-
         //notification
 		Route::prefix('notification')->as('notification')->group(function () {
 			Route::get('data', 'Notification\NotificationController@data');
@@ -137,6 +92,20 @@ Route::group([
             Route::get('manual-book', 'Documentation\DocumentationController@manualBook')->name('manual-book');
         });
         //end-documentation
+
+        //presensi
+        Route::prefix('presensi')->as('presensi.')->group(function () {
+            Route::get('data', 'Presensi\PresensiController@data')->name('data');
+            Route::get('logs-data', 'Presensi\PresensiController@logsData')->name('logs-data');
+            Route::get('kantor', 'Presensi\PresensiController@kantor')->name('kantor');
+            Route::get('{id}/show', 'Presensi\PresensiController@show')->name('show');
+            Route::post('sync', 'Presensi\PresensiController@sync')->name('sync');
+            Route::post('sync-pegawai', 'Presensi\PresensiController@syncPegawai')->name('sync-pegawai');
+            Route::get('foto', 'Presensi\PresensiController@fotoPresensi')->name('foto');
+            Route::post('import-csv', 'Presensi\PresensiController@importCsv')->name('import-csv');
+        });
+        Route::resource('presensi', 'Presensi\PresensiController')->only(['index']);
+        //end-presensi
 	});
 });
 
