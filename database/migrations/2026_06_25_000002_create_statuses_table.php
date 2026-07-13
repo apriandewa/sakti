@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('rapat_verifikasis', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('agenda_rapat_id')->constrained('agenda_rapats')->onDelete('cascade');
-            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('status');
-            $table->text('catatan')->nullable();
+        Schema::create('statuses', function (Blueprint $table) {
+            $table->uuid("id")->primary();
+            $table->string("nama");
+            $table->text("desc")->nullable();
+            $table->text("keterangan")->nullable();
+            $table->string("status")->default('aktif');
+            $table->foreignUuid("user_id")->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rapat_verifikasis');
+        Schema::dropIfExists('statuses');
     }
 };
