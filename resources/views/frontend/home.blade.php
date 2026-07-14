@@ -235,16 +235,16 @@
     <div class="container">
 
       <div class="container section-title text-center" data-aos="fade-up">
-        <span class="eyebrow">Struktur Layanan</span>
-        <h2>Bidang Diskominfotik</h2>
-        <p class="mx-auto">Bidang-bidang pelayanan dan tugas pokok pada Dinas Komunikasi, Informatika, Statistik, dan Persandian</p>
+        <span class="eyebrow">Layanan Kepegawaian</span> <br>
+        <h2>Layanan Kepegawaian</h2>
+        <p class="mx-auto">Beberapa Layanan Kepegawaian pada Pemerintah Kabupaten Indragiri Hulu</p>
       </div>
 
       <div class="swiper bidangSwiper" data-aos="fade-up" data-aos-delay="200">
         <div class="swiper-wrapper">
           @forelse($bidang as $index => $prof)
-            <div class="swiper-slide">
-              <div class="glass-card service-card h-100 d-flex flex-column align-items-start">
+            <div class="swiper-slide text-center">
+              <div class="glass-card service-card h-100 d-flex flex-column align-items-center">
                 <div class="service-icon-box">
                   <i class="fa {{ $prof->icon ?? 'fa-laptop' }}"></i>
                 </div>
@@ -252,7 +252,7 @@
                 <p class="text-secondary small mb-4 flex-grow-1">
                   {{ $prof->keterangan }}
                 </p>
-                <a href="{{ route('page.detail', $prof->slug) }}" class="btn-cyber-outline py-2 px-3 text-center w-100">Selengkapnya</a>
+                <a href="{{ route('page.detail', $prof->slug) }}" class="btn-cyber-outline py-2 px-3 text-center">Selengkapnya</a>
               </div>
             </div>
           @empty
@@ -319,7 +319,7 @@
     <div class="container">
 
       <div class="container section-title text-center" data-aos="fade-up">
-        <span class="eyebrow">Informasi Terkini</span>
+        <span class="eyebrow">Informasi Terkini</span> <br>
         <h2>Berita & Artikel</h2>
         <p class="mx-auto">Berita, artikel, dan rilis pers seputar kegiatan Pemkab Indragiri Hulu</p>
       </div>
@@ -379,9 +379,9 @@
     <div class="container">
 
       <div class="container section-title text-center" data-aos="fade-up">
-        <span class="eyebrow">Pusat Dokumen</span>
-        <h2>Unduhan Dokumen</h2>
-        <p class="mx-auto">Pusat berkas, formulir, regulasi, dan laporan resmi Diskominfotik Kabupaten Indragiri Hulu</p>
+        <span class="eyebrow">Pusat Dokumen</span> <br>
+        <h2>Dokumen Unduhan</h2>
+        <p class="mx-auto">Pusat pengelolaan Berkas, Formulir, Regulasi, dan Surat Edaran</p>
       </div>
 
       <div class="swiper unduhanSwiper" data-aos="fade-up" data-aos-delay="200">
@@ -438,7 +438,7 @@
     <div class="container">
 
       <div class="container section-title text-center" data-aos="fade-up">
-        <span class="eyebrow">Ekosistem Digital</span>
+        <span class="eyebrow">Ekosistem Digital</span> <br>
         <h2>Tautan Terkait</h2>
         <p class="mx-auto">Konektivitas portal dengan kementerian, lembaga, dan instansi daerah</p>
       </div>
@@ -476,7 +476,7 @@
     <div class="container">
 
       <div class="container section-title text-center" data-aos="fade-up">
-        <span class="eyebrow">Suara Masyarakat</span>
+        <span class="eyebrow">Suara Masyarakat</span> <br>
         <h2>Ulasan Pengguna</h2>
         <p class="mx-auto">Apresiasi dan saran yang dikirimkan oleh pengguna layanan informasi kami</p>
       </div>

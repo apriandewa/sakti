@@ -77,29 +77,55 @@ class PresensiService
      */
     public function getRekap(string $kantorId, int $bulan, int $tahun): array
     {
+        $dayLimit = $this->resolveDayLimit($bulan, $tahun);
+
         $pegawais = Pegawai::where('kantor_id', $kantorId)
-            ->with(['presensiHarians' => function ($q) use ($bulan, $tahun) {
+            ->with(['presensiHarians' => function ($q) use ($bulan, $tahun, $dayLimit) {
                 $q->whereMonth('tanggal', $bulan)
                   ->whereYear('tanggal', $tahun);
+
+                if ($dayLimit !== null) {
+                    $q->whereDay('tanggal', '<=', $dayLimit);
+                }
             }])
             ->aktif()
             ->get();
 
-        $hariKerja = $this->countHariKerja($bulan, $tahun);
+        $hariKerja = $this->countHariKerja($bulan, $tahun, $dayLimit);
 
-        return $pegawais->map(function (Pegawai $pegawai) use ($hariKerja, $bulan, $tahun) {
-            return $this->hitungRekapPegawai($pegawai, $hariKerja, $bulan, $tahun);
+        return $pegawais->map(function (Pegawai $pegawai) use ($hariKerja, $bulan, $tahun, $dayLimit) {
+            return $this->hitungRekapPegawai($pegawai, $hariKerja, $bulan, $tahun, $dayLimit);
         })->values()->toArray();
+    }
+
+    /**
+     * Tentukan batas hari yang boleh dihitung untuk bulan yang diminta.
+     *
+     * - Jika bulan/tahun yang diminta BUKAN bulan berjalan (sudah lewat / masa depan): null (tidak dibatasi, tampilkan penuh).
+     * - Jika bulan berjalan: dibatasi sampai HARI KEMARIN saja (bukan hari ini),
+     *   karena presensi hari ini biasanya belum lengkap (belum checkout / belum diproses BKN).
+     *   Jika hari ini tanggal 1, maka dayLimit = 0 (belum ada hari yang bisa dihitung sama sekali).
+     */
+    protected function resolveDayLimit(int $bulan, int $tahun): ?int
+    {
+        $today = Carbon::today();
+        $isCurrentMonth = ($bulan == $today->month && $tahun == $today->year);
+
+        if (! $isCurrentMonth) {
+            return null;
+        }
+
+        return $today->day - 1;
     }
 
     /**
      * Hitung rekap untuk satu pegawai
      */
-    public function hitungRekapPegawai(Pegawai $pegawai, int $hariKerja, int $bulan, int $tahun): array
+    public function hitungRekapPegawai(Pegawai $pegawai, int $hariKerja, int $bulan, int $tahun, ?int $dayLimit = null): array
     {
         $presensiList = $pegawai->presensiHarians->isNotEmpty()
             ? $pegawai->presensiHarians
-            : $pegawai->presensiByBulan($bulan, $tahun);
+            : $pegawai->presensiByBulan($bulan, $tahun, $dayLimit);
 
         // Hitung per-kategori
         $hadir = 0; $tk = 0; $cuti = 0; $dl = 0; $izin = 0;
@@ -175,19 +201,27 @@ class PresensiService
     public function getLogHarian(string $pegawaiId, int $bulan, int $tahun): array
     {
         $pegawai = Pegawai::findOrFail($pegawaiId);
+        $dayLimit = $this->resolveDayLimit($bulan, $tahun);
 
-        $presensi = PresensiHarian::where('pegawai_id', $pegawaiId)
+        $presensiQuery = PresensiHarian::where('pegawai_id', $pegawaiId)
             ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->orderBy('tanggal')
-            ->get();
+            ->whereYear('tanggal', $tahun);
+
+        if ($dayLimit !== null) {
+            $presensiQuery->whereDay('tanggal', '<=', $dayLimit);
+        }
+
+        $presensi = $presensiQuery->orderBy('tanggal')->get();
 
         return [
             'pegawai'  => $pegawai,
             'presensi' => $presensi,
-            'rekap'    => $this->hitungRekapPegawai($pegawai->load(['presensiHarians' => function($q) use ($bulan, $tahun) {
+            'rekap'    => $this->hitungRekapPegawai($pegawai->load(['presensiHarians' => function($q) use ($bulan, $tahun, $dayLimit) {
                 $q->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun);
-            }]), $this->countHariKerja($bulan, $tahun), $bulan, $tahun),
+                if ($dayLimit !== null) {
+                    $q->whereDay('tanggal', '<=', $dayLimit);
+                }
+            }]), $this->countHariKerja($bulan, $tahun, $dayLimit), $bulan, $tahun, $dayLimit),
         ];
     }
 
@@ -262,12 +296,20 @@ class PresensiService
     /**
      * Hitung hari kerja dalam sebulan (Senin–Jumat, tanpa libur nasional sederhana)
      * Catatan: jika ingin akurat per kalender libur, extend dengan API kalender nasional.
+     *
+     * @param int|null $dayLimit Jika diisi, hanya hitung hari kerja s.d. tanggal ini (untuk bulan berjalan).
      */
-    public function countHariKerja(int $bulan, int $tahun): int
+    public function countHariKerja(int $bulan, int $tahun, ?int $dayLimit = null): int
     {
-        $start  = Carbon::create($tahun, $bulan, 1);
-        $end    = $start->copy()->endOfMonth();
-        $count  = 0;
+        $start = Carbon::create($tahun, $bulan, 1);
+        $end   = $dayLimit !== null
+            ? Carbon::create($tahun, $bulan, max($dayLimit, 1))
+            : $start->copy()->endOfMonth();
+        $count = 0;
+
+        if ($dayLimit !== null && $dayLimit < 1) {
+            return 0;
+        }
 
         for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
             if ($d->isWeekday()) $count++;

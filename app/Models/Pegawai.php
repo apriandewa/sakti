@@ -78,14 +78,21 @@ class Pegawai extends Model
     }
 
     /**
-     * Presensi di bulan & tahun tertentu
+     * Presensi di bulan & tahun tertentu.
+     *
+     * @param int|null $dayLimit Jika diisi, hanya ambil s.d. tanggal ini (untuk bulan berjalan,
+     *                           dibatasi sampai hari kemarin agar tidak menghitung hari yang belum lewat).
      */
-    public function presensiByBulan(int $bulan, int $tahun): \Illuminate\Database\Eloquent\Collection
+    public function presensiByBulan(int $bulan, int $tahun, ?int $dayLimit = null): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->presensiHarians()
+        $query = $this->presensiHarians()
             ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->orderBy('tanggal')
-            ->get();
+            ->whereYear('tanggal', $tahun);
+
+        if ($dayLimit !== null) {
+            $query->whereDay('tanggal', '<=', $dayLimit);
+        }
+
+        return $query->orderBy('tanggal')->get();
     }
 }

@@ -18,7 +18,7 @@
               </li>
             @empty
               <li class="position-absolute w-100 d-flex align-items-center h-100">
-                <span class="ticker-item">Selamat Datang di Portal Resmi Dinas Komunikasi dan Informatika</span>
+                <span class="ticker-item">Selamat Datang di Portal SAKTI Kabupaten Indragiri Hulu</span>
               </li>
             @endforelse
           </ul>
@@ -64,18 +64,11 @@
             </ul>
           </li>
           
-          <li><a href="{{ url('/#team') }}">Struktur</a></li>
-
-          <li class="dropdown"><a href="#"><span>Akses Informasi</span> <i class="bi bi-chevron-down"></i></a>
-            <ul>
-              @foreach($saluranmenu as $s)
-                <li><a href="{{ url('page/' . $s->slug) }}">{{ $s->nama }}</a></li>
-              @endforeach
-            </ul>
-          </li>
+          <li><a href="{{ url('/cekkehadiran') }}">e-Presensi</a></li>
+          <li><a href="{{ url('/kinerja') }}">e-Kinerja</a></li>
+          <li><a href="{{ url('/prformance') }}">e-Performance</a></li>
           
           <li><a href="{{ url('/#blog-posts') }}">Berita</a></li>
-          <li><a href="{{ url('/#portfolio') }}">Galeri</a></li>
           
           <li class="dropdown"><a href="#"><span>Unduhan</span> <i class="bi bi-chevron-down"></i></a>
             <ul>

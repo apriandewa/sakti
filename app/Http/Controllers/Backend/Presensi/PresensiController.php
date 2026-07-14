@@ -126,12 +126,23 @@ class PresensiController extends Controller
 
         $pegawai = Pegawai::findOrFail($id);
 
-        $logs = PresensiHarian::where('pegawai_id', $id)
+        // Batasi bulan berjalan sampai HARI KEMARIN saja - presensi hari ini
+        // biasanya belum lengkap (belum checkout / belum diproses BKN), jadi
+        // jika ikut dihitung bisa membuat total potongan tampak lebih besar dari seharusnya.
+        $today = \Carbon\Carbon::today();
+        $isCurrentMonth = ($bulan == $today->month && $tahun == $today->year);
+        $dayLimit = $isCurrentMonth ? ($today->day - 1) : null;
+
+        $logsQuery = PresensiHarian::where('pegawai_id', $id)
             ->whereMonth('tanggal', $bulan)
             ->whereYear('tanggal', $tahun)
-            ->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)') // exclude Sabtu-Minggu
-            ->orderBy('tanggal')
-            ->get();
+            ->whereRaw('DAYOFWEEK(tanggal) NOT IN (1, 7)'); // exclude Sabtu-Minggu
+
+        if ($dayLimit !== null) {
+            $logsQuery->whereDay('tanggal', '<=', $dayLimit);
+        }
+
+        $logs = $logsQuery->orderBy('tanggal')->get();
 
         $monthName = \Carbon\Carbon::create($tahun, $bulan, 1)->translatedFormat('F');
 
@@ -187,7 +198,11 @@ class PresensiController extends Controller
     }
 
     /**
-     * Proxy foto profil pegawai dari API Simpegnas BKN (mencegah CORS/token leak)
+     * Proxy foto profil pegawai dari API Simpegnas BKN (mencegah CORS/token leak).
+     *
+     * Parsing dibuat toleran terhadap beberapa kemungkinan bentuk respons API,
+     * karena struktur pastinya belum terkonfirmasi 100% - kalau semua percobaan
+     * gagal, responsnya di-log supaya mudah dicek strukturnya dari log Laravel.
      */
     public function image(string $nip)
     {
@@ -195,25 +210,43 @@ class PresensiController extends Controller
 
         if ($response && $response->successful()) {
             $data = $response->json();
+            $base64 = null;
 
-            if (
-                isset($data['status']) && $data['status'] === true
-                && isset($data['data']['register']) && is_array($data['data']['register'])
+            // Percobaan 1: base64 langsung di 'data' (string)
+            if (is_string($data['data'] ?? null) && $data['data'] !== '') {
+                $base64 = $data['data'];
+            }
+            // Percobaan 2: 'data.image' atau 'data.image_base64' (string langsung)
+            elseif (! empty($data['data']['image_base64'] ?? null)) {
+                $base64 = $data['data']['image_base64'];
+            } elseif (! empty($data['data']['image'] ?? null)) {
+                $base64 = $data['data']['image'];
+            }
+            // Percobaan 3: nested 'data.register[]' - ambil foto terbaru
+            elseif (
+                isset($data['data']['register']) && is_array($data['data']['register'])
                 && count($data['data']['register']) > 0
             ) {
                 $latestPhoto = end($data['data']['register']);
+                $base64 = $latestPhoto['image_base64'] ?? null;
+            }
 
-                if (! empty($latestPhoto['image_base64'])) {
-                    $base64 = $latestPhoto['image_base64'];
+            if (! empty($base64)) {
+                if (strpos($base64, 'base64,') !== false) {
+                    $base64 = explode('base64,', $base64)[1];
+                }
 
-                    if (strpos($base64, 'base64,') !== false) {
-                        $base64 = explode('base64,', $base64)[1];
-                    }
+                $decoded = base64_decode($base64, true);
 
-                    return response(base64_decode($base64), 200)
-                        ->header('Content-Type', 'image/jpeg');
+                if ($decoded !== false) {
+                    return response($decoded, 200)->header('Content-Type', 'image/jpeg');
                 }
             }
+
+            \Illuminate\Support\Facades\Log::warning(
+                "Gagal parse foto profil NIP {$nip} - struktur respons tidak dikenali",
+                ['response' => $data]
+            );
         }
 
         return redirect(asset(config('master.app.web.template') . '/images/avatar/avatar-1.png'));

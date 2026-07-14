@@ -85,26 +85,50 @@ class CekKehadiranController extends Controller
             ]);
         }
 
+        // Batasi bulan berjalan sampai HARI KEMARIN saja - presensi hari ini
+        // biasanya belum lengkap (belum checkout / belum diproses BKN), jadi
+        // jika ikut dihitung bisa membuat total potongan tampak lebih besar dari seharusnya.
+        // Sama seperti pembatasan di PresensiController (backend).
+        $today = \Carbon\Carbon::today();
+        $isCurrentMonth = ($bulan == $today->month && $tahun == $today->year);
+        $dayLimit = $isCurrentMonth ? ($today->day - 1) : null;
+
         // Ambil data presensi bulanan
-        $presensiList = PresensiHarian::where('pegawai_id', $pegawai->id)
+        $presensiQuery = PresensiHarian::where('pegawai_id', $pegawai->id)
             ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->orderBy('tanggal')
-            ->get();
+            ->whereYear('tanggal', $tahun);
+
+        if ($dayLimit !== null) {
+            $presensiQuery->whereDay('tanggal', '<=', $dayLimit);
+        }
+
+        $presensiList = $presensiQuery->orderBy('tanggal')->get();
 
         if ($presensiList->isEmpty()) {
+            $pesanKosong = ($dayLimit !== null && $dayLimit < 1)
+                ? 'Data kehadiran bulan ini belum tersedia karena belum ada hari yang lewat untuk disinkronkan.'
+                : 'Data kehadiran belum tersedia untuk periode tersebut. Pastikan data sudah disinkronisasi oleh administrator.';
+
             return response()->json([
                 'success' => false,
-                'message' => 'Data kehadiran belum tersedia untuk periode tersebut. Pastikan data sudah disinkronisasi oleh administrator.',
+                'message' => $pesanKosong,
             ]);
         }
 
-        // Hitung rekap
+        // Hitung rekap (dengan dayLimit yang sama supaya konsisten dengan data harian di atas)
+        $pegawaiWithPresensi = $pegawai->load(['presensiHarians' => function ($q) use ($bulan, $tahun, $dayLimit) {
+            $q->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun);
+            if ($dayLimit !== null) {
+                $q->whereDay('tanggal', '<=', $dayLimit);
+            }
+        }]);
+
         $rekap = $this->service->hitungRekapPegawai(
-            $pegawai->load(['presensiHarians' => fn($q) => $q->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)]),
-            $this->service->countHariKerja($bulan, $tahun),
+            $pegawaiWithPresensi,
+            $this->service->countHariKerja($bulan, $tahun, $dayLimit),
             $bulan,
-            $tahun
+            $tahun,
+            $dayLimit
         );
 
         // Format data harian untuk tampilan
