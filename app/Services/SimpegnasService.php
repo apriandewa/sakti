@@ -256,7 +256,6 @@ class SimpegnasService
 
                 $pegawai = Pegawai::query()
                     ->where('nip', $nip)
-                    ->where('kantor_id', $kantorId)
                     ->first();
 
                 if (! $pegawai) {
@@ -275,6 +274,10 @@ class SimpegnasService
                         'status' => 'aktif',
                     ]);
                     $pegawaiBaru++;
+                } else {
+                    if ($pegawai->kantor_id !== $kantorId) {
+                        $pegawai->update(['kantor_id' => $kantorId]);
+                    }
                 }
 
                 $pegawaiDisync++;

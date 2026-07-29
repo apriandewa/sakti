@@ -92,6 +92,10 @@ Selain penarikan data secara manual melalui Tab Monitoring, sistem dilengkapi de
    - Untuk mencegah *server overload* atau *timeout* saat menarik data puluhan instansi sekaligus pada pukul 18.00, penarikan otomatis diproses melalui **Background Jobs (Laravel Queue)** secara bertahap (memecah antrean *dispatch job* per-kantor).
    - Pembaruan ke *database* dilakukan menggunakan metode **Batch Upsert** (Insert-Update massal) alih-alih mengecek data satu per satu, sehingga sistem sanggup memproses ribuan data presensi dalam sepersekian detik dan UI admin tetap responsif.
 
+5. **Pencegahan Konflik dengan Modul e-Kinerja (Master Pegawai)**:
+   - Tabel `pegawais` digunakan bersama dengan Modul e-Kinerja. Modul Presensi menggunakan `kantor_id` (dari API Simpegnas), sedangkan Modul Kinerja menggunakan `ekinerja_unor_id` (dari API BKN).
+   - Saat proses sinkronisasi Presensi melakukan *insert/update* data pegawai baru ke tabel master `pegawais`, sistem **HANYA** boleh memperbarui field `kantor_id` beserta NIP/Nama, dan **DILARANG KERAS** mengubah atau me-null-kan field `ekinerja_unor_id` milik Kinerja. Selalu gunakan `NIP` sebagai kunci (Unique Key) pada operasi pencocokan data (`updateOrCreate` / `upsert`).
+
 ---
 
 ## 3. Logika Perhitungan Potongan Kehadiran
@@ -330,6 +334,8 @@ erDiagram
         string nama
         string nip UK
         string status
+        uuid kantor_id FK "Relasi ke Master Kantor Presensi"
+        string ekinerja_unor_id "Relasi ke Master Unor e-Kinerja"
     }
 
     PRESENSI_HARIANS {

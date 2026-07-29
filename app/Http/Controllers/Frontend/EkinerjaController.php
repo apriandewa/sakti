@@ -4,54 +4,77 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Ekinerja\CariPenilaianRequest;
+use App\Models\Ekinerja\EkinerjaReferensiPeriode;
+use App\Services\Ekinerja\BknApiException;
 use App\Services\Ekinerja\EkinerjaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * Controller publik untuk halaman pengecekan mandiri Penilaian e-Kinerja.
- * Route prefix: /sakti/kinerja
+ * EkinerjaController — Frontend Publik Pencarian e-Kinerja (PRD Bab 7)
  *
- * Tidak ada query Eloquent atau panggilan HTTP di sini — semuanya
- * didelegasikan ke EkinerjaService (lihat app/Services/Ekinerja).
+ * Route (routes/web.php):
+ *   Route::prefix('kinerja')->name('ekinerja.')->group(function () {
+ *       Route::get('/', [EkinerjaController::class, 'index'])->name('index');
+ *       Route::get('/periode', [EkinerjaController::class, 'periode'])->name('periode');
+ *       Route::post('/cari', [EkinerjaController::class, 'cari'])
+ *           ->middleware('throttle:10,1')->name('cari');
+ *   });
+ *
+ * Tidak ada query Eloquent langsung di sini — semua delegasi ke EkinerjaService.
  */
 class EkinerjaController extends Controller
 {
-    public function __construct(protected EkinerjaService $ekinerjaService)
+    public function __construct(protected EkinerjaService $service)
     {
     }
 
-    /** GET /sakti/kinerja */
+    /* ============================================================
+     *  INDEX — Halaman utama pencarian publik
+     * ============================================================ */
+
     public function index(): View
     {
         return view('frontend.ekinerja.index');
     }
 
-    /** GET /sakti/kinerja/periode — sumber data AJAX Select2 */
+    /* ============================================================
+     *  PERIODE — Daftar periode untuk Select2 (publik)
+     * ============================================================ */
+
     public function periode(Request $request): JsonResponse
     {
-        $results = $this->ekinerjaService->getPeriodeOptions($request->query('q'));
+        $results = $this->service->getPeriodeOptions($request->query('q'));
 
         return response()->json(['results' => $results]);
     }
 
-    /** POST /sakti/kinerja/cari */
+    /* ============================================================
+     *  CARI — Submit form pencarian (POST + throttle)
+     * ============================================================ */
+
     public function cari(CariPenilaianRequest $request): JsonResponse
     {
-        // TODO(backend): validasi nilai captcha terlebih dahulu di sini
-        // menggunakan helper/facade resmi package "meaws captcha" sebelum
-        // melanjutkan ke pencarian data, contoh:
-        // if (! Meaws::validate($request->input('captcha'))) { ... }
-
-        $result = $this->ekinerjaService->cariPenilaian(
+        $result = $this->service->cariPenilaian(
             periodeId: $request->validated('periode_id'),
-            nip: $request->validated('nip'),
+            nip:       $request->validated('nip'),
             namaInput: $request->validated('nama'),
             ipAddress: $request->ip(),
             userAgent: $request->userAgent(),
         );
 
-        return response()->json($result);
+        if (! $result['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'] ?? 'Data tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success'     => true,
+            'data'        => $result['data'],
+            'nama_cocok'  => $result['nama_cocok'],
+        ]);
     }
 }

@@ -21,6 +21,10 @@ return new class extends Migration
             if (! Schema::hasColumn('pegawais', 'nama_kantor')) {
                 $table->string('nama_kantor')->nullable()->after('kantor_id');
             }
+            if (! Schema::hasColumn('pegawais', 'unor_id')) {
+                $table->string('unor_id', 64)->nullable()->after('nama_kantor')
+                    ->comment('UUID unor dari API E-Kinerja BKN');
+            }
         });
     }
 
@@ -29,6 +33,7 @@ return new class extends Migration
         Schema::table('pegawais', function (Blueprint $table) {
             $table->dropColumnIfExists('kantor_id');
             $table->dropColumnIfExists('nama_kantor');
+            $table->dropColumnIfExists('unor_id');
         });
     }
 };

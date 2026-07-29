@@ -106,7 +106,28 @@ Route::group([
         });
         Route::resource('presensi', 'Presensi\PresensiController')->only(['index']);
         //end-presensi
+
+        //ekinerja
+        Route::prefix('ekinerja')->as('ekinerja.')->group(function () {
+            Route::get('data', 'Ekinerja\EkinerjaController@data')->name('data');
+            Route::get('logs-data', 'Ekinerja\EkinerjaController@logsData')->name('logs-data');
+            Route::get('unor', 'Ekinerja\EkinerjaController@unor')->name('unor');
+            Route::get('periode', 'Ekinerja\EkinerjaController@periode')->name('periode');
+            Route::get('{id}/show', 'Ekinerja\EkinerjaController@show')->name('show');
+            Route::post('sync', 'Ekinerja\EkinerjaController@sync')->name('sync');
+        });
+        Route::resource('ekinerja', 'Ekinerja\EkinerjaController')->only(['index']);
+        //end-ekinerja
 	});
+
+    //pegawai
+		Route::prefix('pegawai')->as('pegawai.')->group(function () {
+			Route::get('data', 'Pegawai\PegawaiController@data')->name('data');
+			Route::get('delete/{id}', 'Pegawai\PegawaiController@delete')->name('delete');
+			Route::get('get-jabatan-nama/{parent_id}', 'Pegawai\PegawaiController@getJabatanNama')->name('get-jabatan-nama');
+		});
+		Route::resource('pegawai', 'Pegawai\PegawaiController');
+		//end-pegawai
 });
 
 

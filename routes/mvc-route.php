@@ -100,6 +100,17 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		Route::resource('kategori', 'Kategori\KategoriController');
 		//end-kategori
 
+		//ekinerja
+		Route::prefix('kinerja')->as('kinerja.')->group(function () {
+			Route::get('data', 'Ekinerja\EkinerjaController@data')->name('data');
+			Route::get('unor', 'Ekinerja\EkinerjaController@unor')->name('unor');
+			Route::get('periode', 'Ekinerja\EkinerjaController@periode')->name('periode');
+			Route::get('{id}/show', 'Ekinerja\EkinerjaController@show')->name('show');
+			Route::post('sync', 'Ekinerja\EkinerjaController@sync')->name('sync');
+		});
+		Route::resource('kinerja', 'Ekinerja\EkinerjaController')->only(['index']);
+		//end-ekinerja
+
 		/* DISABLED: AgendaRapat and VerifikasiRapat features depend on Pegawai model which has been removed
 		//agenda-rapat
 		Route::prefix('agenda-rapat')->as('agenda-rapat')->group(function () {

@@ -1,0 +1,281 @@
+# PRD (Product Requirement Document)
+# Modul Penilaian e-Kinerja Pegawai
+### Aplikasi SAKTI - Diskominfotik Kabupaten Indragiri Hulu
+
+| Atribut | Keterangan |
+|---|---|
+| Nama Modul | Penilaian e-Kinerja (Integrasi BKN) |
+| Versi Dokumen | 1.1 |
+| Tanggal | 19 Juli 2026 |
+| Disusun untuk | Diskominfotik Kabupaten Indragiri Hulu |
+| Stack | Laravel 12, Bootstrap 5, jQuery, DataTables, Select2, EduAdmin Template, SweetAlert |
+| Trait/Package Existing | `HasUuid`, `Sluggable`, `Logable`, `Verifiable`, MVC Builder, `mvc-route`, meaws captcha |
+
+---
+
+## 1. Latar Belakang
+
+Kabupaten Indragiri Hulu membutuhkan modul untuk menampilkan **hasil Penilaian SKP (Sasaran Kinerja Pegawai) / e-Kinerja** milik ASN di lingkungan Pemerintah Kabupaten Indragiri Hulu, dengan sumber data resmi dari **API BKN (Badan Kepegawaian Negara)** — `kinerja.bkn.go.id`.
+
+Sama seperti modul Presensi Pegawai, modul ini membutuhkan sinkronisasi data yang solid berbasis master data pegawai, karena API BKN untuk rekap kinerja hanya dapat diakses per NIP + Periode.
+
+Terdapat dua kebutuhan akses:
+
+1. **Publik (Frontend)** — ASN secara mandiri dapat mengecek hasil penilaian e-Kinerja miliknya melalui halaman publik `../kinerja` dengan memasukkan NIP, nama, dan memilih periode.
+2. **Admin (Backend)** — Admin/Operator Diskominfotik dapat melakukan rekap penilaian e-Kinerja seluruh pegawai per **Unit Organisasi (Unor/OPD)** dan per **periode**, ditampilkan dalam bentuk DataTable dengan fitur detail per pegawai.
+
+Modul ini **wajib mengikuti arsitektur project existing** (MVC Builder, mvc-route, trait `HasUuid`/`Sluggable`/`Logable`/`Verifiable`, serta captcha meaws untuk form publik).
+
+---
+
+## 2. Tujuan
+
+- Menyediakan sarana pengecekan mandiri hasil e-Kinerja bagi ASN Pemkab Inhu.
+- Menyediakan sarana rekap dan monitoring capaian kinerja ASN bagi admin Diskominfotik / BKD dengan tampilan DataTable dan detail modal.
+- Menjadi lapisan integrasi (proxy + cache lokal) terhadap API BKN agar performa dan reliabilitas aplikasi tidak sepenuhnya bergantung pada ketersediaan API eksternal.
+- Mengotomatisasi penarikan data kinerja melalui Cron Job (Scheduler) dan log eksekusi yang transparan.
+- Menyimpan histori/log hasil penilaian untuk keperluan audit dan pelaporan.
+
+## 3. Ruang Lingkup
+
+**Termasuk dalam ruang lingkup:**
+- Halaman publik pencarian penilaian e-Kinerja per NIP.
+- Halaman admin rekap e-Kinerja per Unor + Periode dengan DataTable server-side.
+- Halaman detail penilaian per pegawai (admin) menggunakan modal show blade.
+- Tab khusus Log & Monitoring Sinkronisasi BKN (manual & otomatis).
+- Integrasi ke 2 endpoint API BKN yang tersedia (Referensi Periode & Laporan Penilaian).
+- Relasi tabel data kinerja dengan tabel `pegawais` (tabel master pegawai) dan tabel `ekinerja_master_unor`.
+- Mekanisme sinkronisasi & caching data lokal.
+- Manajemen master Unor (kantor/OPD) untuk kebutuhan filter.
+- Manajemen token Bearer BKN (karena bersifat JWT dengan masa berlaku terbatas).
+- Audit log pencarian publik & rate limiting/captcha.
+
+---
+
+## 4. Aktor & Hak Akses
+
+| Aktor | Deskripsi | Akses |
+|---|---|---|
+| **Publik/ASN** | Pegawai Pemkab Inhu tanpa login | Halaman `/sakti/kinerja` — cari hasil e-Kinerja diri sendiri via NIP + captcha |
+| **Admin/Operator Diskominfotik** | User terautentikasi pada backend | Menu **Rekap e-Kinerja** — filter, lihat DataTable, lihat detail (modal) |
+| **Super Admin** | User dengan hak penuh | Tambahan: kelola master Unor, kelola token BKN, trigger sinkronisasi manual |
+| **System (Scheduler)** | Laravel Task Scheduler | Sinkronisasi periode & sinkronisasi penilaian pegawai otomatis terjadwal (mis. via `sync:kinerja`) |
+
+---
+
+## 5. Arsitektur Teknis
+
+### 5.1 Prinsip Arsitektur
+Modul mengikuti pola **MVC Builder** dan **mvc-route** yang sudah digunakan pada modul-modul lain (mis. Presensi, PPID), dengan struktur folder yang konsisten:
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Frontend/
+│   │   │   └── EkinerjaController.php
+│   │   └── Backend/
+│   │       └── Ekinerja/EkinerjaController.php
+│   ├── Requests/
+│   │   ├── CariPenilaianEkinerjaRequest.php
+│   │   └── FilterRekapEkinerjaRequest.php
+│   └── Resources/
+│       └── PenilaianEkinerjaResource.php
+├── Models/
+│   ├── Ekinerja/EkinerjaReferensiPeriode.php
+│   ├── Ekinerja/EkinerjaMasterUnor.php
+│   ├── Ekinerja/EkinerjaPenilaian.php
+│   ├── Ekinerja/EkinerjaLogPencarian.php
+│   └── Ekinerja/EkinerjaSyncLog.php
+├── Services/
+│   └── Ekinerja/
+│       ├── BknEkinerjaClient.php        (HTTP client wrapper ke API BKN)
+│       └── EkinerjaService.php          (Logika sinkronisasi & pencarian)
+├── Console/
+│   └── Commands/
+│       ├── SyncPeriodeEkinerja.php      (ekinerja:sync-periode)
+│       ├── SyncPenilaianEkinerja.php    (ekinerja:sync-penilaian)
+│       └── CheckTokenEkinerja.php       (ekinerja:check-token)
+config/
+└── ekinerja.php
+```
+
+Model menggunakan trait existing:
+- `HasUuid` → primary key UUID pada seluruh tabel baru.
+- `Logable` → audit trail create/update/delete otomatis ke activity log.
+
+---
+
+## 6. Integrasi API BKN
+
+### 6.1 Endpoint yang Digunakan
+
+| Endpoint | Method | Fungsi |
+|---|---|---|
+| `{{base_url}}/api_kinerja/referensi/periode` | GET | Daftar referensi periode (bulan/tahun) |
+| `{{base_url}}/api_kinerja/laporan/penilaian/{tahun}/{periode_id}?nip={nip}` | GET | Detail hasil penilaian SKP per NIP & periode |
+
+### 6.2 Konfigurasi (`config/ekinerja.php`)
+
+```php
+return [
+    'base_url' => env('EKINERJA_BKN_BASE_URL', 'https://kinerja.bkn.go.id'),
+    'token'    => env('EKINERJA_BKN_TOKEN'),
+    'timeout'  => env('EKINERJA_BKN_TIMEOUT', 15),
+    'retry'    => [
+        'times' => 2,
+        'sleep' => 500,
+    ],
+    'cache_ttl' => [
+        'periode'   => 60 * 60 * 12,
+        'penilaian' => 60 * 60 * 1,
+    ],
+];
+```
+
+---
+
+## 7. Alur Fungsional
+
+### 7.1 Backend Admin — Menu "Rekap e-Kinerja"
+
+**Halaman Filter & Tabs**
+Sama seperti modul Presensi, halaman admin dibagi menjadi 2 Tab utama:
+- **Tab 1: Data Kinerja**: Menampilkan form filter (Pilih Kantor/OPD (Unor), Pilih Bulan, Pilih Tahun, dan Tombol "Cari") beserta DataTable rekap kinerja pegawai.
+- **Tab 2: Log & Monitoring Sinkronisasi BKN**: Menampilkan form aksi (Pilih Kantor/OPD (Unor), Pilih Bulan, Pilih Tahun, dan Tombol "Tarik Data BKN") beserta DataTable histori log sinkronisasi dari `ekinerja_sync_logs`.
+
+**Hasil (DataTable Server-Side) pada Tab 1**
+Kolom: `No`, `Nama Pegawai / NIP`, `Unor`, `Periode SKP (Bulan)`, `Hasil Kerja`, `Perilaku Kerja`, `Hasil Akhir`, `Aksi`.
+- Data diambil dari tabel cache lokal `ekinerja_penilaian` berelasi dengan `pegawais` dan `ekinerja_master_unor`.
+- Tombol **Sync Pegawai** per baris: Sinkronisasi satu NIP tertentu.
+- Tombol **Detail** per baris: Membuka modal (Blade Show Detail) menampilkan seluruh field hasil penilaian (mirip presensi harian).
+
+### 7.2 Strategi Sinkronisasi Rekap per Unor
+
+Karena BKN tidak menyediakan endpoint list seluruh pegawai per Unor, strategi yang digunakan untuk melakukan penarikan data massal:
+
+1. **Sinkronisasi API Berbasis Master Pegawai (Otomatis & Manual)**:
+   Seperti modul Presensi, sistem akan melakukan *loop* terhadap NIP yang ada pada tabel master `pegawais` (yang memiliki `unor_id` terkait `ekinerja_master_unor`). Data kemudian ditarik satu-per-satu atau di-batch lalu disimpan (`upsert`) ke tabel `ekinerja_penilaian`.
+   - **Manual**: Admin memilih Unor, Bulan/Tahun, lalu klik "Tarik Data BKN".
+   - **Otomatis**: Scheduler (Cron job) berjalan periodik melakukan sinkronisasi untuk seluruh Unor aktif.
+
+> **Pencegahan Konflik Data Master Pegawai (PENTING):**
+> Tabel `pegawais` adalah *Single Source of Truth* yang dipakai bersama oleh Modul Presensi (Simpegnas) dan e-Kinerja (BKN). Untuk menghindari bentrok data (overwrite):
+> - Tabel `pegawais` harus memiliki kolom terpisah untuk unit kerja: `kantor_id` (untuk Presensi) dan `unor_id` (untuk e-Kinerja).
+> - Pencocokan/Identifikasi pegawai antar API **selalu menggunakan NIP**.
+> - Saat Modul e-Kinerja melakukan sinkronisasi, proses `upsert` ke tabel master `pegawais` **HANYA** boleh memperbarui field `unor_id` (serta NIP/Nama). Sistem **TIDAK BOLEH** mengubah atau me-null-kan field `kantor_id` yang merupakan ranah Modul Presensi.
+2. **Import Data Pegawai CSV**:
+   Memanfaatkan fitur *Import Data Pegawai CSV* (sudah ada di modul pegawai / presensi) sebagai inisialisasi awal NIP per kantor.
+3. **Sinkronisasi Data Pegawai melalui API BKN (Future)**:
+   Saat ini belum ada endpoint resmi daftar pegawai, namun sedang dalam proses permintaan ke BKN. Struktur disiapkan untuk mendukung endpoint ini jika kelak tersedia.
+
+### 7.3 Strategi Sinkronisasi Master UNOR (On-the-fly Upsert)
+
+Karena API BKN tidak menyediakan endpoint khusus untuk menarik seluruh data referensi UNOR (`getdataUnor`), maka data master UNOR disinkronisasi menggunakan metode **On-the-fly Upsert**.
+Pada saat data kinerja ditarik dari API (yang di dalamnya terdapat data UNOR tempat pegawai bernaung), sistem akan secara otomatis mengekstrak informasi UNOR tersebut lalu melakukan `upsert` (Update or Insert) ke tabel `ekinerja_master_unor`. Selanjutnya, sistem juga akan memperbarui kolom `unor_id` milik pegawai terkait pada tabel `pegawais`. Dengan metode ini, tabel `ekinerja_master_unor` akan terisi secara bertahap seiring berjalannya sinkronisasi nilai kinerja.
+
+### 7.4 Log Sinkronisasi
+Setiap eksekusi sinkronisasi kinerja, baik oleh **Admin** maupun **Sistem (Cron)**, wajib dicatat pada tabel `ekinerja_sync_logs` beserta status, total data ditarik, dan catatan pesan (berhasil/gagal).
+
+---
+
+## 8. Skema Database
+
+### 8.1 `ekinerja_referensi_periode`
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| id | uuid, PK | |
+| periode_id | string(64), unique | ID periode dari BKN |
+| nama | string(30) | JANUARI, FEBRUARI, ... TAHUNAN |
+| tahun | string(4), nullable | |
+| synced_at | timestamp | |
+| created_at / updated_at | timestamp | |
+
+### 8.2 `ekinerja_master_unor`
+Master kantor/OPD untuk relasi dan filter admin.
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| id | uuid, PK | |
+| unor_id | string(64), index | `skp_unor_id` dari BKN |
+| nama_unor | string(150) | |
+| is_active | boolean, default true | |
+| created_at / updated_at | timestamp | |
+
+### 8.3 `ekinerja_penilaian`
+Pusat data capaian kinerja (terintegrasi dengan `pegawais`).
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| id | uuid, PK | |
+| pegawai_id | uuid, index | Relasi ke tabel `pegawais` lokal |
+| nip | string(18), index | NIP pegawai |
+| nama | string(150) | |
+| skp_unor_id | string(64), index | Relasi logis/FK ke `ekinerja_master_unor.unor_id` |
+| hasil_kerja | string(20), nullable | |
+| perilaku_kerja | string(20), nullable | |
+| hasil_akhir | string(30), nullable | |
+| pegawai_atasan_nama | string(150), nullable | |
+| waktu_dinilai | datetime, nullable | |
+| periode_id | string(64), index | Relasi ke `ekinerja_referensi_periode.periode_id` |
+| raw_response | json, nullable | |
+| source | enum('frontend_search','backend_sync') | |
+| synced_at | timestamp | |
+| created_at / updated_at | timestamp | |
+
+### 8.4 `ekinerja_sync_logs`
+Tabel log sinkronisasi kinerja (format disamakan dengan `presensi_sync_logs`).
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| id | uuid, PK | |
+| unor_id | string(64), nullable | Relasi ke `ekinerja_master_unor.unor_id` |
+| periode_id | string(64), nullable | |
+| sync_by | string(255) | "Sistem (Otomatis)" atau ID Admin |
+| status | string(50) | "sukses", "gagal", "berjalan" |
+| waktu_mulai | timestamp, nullable | |
+| waktu_selesai | timestamp, nullable | |
+| jumlah_data_ditarik | integer, nullable | |
+| catatan_pesan | text, nullable | |
+| created_at / updated_at | timestamp | |
+
+---
+
+## 9. Rancangan Route (mengikuti pola `mvc-route`)
+
+| Method | URI | Controller@Method | Keterangan |
+|---|---|---|---|
+| GET | `/backend/ekinerja/data` | `EkinerjaController@data` | AJAX DataTable |
+| GET | `/backend/ekinerja/logs-data`| `EkinerjaController@logsData`| AJAX DataTable Log |
+| GET | `/backend/ekinerja/unor` | `EkinerjaController@unor` | AJAX Select2 |
+| POST | `/backend/ekinerja/sync` | `EkinerjaController@sync` | Sync data BKN (Unor+Periode) |
+| GET | `/backend/ekinerja/{id}/show`| `EkinerjaController@show` | Modal detail penilaian |
+| GET | `/backend/ekinerja` | `EkinerjaController@index` | View utama (Tabs) |
+
+---
+
+## 10. Desain Antarmuka (Wireframe & Visual Mockup)
+
+### 10.1 Halaman Admin — Index Rekap e-Kinerja
+Struktur mengikuti standar EduAdmin dan presensi.
+* **Header**: "Rekap Penilaian e-Kinerja Pegawai"
+* **Tab 1: Data Kinerja**:
+  - Filter Form: Dropdown Pilih Kantor / OPD (Unor), Pilih Bulan, Pilih Tahun, lalu Tombol "Cari".
+  - DataTable: Kolom NIP/Nama, Hasil Kerja, Perilaku, Hasil Akhir, dengan pewarnaan badge yang informatif (berubah berdasarkan filter pencarian).
+* **Tab 2: Log & Monitoring Sinkronisasi BKN**:
+  - Panel Aksi: Form Dropdown Pilih Kantor / OPD (Unor), Pilih Bulan, Pilih Tahun, lalu Tombol "Tarik Data BKN".
+  - DataTable Log: Riwayat penarikan dari tabel `ekinerja_sync_logs` (seperti pada modul presensi).
+
+### 10.2 Modal Detail Penilaian (Show Blade)
+Menampilkan rincian:
+* Data Diri Pegawai (Nama, NIP, Golongan, Unit Kerja).
+* Hasil Kerja, Perilaku Kerja, dan Hasil Akhir.
+* Pejabat Penilai dan Tanggal Dinilai.
+
+---
+
+## 11. Kriteria Penerimaan (Acceptance Criteria)
+
+- [ ] Sinkronisasi kinerja per Unor bekerja baik secara manual (oleh admin) maupun otomatis (cron job).
+- [ ] Tabel `ekinerja_sync_logs` mencatat seluruh operasi penarikan data secara rapi.
+- [ ] Data kinerja yang ditarik terkait langsung dengan tabel master `pegawais`.
+- [ ] Halaman Admin menggunakan sistem 2 Tab (Data & Log) yang identik dengan modul Presensi.
+- [ ] Detail penilaian bisa dilihat melalui modal (show blade) tanpa harus pindah halaman.
+- [ ] Seluruh hasil penilaian divisualisasikan dengan badge warna di DataTable (Sangat Baik/Baik=Hijau, Cukup=Kuning, Kurang=Merah).
