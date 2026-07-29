@@ -55,21 +55,21 @@ class Kernel extends ConsoleKernel
                 ]);
             }
         })
-            ->dailyAt('15:13')
+            ->dailyAt('11:15')
             ->timezone('Asia/Jakarta')
             ->withoutOverlapping()
             ->name('sync-presensi-simpegnas'); // wajib diisi karena closure (bukan Artisan command)
 
         // Sinkronisasi referensi periode e-Kinerja dari BKN setiap hari pukul 01:00 WIB
         $schedule->command('ekinerja:sync-periode')
-            ->dailyAt('01:00')
+            ->dailyAt('11:20')
             ->timezone('Asia/Jakarta')
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/ekinerja-sync-periode.log'));
 
         // Sinkronisasi penilaian e-Kinerja (seluruh Unor aktif, periode berjalan) setiap hari pukul 02:00 WIB
         $schedule->command('ekinerja:sync-penilaian')
-            ->dailyAt('02:00')
+            ->dailyAt('11:25')
             ->timezone('Asia/Jakarta')
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/ekinerja-sync-penilaian.log'));
