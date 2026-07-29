@@ -2,8 +2,9 @@
 
 namespace App\Models\Ekinerja;
 
-use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Testing\Fluent\Concerns\Has;
 
 /**
  * Model log sinkronisasi e-Kinerja (PRD Bab 8.4).
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EkinerjaSyncLog extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $table = 'ekinerja_sync_logs';
 

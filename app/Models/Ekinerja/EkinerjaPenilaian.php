@@ -2,12 +2,12 @@
 
 namespace App\Models\Ekinerja;
 
-use App\Traits\HasUuid; // TODO: sesuaikan namespace trait existing project
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class EkinerjaPenilaian extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     protected $table = 'ekinerja_penilaian';
 

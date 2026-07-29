@@ -2,12 +2,13 @@
 
 namespace App\Models\Ekinerja;
 
-use App\Traits\HasUuid; // TODO: sesuaikan namespace trait existing project
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Testing\Fluent\Concerns\Has;
 
 class EkinerjaLogPencarian extends Model
 {
-    use HasUuid;
+    use HasUuids;
 
     const UPDATED_AT = null; // tabel log hanya butuh created_at
 

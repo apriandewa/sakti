@@ -2,14 +2,15 @@
 
 namespace App\Models\Ekinerja;
 
-use App\Traits\HasUuid;  // TODO: sesuaikan namespace trait existing project
-use App\Traits\Logable;  // TODO: sesuaikan namespace trait existing project
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 class EkinerjaMasterUnor extends Model
 {
-    use HasUuid, Logable, SoftDeletes;
+    use HasUuids, Loggable, SoftDeletes;
 
     protected $table = 'ekinerja_master_unor';
 
