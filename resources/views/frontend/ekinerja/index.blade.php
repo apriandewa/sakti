@@ -354,7 +354,8 @@
       $('#ekinerjaLoading').show();
 
       // serialize() otomatis ikut sertakan seluruh field form, termasuk
-      // 'captcha' & 'captcha_key' yang di-render oleh komponen <x-captcha />.
+      // 'captcha' & 'captcha_key' yang di-render oleh komponen captcha
+      // (lihat resources/views/components/captcha.blade.php).
       $.ajax({
         url: '{{ route('ekinerja.cari') }}',
         method: 'POST',
@@ -396,7 +397,7 @@
     });
 
     /* Reload captcha setelah submit (berhasil/gagal), memakai mekanisme
-       bawaan mews/captcha jika komponen <x-captcha /> menyediakan tombol
+       bawaan mews/captcha jika komponen captcha menyediakan tombol
        refresh sendiri (biasanya class .captcha-refresh / event klik pada
        gambar). Fallback: reload gambar captcha via endpoint bawaan package. */
     function refreshCaptcha() {
