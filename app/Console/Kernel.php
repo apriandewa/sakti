@@ -56,23 +56,51 @@ class Kernel extends ConsoleKernel
             }
         })
             ->name('sync-presensi-simpegnas') // WAJIB dipanggil SEBELUM withoutOverlapping() untuk closure
-            ->dailyAt('12:05')
+            ->dailyAt('23:45')
             ->timezone('Asia/Jakarta')
             ->withoutOverlapping();
 
         // Sinkronisasi referensi periode e-Kinerja dari BKN setiap hari pukul 01:00 WIB
-        $schedule->command('ekinerja:sync-periode')
-            ->dailyAt('12:07')
+        $schedule->call(function () {
+            Log::channel('scheduler')->info('[Ekinerja] Sinkronisasi periode dimulai');
+
+            try {
+                \Illuminate\Support\Facades\Artisan::call('ekinerja:sync-periode');
+                $output = \Illuminate\Support\Facades\Artisan::output();
+                Log::channel('scheduler')->info('[Ekinerja] Sinkronisasi periode selesai', [
+                    'output' => trim($output),
+                ]);
+            } catch (\Throwable $e) {
+                Log::channel('scheduler')->error('[Ekinerja] Sinkronisasi periode gagal', [
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        })
+            ->name('sync-periode-ekinerja')
+            ->dailyAt('23:46')
             ->timezone('Asia/Jakarta')
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/ekinerja-sync-periode.log'));
+            ->withoutOverlapping();
 
         // Sinkronisasi penilaian e-Kinerja (seluruh Unor aktif, periode berjalan) setiap hari pukul 02:00 WIB
-        $schedule->command('ekinerja:sync-penilaian')
-            ->dailyAt('12:10')
+        $schedule->call(function () {
+            Log::channel('scheduler')->info('[Ekinerja] Sinkronisasi penilaian dimulai');
+
+            try {
+                \Illuminate\Support\Facades\Artisan::call('ekinerja:sync-penilaian');
+                $output = \Illuminate\Support\Facades\Artisan::output();
+                Log::channel('scheduler')->info('[Ekinerja] Sinkronisasi penilaian selesai', [
+                    'output' => trim($output),
+                ]);
+            } catch (\Throwable $e) {
+                Log::channel('scheduler')->error('[Ekinerja] Sinkronisasi penilaian gagal', [
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        })
+            ->name('sync-penilaian-ekinerja')
+            ->dailyAt('23:47')
             ->timezone('Asia/Jakarta')
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/ekinerja-sync-penilaian.log'));
+            ->withoutOverlapping();
     }
 
     /**

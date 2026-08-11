@@ -1,9 +1,9 @@
 {{--
   ==========================================================================
   HALAMAN: Penilaian e-Kinerja Pegawai (Frontend Publik)
-  ROUTE   : GET  /sakti/kinerja        -> ekinerja.index
-            GET  /sakti/kinerja/periode -> ekinerja.periode (AJAX Select2, JSON {results:[{id,text}]})
-            POST /sakti/kinerja/cari    -> ekinerja.cari    (AJAX, JSON {success, data, message, nama_cocok})
+  ROUTE   : GET  /sakti/kinerja        -> ekinerja-publik.index
+            GET  /sakti/kinerja/periode -> ekinerja-publik.periode (AJAX Select2, JSON {results:[{id,text}]})
+            POST /sakti/kinerja/cari    -> ekinerja-publik.cari    (AJAX, JSON {success, data, message, nama_cocok})
   LOKASI  : resources/views/frontend/ekinerja/index.blade.php
   CATATAN : Bagian captcha di bawah masih PLACEHOLDER (route 'captcha.image').
             Sesuaikan dengan komponen/helper package "meaws captcha" yang
@@ -233,7 +233,7 @@
       width: '100%',
       minimumInputLength: 0,
       ajax: {
-        url: '{{ route('ekinerja.periode') }}',
+        url: '{{ route('ekinerja-publik.periode') }}',
         dataType: 'json',
         delay: 250,
         data: function (params) {
@@ -357,7 +357,7 @@
       // 'captcha' & 'captcha_key' yang di-render oleh komponen captcha
       // (lihat resources/views/components/captcha.blade.php).
       $.ajax({
-        url: '{{ route('ekinerja.cari') }}',
+        url: '{{ route('ekinerja-publik.cari') }}',
         method: 'POST',
         dataType: 'json',
         data: $('#formCariEkinerja').serialize(),

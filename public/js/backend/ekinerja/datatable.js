@@ -3,7 +3,7 @@
  * 2-Tab: (1) Data Kinerja + (2) Log & Monitoring Sinkronisasi BKN
  *
  * Bergantung pada window.EkinerjaRekapConfig yang di-inject dari Blade
- * (resources/views/backend/ekinerja/index.blade.php).
+ * (resources/views/backend/kinerja/index.blade.php).
  *
  * Pola identik dengan PresensiController JS (modul Presensi).
  */
@@ -19,10 +19,11 @@ $(document).ready(function () {
             placeholder: 'Pilih Kantor / OPD (Unor)',
             width: '100%',
             allowClear: true,
+            minimumInputLength: 0,
             ajax: {
                 url: cfg.urlUnorOptions,
                 dataType: 'json',
-                delay: 250,
+                delay: 300,
                 data: function (params) { return { q: params.term || '' }; },
                 processResults: function (data) { return { results: data.results || [] }; },
                 cache: true
@@ -35,10 +36,11 @@ $(document).ready(function () {
             placeholder: 'Pilih Periode SKP',
             width: '100%',
             allowClear: true,
+            minimumInputLength: 0,
             ajax: {
                 url: cfg.urlPeriodeOptions,
                 dataType: 'json',
-                delay: 250,
+                delay: 300,
                 data: function (params) { return { q: params.term || '' }; },
                 processResults: function (data) { return { results: data.results || [] }; },
                 cache: true
@@ -125,9 +127,18 @@ $(document).ready(function () {
     initSelect2Unor($syncUnor);
     initSelect2Periode($syncPeriode);
 
+    // Nonaktifkan tombol sync saat halaman pertama dibuka
+    $btnSync.prop('disabled', true);
+
+    function toggleSyncButton() {
+        $btnSync.prop('disabled', !($syncUnor.val() && $syncPeriode.val()));
+    }
+    $syncUnor.on('change', toggleSyncButton);
+    $syncPeriode.on('change', toggleSyncButton);
+
     function initTableLogs() {
         if (tableLogs) {
-            tableLogs.ajax.reload();
+            tableLogs.ajax.reload(null, false);
             return;
         }
 
@@ -151,8 +162,8 @@ $(document).ready(function () {
             ajax: {
                 url: cfg.urlLogsDatatable,
                 data: function (d) {
-                    d.unor_id   = $syncUnor.val();
-                    d.periode_id = $syncPeriode.val();
+                    d.unor_id    = $syncUnor.val() || '';
+                    d.periode_id = $syncPeriode.val() || '';
                 }
             },
             columns: [
@@ -175,12 +186,22 @@ $(document).ready(function () {
         initTableLogs();
     });
 
-    /* Filter log berubah → reload tabel */
+    /* Filter log berubah → inisialisasi/reload tabel */
     $syncUnor.on('change', function () {
-        if (tableLogs) tableLogs.ajax.reload();
+        if (tableLogs) {
+            tableLogs.ajax.reload(null, false);
+        }
+        // Jika tabel belum diinisialisasi tapi tab sudah aktif, init sekarang
+        else if ($('#tabLogSinkronisasi').hasClass('active')) {
+            initTableLogs();
+        }
     });
     $syncPeriode.on('change', function () {
-        if (tableLogs) tableLogs.ajax.reload();
+        if (tableLogs) {
+            tableLogs.ajax.reload(null, false);
+        } else if ($('#tabLogSinkronisasi').hasClass('active')) {
+            initTableLogs();
+        }
     });
 
     /* =================================================================
@@ -213,13 +234,20 @@ $(document).ready(function () {
             }).done(function (res) {
                 var icon = res.status ? 'success' : 'error';
                 swal('Selesai', res.message || 'Sinkronisasi selesai.', icon);
-                if (tableLogs) tableLogs.ajax.reload(null, false);
+                // Reload tabel log — inisialisasi jika belum ada
+                if (tableLogs) {
+                    tableLogs.ajax.reload(null, false);
+                } else {
+                    initTableLogs();
+                }
+                // Reload tabel rekap jika sudah diinisialisasi
                 if (tableRekap) tableRekap.ajax.reload(null, false);
             }).fail(function (xhr) {
                 var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Sinkronisasi gagal, silakan coba lagi.';
                 swal('Gagal', msg, 'error');
             }).always(function () {
                 $btnSync.prop('disabled', false).html(originalHtml);
+                toggleSyncButton();
             });
         });
     });

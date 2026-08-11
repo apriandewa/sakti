@@ -4,7 +4,6 @@ namespace App\Models\Ekinerja;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Testing\Fluent\Concerns\Has;
 
 /**
  * Model log sinkronisasi e-Kinerja (PRD Bab 8.4).

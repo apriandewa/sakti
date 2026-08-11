@@ -86,7 +86,7 @@ Route::group(['prefix' => config('master.app.url.frontend')], function () {
     });
 });
 
-Route::prefix('kinerja')->name('ekinerja.')->group(function () {
+Route::prefix('kinerja')->name('ekinerja-publik.')->group(function () {
     Route::get('/', [EkinerjaController::class, 'index'])->name('index');
     Route::get('/periode', [EkinerjaController::class, 'periode'])->name('periode');
 
