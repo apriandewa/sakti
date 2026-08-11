@@ -85,7 +85,10 @@ class EkinerjaService
                 );
             }
         } catch (BknApiException $e) {
-            // Jangan lempar exception saat ensure — fallback ke data lokal
+            // Jangan lempar exception saat ensure otomatis — fallback ke data lokal
+            if ($force) {
+                throw $e;
+            }
         }
     }
 

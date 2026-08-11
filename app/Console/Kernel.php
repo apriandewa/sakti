@@ -77,7 +77,7 @@ class Kernel extends ConsoleKernel
             }
         })
             ->name('sync-periode-ekinerja')
-            ->dailyAt('23:46')
+            ->dailyAt('00:20')
             ->timezone('Asia/Jakarta')
             ->withoutOverlapping();
 
@@ -98,7 +98,7 @@ class Kernel extends ConsoleKernel
             }
         })
             ->name('sync-penilaian-ekinerja')
-            ->dailyAt('23:47')
+            ->dailyAt('00:21')
             ->timezone('Asia/Jakarta')
             ->withoutOverlapping();
     }

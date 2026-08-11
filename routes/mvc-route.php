@@ -103,6 +103,7 @@ Route::group(['prefix'=>config('mvc.route_prefix')], function () { // remove thi
 		//ekinerja
 		Route::prefix('kinerja')->as('kinerja.')->group(function () {
 			Route::get('data', 'Ekinerja\EkinerjaController@data')->name('data');
+			Route::get('logs-data', 'Ekinerja\EkinerjaController@logsData')->name('logs-data');
 			Route::get('unor', 'Ekinerja\EkinerjaController@unor')->name('unor');
 			Route::get('periode', 'Ekinerja\EkinerjaController@periode')->name('periode');
 			Route::get('{id}/show', 'Ekinerja\EkinerjaController@show')->name('show');

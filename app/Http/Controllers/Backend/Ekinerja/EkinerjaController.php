@@ -75,7 +75,7 @@ class EkinerjaController extends Controller
             ->addColumn('perilaku_kerja_badge', fn ($row) => $this->badgeHtml($row->perilaku_kerja))
             ->addColumn('hasil_akhir_badge', fn ($row) => $this->badgeHtml($row->hasil_akhir))
             ->addColumn('action', function ($row) {
-                $detailUrl = route('ekinerja.show', $row->id);
+                $detailUrl = route('kinerja.show', $row->id);
                 return "
                     <button type='button' class='btn btn-xs btn-info btn-action'
                         data-title='Detail Penilaian e-Kinerja' data-url='{$detailUrl}'>

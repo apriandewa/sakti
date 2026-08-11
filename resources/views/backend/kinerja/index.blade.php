@@ -190,11 +190,11 @@
     {{-- Inject config URLs ke JS (aman, tidak expose secret) --}}
     <script>
         window.EkinerjaRekapConfig = {
-            urlDatatable:    '{{ route('ekinerja.data') }}',
-            urlLogsDatatable:'{{ route('ekinerja.logs-data') }}',
-            urlUnorOptions:  '{{ route('ekinerja.unor') }}',
-            urlPeriodeOptions:'{{ route('ekinerja.periode') }}',
-            urlSync:         '{{ route('ekinerja.sync') }}',
+            urlDatatable:    '{{ route('kinerja.data') }}',
+            urlLogsDatatable:'{{ route('kinerja.logs-data') }}',
+            urlUnorOptions:  '{{ route('kinerja.unor') }}',
+            urlPeriodeOptions:'{{ route('kinerja.periode') }}',
+            urlSync:         '{{ route('kinerja.sync') }}',
             csrfToken:       '{{ csrf_token() }}'
         };
     </script>
