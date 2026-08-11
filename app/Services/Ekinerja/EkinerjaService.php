@@ -122,7 +122,7 @@ class EkinerjaService
                 $apiData = $this->client->getPenilaian($tahun, $periodeId, $nip);
 
                 if ($apiData) {
-                    $cache = $this->upsertPenilaian($apiData, 'frontend_search');
+                    $cache = $this->upsertPenilaian($apiData, 'frontend_search', $periodeId);
                 }
             } catch (BknApiException $e) {
                 // API BKN gagal: fallback ke cache lama bila ada, kalau tidak ada → gagal
@@ -237,7 +237,7 @@ class EkinerjaService
                 $apiData = $this->client->getPenilaian($tahun, $periodeId, $nip);
 
                 if ($apiData) {
-                    $this->upsertPenilaian($apiData, 'backend_sync');
+                    $this->upsertPenilaian($apiData, 'backend_sync', $periodeId);
                     $berhasil++;
                 } else {
                     $gagal++;
@@ -276,8 +276,10 @@ class EkinerjaService
      * Upsert satu record penilaian dari data API BKN.
      * Juga melakukan On-the-fly Upsert master Unor & update pegawai.unor_id (PRD 7.3).
      */
-    protected function upsertPenilaian(array $row, string $source): EkinerjaPenilaian
+    protected function upsertPenilaian(array $row, string $source, ?string $fallbackPeriodeId = null): EkinerjaPenilaian
     {
+        $periodeId = ! empty($row['periode_id']) ? $row['periode_id'] : $fallbackPeriodeId;
+
         // 1. On-the-fly Upsert Master Unor (PRD 7.3)
         if (! empty($row['skp_unor_id'])) {
             EkinerjaMasterUnor::updateOrCreate(
@@ -296,7 +298,7 @@ class EkinerjaService
 
         // 3. Upsert Ekinerja Penilaian
         return EkinerjaPenilaian::updateOrCreate(
-            ['nip' => $row['nip'], 'periode_id' => $row['periode_id']],
+            ['nip' => $row['nip'], 'periode_id' => $periodeId],
             [
                 'bkn_id'                 => $row['id'] ?? null,
                 'jenis'                  => $row['jenis'] ?? null,

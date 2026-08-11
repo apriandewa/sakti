@@ -77,9 +77,9 @@ class Kernel extends ConsoleKernel
             }
         })
             ->name('sync-periode-ekinerja')
-            ->dailyAt('00:20')
+            ->dailyAt('00:40')
             ->timezone('Asia/Jakarta')
-            ->withoutOverlapping();
+            ->withoutOverlapping(60);
 
         // Sinkronisasi penilaian e-Kinerja (seluruh Unor aktif, periode berjalan) setiap hari pukul 02:00 WIB
         $schedule->call(function () {
@@ -98,9 +98,9 @@ class Kernel extends ConsoleKernel
             }
         })
             ->name('sync-penilaian-ekinerja')
-            ->dailyAt('00:21')
+            ->dailyAt('00:45')
             ->timezone('Asia/Jakarta')
-            ->withoutOverlapping();
+            ->withoutOverlapping(60);
     }
 
     /**
