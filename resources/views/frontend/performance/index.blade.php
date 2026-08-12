@@ -7,6 +7,46 @@
 @section('container')
 <main class="main performance-page">
 
+@push('css')
+<style>
+.performance-page .perf-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.performance-page .perf-stat-item {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.performance-page .perf-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 4px;
+}
+.performance-page .perf-stat-val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+.performance-page .perf-stat-item.success { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.12); }
+.performance-page .perf-stat-item.success .perf-stat-val { color: #34d399; }
+.performance-page .perf-stat-item.danger  { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.12); }
+.performance-page .perf-stat-item.danger .perf-stat-val  { color: #f87171; }
+.performance-page .perf-stat-item.info    { border-color: rgba(6, 182, 212, 0.4); background: rgba(6, 182, 212, 0.12); }
+.performance-page .perf-stat-item.info .perf-stat-val    { color: #38bdf8; }
+.performance-page .perf-stat-item.primary { border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.12); }
+.performance-page .perf-stat-item.primary .perf-stat-val { color: #60a5fa; }
+</style>
+@endpush
+
   {{-- ==========================================
        PAGE TITLE / BREADCRUMB
        ========================================== --}}
@@ -192,7 +232,7 @@
                 <text x="185" y="115" font-size="8" fill="#aaa" text-anchor="middle">100%</text>
 
                 <!-- Animated Needle Pointer -->
-                <g id="speedometerNeedleGroup" transform="rotate(-90 100 100)" style="transition: transform 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);" filter="url(#needleShadow)">
+                <g id="speedometerNeedleGroup" transform="rotate(-90 100 100)" style="transform-origin: 100px 100px; transition: transform 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);" filter="url(#needleShadow)">
                   <polygon points="96,100 100,28 104,100" fill="#f59e0b"/>
                   <circle cx="100" cy="100" r="8" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
                 </g>
@@ -313,65 +353,106 @@
                   </div>
                 </div>
 
-                <!-- Grid Counts -->
-                <h6 class="fw-bold mb-2 small text-uppercase text-secondary">Rincian Keterlambatan & Pulang Cepat:</h6>
-                <div class="row g-2 mb-3">
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">TL 1</div>
-                      <div id="resCountTL1" class="fw-bold text-warning">0</div>
-                    </div>
+                <!-- Ringkasan Kategori Kehadiran Utama -->
+                <h6 class="fw-bold mb-2 small text-uppercase text-secondary">
+                  <i class="bi bi-person-check me-1"></i> Status Kehadiran Utama:
+                </h6>
+                <div class="perf-stat-grid mb-4">
+                  <div class="perf-stat-item success">
+                    <span class="perf-stat-label"><i class="bi bi-check-circle-fill me-1"></i> Hadir</span>
+                    <div class="perf-stat-val" id="resCountHadir">0</div>
+                    <div class="extra-small text-muted mt-1">Hari Kerja</div>
                   </div>
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">TL 2</div>
-                      <div id="resCountTL2" class="fw-bold text-warning">0</div>
-                    </div>
+                  <div class="perf-stat-item danger">
+                    <span class="perf-stat-label"><i class="bi bi-x-circle-fill me-1"></i> Alpa</span>
+                    <div class="perf-stat-val" id="resCountAlpa">0</div>
+                    <div class="extra-small text-muted mt-1">Tanpa Ket.</div>
                   </div>
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">TL 3</div>
-                      <div id="resCountTL3" class="fw-bold text-warning">0</div>
-                    </div>
+                  <div class="perf-stat-item info">
+                    <span class="perf-stat-label"><i class="bi bi-calendar-check me-1"></i> Cuti</span>
+                    <div class="perf-stat-val" id="resCountCuti">0</div>
+                    <div class="extra-small text-muted mt-1">Resmi</div>
                   </div>
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">TL 4</div>
-                      <div id="resCountTL4" class="fw-bold text-danger">0</div>
-                    </div>
+                  <div class="perf-stat-item primary">
+                    <span class="perf-stat-label"><i class="bi bi-briefcase-fill me-1"></i> DL</span>
+                    <div class="perf-stat-val" id="resCountDL">0</div>
+                    <div class="extra-small text-muted mt-1">Dinas Luar</div>
                   </div>
+                  <div class="perf-stat-item">
+                    <span class="perf-stat-label"><i class="bi bi-file-earmark-text me-1"></i> Izin/Sakit</span>
+                    <div class="perf-stat-val" id="resCountIzinSakit">0</div>
+                    <div class="extra-small text-muted mt-1">Tercatat</div>
+                  </div>
+                </div>
 
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">PSW 1</div>
-                      <div id="resCountPSW1" class="fw-bold text-warning">0</div>
+                <!-- Grid Rincian Terlambat (TM) -->
+                <h6 class="fw-bold mb-2 small text-uppercase text-secondary">
+                  <i class="bi bi-clock-history me-1"></i> Terlambat Masuk (TM / TL):
+                </h6>
+                <div class="row g-2 mb-3">
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-warning border-opacity-25">
+                      <div class="text-warning fw-semibold small">TM 1 (1–31m)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 0.5%</div>
+                      <div id="resCountTL1" class="fs-5 fw-bold text-white">0</div>
                     </div>
                   </div>
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">PSW 2</div>
-                      <div id="resCountPSW2" class="fw-bold text-warning">0</div>
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-warning border-opacity-25">
+                      <div class="text-warning fw-semibold small">TM 2 (31–60m)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 1.0%</div>
+                      <div id="resCountTL2" class="fs-5 fw-bold text-white">0</div>
                     </div>
                   </div>
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">PSW 3</div>
-                      <div id="resCountPSW3" class="fw-bold text-warning">0</div>
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-warning border-opacity-25">
+                      <div class="text-warning fw-semibold small">TM 3 (61–90m)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 1.25%</div>
+                      <div id="resCountTL3" class="fs-5 fw-bold text-white">0</div>
                     </div>
                   </div>
-                  <div class="col-3">
-                    <div class="p-2 rounded bg-dark text-center border border-secondary border-opacity-10">
-                      <div class="text-muted extra-small">PSW 4</div>
-                      <div id="resCountPSW4" class="fw-bold text-danger">0</div>
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-danger border-opacity-25">
+                      <div class="text-danger fw-semibold small">TM 4 (>90m/TMM)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 1.5%</div>
+                      <div id="resCountTL4" class="fs-5 fw-bold text-danger">0</div>
                     </div>
                   </div>
                 </div>
 
-                <div class="d-flex flex-wrap gap-2 text-secondary small pt-2 border-top border-secondary border-opacity-25">
-                  <span class="badge bg-secondary bg-opacity-20 text-white">Hadir: <strong id="resCountHadir">0</strong> hr</span>
-                  <span class="badge bg-danger bg-opacity-20 text-danger">Alpa: <strong id="resCountAlpa">0</strong> hr</span>
-                  <span class="badge bg-info bg-opacity-20 text-info">Cuti: <strong id="resCountCuti">0</strong> hr</span>
-                  <span class="badge bg-primary bg-opacity-20 text-primary">DL: <strong id="resCountDL">0</strong> hr</span>
+                <!-- Grid Rincian Pulang Cepat (PC) -->
+                <h6 class="fw-bold mb-2 small text-uppercase text-secondary">
+                  <i class="bi bi-box-arrow-right me-1"></i> Pulang Sebelum Waktu (PC / PSW):
+                </h6>
+                <div class="row g-2 mb-2">
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-warning border-opacity-25">
+                      <div class="text-warning fw-semibold small">PC 1 (1–31m)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 0.5%</div>
+                      <div id="resCountPSW1" class="fs-5 fw-bold text-white">0</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-warning border-opacity-25">
+                      <div class="text-warning fw-semibold small">PC 2 (31–60m)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 1.0%</div>
+                      <div id="resCountPSW2" class="fs-5 fw-bold text-white">0</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-warning border-opacity-25">
+                      <div class="text-warning fw-semibold small">PC 3 (61–90m)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 1.25%</div>
+                      <div id="resCountPSW3" class="fs-5 fw-bold text-white">0</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-sm-3">
+                    <div class="p-2.5 rounded-3 bg-dark bg-opacity-40 text-center border border-danger border-opacity-25">
+                      <div class="text-danger fw-semibold small">PC 4 (>90m/PCM)</div>
+                      <div class="extra-small text-muted mb-1">Potongan 1.5%</div>
+                      <div id="resCountPSW4" class="fs-5 fw-bold text-danger">0</div>
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -493,7 +574,12 @@ function initPerformance($, Swal) {
 
         // Update Speedometer Needle (-90deg = 0%, +90deg = 100%)
         var angle = -90 + ((score / 100) * 180);
-        $('#speedometerNeedleGroup').css('transform', 'rotate(' + angle + 'deg)');
+        var needleEl = document.getElementById('speedometerNeedleGroup');
+        if (needleEl) {
+          needleEl.setAttribute('transform', 'rotate(' + angle + ' 100 100)');
+          needleEl.style.transformOrigin = '100px 100px';
+          needleEl.style.transform = 'rotate(' + angle + 'deg)';
+        }
 
         // Populate Kinerja Details
         $('#resHasilAkhir').text(res.kinerja.hasil_akhir);
@@ -521,6 +607,7 @@ function initPerformance($, Swal) {
         $('#resCountAlpa').text(res.presensi.count_alpa);
         $('#resCountCuti').text(res.presensi.count_cuti);
         $('#resCountDL').text(res.presensi.count_dl);
+        $('#resCountIzinSakit').text((res.presensi.count_izin || 0) + (res.presensi.count_sakit || 0));
 
         // Show Result with animation
         $resultSec.removeClass('d-none');
