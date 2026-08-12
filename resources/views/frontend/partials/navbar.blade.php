@@ -64,9 +64,9 @@
             </ul>
           </li>
           
-          <li><a href="{{ url('/cekkehadiran') }}">e-Presensi</a></li>
-          <li><a href="{{ url('/kinerja') }}">e-Kinerja</a></li>
-          <li><a href="{{ url('/prformance') }}">e-Performance</a></li>
+          <li><a href="{{ url('/cekkehadiran') }}" class="{{ Request::is('cekkehadiran*') ? 'active' : '' }}">e-Presensi</a></li>
+          <li><a href="{{ url('/kinerja') }}" class="{{ Request::is('kinerja*') ? 'active' : '' }}">e-Kinerja</a></li>
+          <li><a href="{{ url('/performance') }}" class="{{ Request::is('performance*') ? 'active' : '' }}">e-Performance</a></li>
           
           <li><a href="{{ url('/#blog-posts') }}">Berita</a></li>
           

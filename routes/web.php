@@ -103,6 +103,14 @@ Route::prefix('cekkehadiran')->name('cekkehadiran.')->group(function () {
         ->name('cari');
 });
 
+// ===== e-Performance Pegawai (Kinerja 70% + Presensi 30%) =====
+Route::prefix('performance')->name('performance.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Frontend\PerformanceController::class, 'index'])->name('index');
+    Route::post('/cari', [\App\Http\Controllers\Frontend\PerformanceController::class, 'cari'])
+        ->middleware('throttle:10,1')
+        ->name('cari');
+});
+
 
 use App\Http\Controllers\Auth\SsoController;
 
